@@ -1,2 +1,3 @@
 # EvePnP
-A web based Pick n Place controller
+
+A web based Pick n Place machine controller

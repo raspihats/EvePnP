@@ -1,0 +1,82 @@
+text {
+  font-family: "helvetica";
+  stroke: black;
+  stroke-width: 1;
+  fill: black;
+}
+
+text.home {
+  font-family: helvetica;
+  stroke: black;
+  stroke-width: 1;
+  fill: black;
+  font-weight: 900;
+  font-size: 16;
+  pointer-events: none;
+}
+
+text.scl {
+  font-family: helvetica;
+  stroke: white;
+  stroke-width: 1;
+  fill: white;
+  pointer-events: none;
+}
+
+circle.scl {
+  fill: black;
+  fill-opacity: 0.5;
+  stroke: red;
+  stroke-width: 3;
+  filter: url(#f1);
+  pointer-events: none;
+}
+
+path.home {
+  stroke: black;
+}
+
+path.std {
+  stroke: black;
+  stroke-width: 1;
+  filter: url(#f1);
+  cursor: pointer;
+}
+
+path.std:hover {
+  fill: orange;
+}
+
+rect.std {
+  stroke: black;
+  stroke-width: 1;
+  filter: url(#f1);
+  cursor: pointer;
+}
+
+rect.std:hover {
+  fill: orange;
+}
+
+rect.park {
+  fill: #0063b3;
+  fill-opacity: 1;
+  fill-rule: evenodd;
+  stroke: none;
+  pointer-events: none;
+}
+
+text.park {
+  font-size: 10;
+  font-style: normal;
+  font-weight: bold;
+  fill: white;
+  fill-opacity: 1;
+  stroke: none;
+  stroke-width: 1px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-opacity: 1;
+  font-family: Arial;
+  pointer-events: none;
+}

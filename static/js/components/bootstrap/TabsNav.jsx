@@ -1,6 +1,6 @@
 import React from "react";
 
-const Tabs = props => {
+const TabsNav = props => {
   const titles = props.children.map(child => {
     let className = "nav-link";
     if (child.props.active) {
@@ -56,4 +56,4 @@ const TabPane = props => {
   );
 };
 
-export { Tabs, TabPane };
+export { TabsNav, TabPane };

@@ -11,6 +11,7 @@ const JogDialAngle = props => {
         transform="translate(10, 10)"
         pointerEvents="none"
       >
+        <title>CounterClockWise rotation</title>
         <path
           className="std"
           d="M0,5 a 5 5 0 0 1 5 -5 h27 v40 h-27 a 5 5 0 0 1 -5 -5 v-30 z"
@@ -31,12 +32,8 @@ const JogDialAngle = props => {
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
-        <title>+10 deg</title>
+        <title>-10 deg</title>
         <rect className="std" x="32" y="0" width="28" height="40" />
-        <circle className="scl" cx="45.5" cy="20" r="12" />
-        <text className="scl" x="36.5" y="25" fontSize="16">
-          10
-        </text>
       </g>
       <g
         id={"ccw" + axis + "1"}
@@ -46,10 +43,6 @@ const JogDialAngle = props => {
       >
         <title>-1 deg</title>
         <rect className="std" x="60" y="0" width="25" height="40" />
-        <circle className="scl" cx="72.5" cy="20" r="10" />
-        <text className="scl" x="68" y="25" fontSize="16">
-          1
-        </text>
       </g>
       <g
         id={"ccw" + axis + "0.1"}
@@ -59,17 +52,14 @@ const JogDialAngle = props => {
       >
         <title>-0.1 deg</title>
         <rect className="std" x="85" y="0" width="22" height="40" />
-        <circle className="scl" cx="96" cy="20" r="8.5" />
-        <text className="scl" x="89.5" y="23" fontSize="9">
-          0.1
-        </text>
       </g>
       <g
-        id={"park" + axis}
+        id={"Park" + axis}
         data-ng-click="motoVM.jogZClick('Zpark')"
         fill="DarkSeaGreen"
         transform="translate(10, 10)"
       >
+        <title>{"Park " + axis}</title>
         <rect className="std" x="107" y="0" width="26" height="40" />
         <use x="110" y="10" width="20" height="20" xlinkHref="#ParkIcon" />
       </g>
@@ -79,8 +69,12 @@ const JogDialAngle = props => {
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
-        <title>-0.1 deg</title>
+        <title>+0.1 deg</title>
         <rect className="std" x="133" y="0" width="22" height="40" />
+        <circle className="scl" cx="144" cy="20" r="8.5" />
+        <text className="scl" x="137.5" y="23" fontSize="9">
+          0.1
+        </text>
       </g>
       <g
         id={"cw" + axis + "1"}
@@ -88,8 +82,12 @@ const JogDialAngle = props => {
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
-        <title>-1 deg</title>
+        <title>+1 deg</title>
         <rect className="std" x="155" y="0" width="25" height="40" />
+        <circle className="scl" cx="167.5" cy="20" r="10" />
+        <text className="scl" x="163" y="25" fontSize="16">
+          1
+        </text>
       </g>
       <g
         id={"cw" + axis + "10"}
@@ -97,8 +95,12 @@ const JogDialAngle = props => {
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
-        <title>-10 deg</title>
+        <title>+10 deg</title>
         <rect className="std" x="180" y="0" width="28" height="40" />
+        <circle className="scl" cx="193.5" cy="20" r="12" />
+        <text className="scl" x="184.5" y="25" fontSize="16">
+          10
+        </text>
       </g>
       <g
         id={"cw" + axis}
@@ -106,6 +108,7 @@ const JogDialAngle = props => {
         transform="translate(10, 10)"
         pointerEvents="none"
       >
+        <title>ClockWise rotation</title>
         <path
           className="std"
           d="M208,0 h27 a 5 5 0 0 1 5 5 v30 a 5 5 0 0 1 -5 5 h-27 v-40 z"

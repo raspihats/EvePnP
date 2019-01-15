@@ -1,10 +1,10 @@
 import React from "react";
-// import "../../../../css/jogdial.css";
 
 const JogDialXY = props => {
   return (
     <g>
       <g id="HomeAll" onClick={() => jog("G28")} transform="translate(10, 10)">
+        <title>Home all axis</title>
         <path
           className="std"
           d="M10 182.5 h-10 v57.5 h57.5 v-10 a 125,125 0 0,1 -47.5 -47.5 Z"
@@ -14,6 +14,7 @@ const JogDialXY = props => {
       </g>
 
       <g id="ParkX" onClick={() => jog("G28 X0")} transform="translate(10, 10)">
+        <title>Park X axis</title>
         <path
           className="std"
           d="M10 57.50 h-10 v-57.5 h57.5 v10 a 125,125 0 0,0 -47.5 47.5 Z"
@@ -25,6 +26,7 @@ const JogDialXY = props => {
         </text>
       </g>
       <g id="ParkY" onClick={() => jog("G28 Y0")} transform="translate(10, 10)">
+        <title>Park Y axis</title>
         <path
           className="std"
           d="M230 57.50 h10 v-57.5 h-57.5 v10 a 125,125 0 0,1 47.5 47.5 z"
@@ -41,6 +43,7 @@ const JogDialXY = props => {
         onClick={() => jog("G28 Z0")}
         transform="translate(10, 10)"
       >
+        <title>Park X and Y axis</title>
         <path
           className="std"
           d="M230 182.5 h10 v57.5 h-57.5 v-10 a 125,125 0 0,0 47.5 -47.5 z"
@@ -66,7 +69,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", 100)}
           transform="translate(120 120)"
         >
-          <title>100 mm</title>
+          <title>+100 mm</title>
           <path
             className="std"
             d="M-60 -67.07 L-75.93,-83 A112.5,112.5 0 0,1 75,-83 L60,-67.07 A90,90 0 0,0 -60.00,-67.07 z"
@@ -77,7 +80,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", 100)}
           transform="translate(120 120)"
         >
-          <title>100 mm</title>
+          <title>+100 mm</title>
           <path
             className="std"
             d="M67.07,-60 L83,-75.93 A112.5,112.5 0 0,1 83,75.93 L67.07,60 A90,90 0 0,0 67.07,-60"
@@ -88,7 +91,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", -100)}
           transform="translate(120 120)"
         >
-          <title>100 mm</title>
+          <title>-100 mm</title>
           <path
             className="std"
             d="M-60,67.07 L-75.93,83 A112.5,112.5 0 0,0 75,83 L60,67.07 A90,90 0 0,1 -60.00,67.07 z"
@@ -99,7 +102,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", -100)}
           transform="translate(120 120)"
         >
-          <title>100 mm</title>
+          <title>-100 mm</title>
           <path
             className="std"
             d="M-67.07,-60 L-83,-75.93 A112.5,112.5 0 0,0 -83,75.93 L-67.07,60 A90,90 0 0,1 -67.07,-60 z"
@@ -113,7 +116,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", 10)}
           transform="translate(120 120)"
         >
-          <title>10 mm</title>
+          <title>+10 mm</title>
           <path
             className="std"
             d="M-44.06 -51.13 L-60,-67.07 A90,90 0 0,1 60,-67 L44.06,-51.13 A67.5,67.5 0 0,0 -44.06,-51.13 z"
@@ -124,7 +127,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", 10)}
           transform="translate(120 120)"
         >
-          <title>10 mm</title>
+          <title>+10 mm</title>
           <path
             className="std"
             d="M51.13 44.06 L67.07,60 A90,90 0 0,0 67.07,-60 L51.13,-44.06 A67.5,67.5 0 0,1 51.13,44.06 z"
@@ -135,7 +138,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", -10)}
           transform="translate(120 120)"
         >
-          <title>10 mm</title>
+          <title>-10 mm</title>
           <path
             className="std"
             d="M-44.06 51.13 L-60,67.07 A90,90 0 0,0 60,67 L44.06,51.13 A67.5,67.5 0 0,1 -44.06,51.13 z"
@@ -146,7 +149,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", -10)}
           transform="translate(120 120)"
         >
-          <title>10 mm</title>
+          <title>-10 mm</title>
           <path
             className="std"
             d="M-51.13 44.06 L-67.07,60 A90,90 0 0,1 -67.07,-60 L-51.13,-44.06 A67.5,67.5 0 0,0 -51.13,44.06 z"
@@ -160,7 +163,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", 1)}
           transform="translate(120 120)"
         >
-          <title>1 mm</title>
+          <title>+1 mm</title>
           <path
             className="std"
             d="M-28.09 -35.16 L-44.06,-51.13 A67.5,67.5 0 0,1 44.06,-51.13 L28.09,-35.16 A45,45 0 0,0 -28.09,-35.16 z"
@@ -171,7 +174,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", 1)}
           transform="translate(120 120)"
         >
-          <title>1 mm</title>
+          <title>+1 mm</title>
           <path
             className="std"
             d="M35.16 -28.09 L51.13,-44.06 A67.5,67.05 0 0,1 51.13,44.06 L35.16,28.09 A45,45 0 0,0 35.16,-28.09 z"
@@ -182,7 +185,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", -1)}
           transform="translate(120 120)"
         >
-          <title>1 mm</title>
+          <title>-1 mm</title>
           <path
             className="std"
             d="M-28.09 35.16 L-44.06,51.13 A67.5,67.5 0 0,0 44.06,51.13 L28.09,35.16 A45,45 0 0,1 -28.09,35.16 z"
@@ -193,7 +196,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", -1)}
           transform="translate(120 120)"
         >
-          <title>1 mm</title>
+          <title>-1 mm</title>
           <path
             className="std"
             d="M-35.16 -28.09 L-51.13,-44.06 A67.5,67.05 0 0,0 -51.13,44.06 L-35.16,28.09 A45,45 0 0,1 -35.16,-28.09 z"
@@ -207,7 +210,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", 0.1)}
           transform="translate(120 120)"
         >
-          <title>0.1 mm</title>
+          <title>+0.1 mm</title>
           <path
             className="std"
             d="M-28.09 -35.16 A45,45 0 0,1 29.09,-35.16 L0,-7.07 z"
@@ -218,7 +221,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", 0.1)}
           transform="translate(120 120)"
         >
-          <title>0.1 mm</title>
+          <title>+0.1 mm</title>
           <path
             className="std"
             d="M35.16 -28.09 A45,45 0 0,1 35.16,28.09 L7.07,0 z"
@@ -229,7 +232,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("Y", -0.1)}
           transform="translate(120 120)"
         >
-          <title>0.1 mm</title>
+          <title>-0.1 mm</title>
           <path
             className="std"
             d="M-28.09 35.16 A45,45 0 0,0 29.09,35.16 L0,7.07 z"
@@ -240,7 +243,7 @@ const JogDialXY = props => {
           onClick={() => jogXYClick("X", -0.1)}
           transform="translate(120 120)"
         >
-          <title>0.1 mm</title>
+          <title>-0.1 mm</title>
           <path
             className="std"
             d="M-35.16 -28.09 A45,45 0 0,0 -35.16,28.09 L-7.07,0 z"

@@ -13,6 +13,7 @@ const JogDialZ = props => {
         transform="translate(10, 10)"
         pointerEvents="none"
       >
+        <title>Up</title>
         <path
           className="std"
           d="M5,0 h30 a5,5 0 0,1 5,5 v27 h-40 v-27 a5,5 0 0,1 5,-5 z"
@@ -32,7 +33,7 @@ const JogDialZ = props => {
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
-        <title>+10 mm/deg</title>
+        <title>+10 mm|deg</title>
         <rect className="std" x="0" y="32" width="40" height="28" />
         <circle className="scl" cx="20" cy="45.5" r="12" />
         <text className="scl" x="10.5" y="51" fontSize="16">
@@ -45,7 +46,7 @@ const JogDialZ = props => {
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
-        <title>+1 mm/deg</title>
+        <title>+1 mm|deg</title>
         <rect className="std" x="0" y="60" width="40" height="25" />
         <circle className="scl" cx="20" cy="72.5" r="10" />
         <text className="scl" x="15.5" y="78" fontSize="16">
@@ -58,7 +59,7 @@ const JogDialZ = props => {
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
-        <title>+0.1 mm/deg</title>
+        <title>+0.1 mm|deg</title>
         <rect className="std" x="0" y="85" width="40" height="22" />
         <circle className="scl" cx="20" cy="96" r="8.5" />
         <text className="scl" x="14" y="99" fontSize="9">
@@ -66,11 +67,12 @@ const JogDialZ = props => {
         </text>
       </g>
       <g
-        id="ZSpace"
+        id="ParkZ"
         data-ng-click="motoVM.jogZClick('Zpark')"
         fill="DarkSeaGreen"
         transform="translate(10, 10)"
       >
+        <title>Park Z axis</title>
         <rect className="std" x="0" y="107" width="40" height="26" />
         <use x="10" y="110" width="20" height="20" xlinkHref="#ParkIcon" />
       </g>
@@ -80,7 +82,7 @@ const JogDialZ = props => {
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
-        <title>-0.1 mm/deg</title>
+        <title>-0.1 mm|deg</title>
         <rect className="std" x="0" y="133" width="40" height="22" />
       </g>
       <g
@@ -89,7 +91,7 @@ const JogDialZ = props => {
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
-        <title>-1 mm/deg</title>
+        <title>-1 mm|deg</title>
         <rect className="std" x="0" y="155" width="40" height="25" />
       </g>
       <g
@@ -98,7 +100,7 @@ const JogDialZ = props => {
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
-        <title>-10 mm/deg</title>
+        <title>-10 mm|deg</title>
         <rect className="std" x="0" y="180" width="40" height="28" />
       </g>
       <g
@@ -107,6 +109,7 @@ const JogDialZ = props => {
         transform="translate(10, 10)"
         pointerEvents="none"
       >
+        <title>Down</title>
         <path
           className="std"
           d="M0,208 h40 v27 a5,5 0 0,1 -5,5 h-30 a5,5 0 0,1 -5,-5 z"

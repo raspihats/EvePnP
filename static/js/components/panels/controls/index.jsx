@@ -1,36 +1,50 @@
 import React from "react";
 import { Card, CardHeader, CardBody, CardFooter } from "../../bootstrap/Card";
-import { Tabs, TabPane } from "../../bootstrap/Tabs";
+// import { Tabs, TabPane } from "../../bootstrap/Tabs";
+import {
+  PillsNav,
+  PillsNavPane,
+  PillsNavExtractor
+} from "../../bootstrap/PillsNav";
 import Select from "../../bootstrap/Select";
 import JogDial from "./JogDial";
 
 const ControlsPanel = props => {
+  const pillsNav = (
+    <PillsNav className="py-0" onlyPanes>
+      <PillsNavPane title="Jog" active>
+        <Select prepend="Nozzle:" size="small" options={["N1", "N2"]} />
+        <JogDial />
+      </PillsNavPane>
+      <PillsNavPane title="Actuators">Actuators</PillsNavPane>
+    </PillsNav>
+  );
   return (
     <Card>
-      <CardHeader>Controls</CardHeader>
-      <CardBody className="text-center">
-        <Tabs small>
-          <TabPane className="border border-top-0 p-2" title="Jog" active>
-            <Select prepend="Nozzle:" size="small" options={["N1", "N2"]} />
-            <JogDial />
-          </TabPane>
-          <TabPane className="border border-top-0 p-2" title="Actuators">
-            Actuators
-          </TabPane>
-        </Tabs>
-      </CardBody>
+      <CardHeader>
+        <div className="row">
+          <div className="col-auto">
+            <span className="font-weight-bold text-info">Controls</span>
+          </div>
+          <div className="col-auto">
+            <PillsNavExtractor pillsNav={pillsNav} />
+          </div>
+        </div>
+      </CardHeader>
+      <CardBody className="text-center">{pillsNav}</CardBody>
       <CardFooter>
-        <input
-          type="range"
-          min="1"
-          max="100"
-          value="50"
-          className="slider"
-          id="myRange"
-          onChange={e => {
-            console.log(e);
-          }}
-        />
+        <div className="row">
+          <div className="col-auto">
+            <span>Speed[%]:</span>
+          </div>
+          <div className="col-auto">
+            <input
+              type="range"
+              class="form-control-range"
+              id="formControlRange"
+            />
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );

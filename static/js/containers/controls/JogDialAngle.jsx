@@ -84,8 +84,8 @@ const JogDialAngle = props => {
       >
         <title>+1 deg</title>
         <rect className="std" x="155" y="0" width="25" height="40" />
-        <circle className="scl" cx="167.5" cy="20" r="10" />
-        <text className="scl" x="163" y="25" fontSize="16">
+        <circle className="scl" cx="167.5" cy="19.5" r="10" />
+        <text className="scl" x="163" y="24.5" fontSize="16">
           1
         </text>
       </g>
@@ -97,8 +97,8 @@ const JogDialAngle = props => {
       >
         <title>+10 deg</title>
         <rect className="std" x="180" y="0" width="28" height="40" />
-        <circle className="scl" cx="193.5" cy="20" r="12" />
-        <text className="scl" x="184.5" y="25" fontSize="16">
+        <circle className="scl" cx="193.5" cy="19.5" r="12" />
+        <text className="scl" x="184.5" y="24.5" fontSize="16">
           10
         </text>
       </g>

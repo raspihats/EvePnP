@@ -2,7 +2,8 @@ import React from "react";
 import JogDialXY from "./JogDialXY";
 import JogDialZ from "./JogDialZ";
 import JogDialAngle from "./JogDialAngle";
-import "../../../../css/jogdial.css";
+import SpeedKnob from "./SpeedKnob";
+import "../../../css/jogdial.css";
 
 const jogXYClick = (axis, step) => {
   console.log(axis + " " + step);
@@ -14,6 +15,7 @@ const JogDial = props => {
       <JogDialXY />
       <JogDialZ />
       <JogDialAngle />
+      <SpeedKnob />
       <defs>
         <filter id="f1" x="-1" y="-1" width="300%" height="300%">
           <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />

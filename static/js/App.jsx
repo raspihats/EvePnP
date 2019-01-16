@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import Navbar from "./components/Navbar";
-import ControlsPanel from "./components/panels/controls";
-import CamerasPanel from "./components/panels/cameras";
+import ControlsPanel from "./containers/controls";
+import CamerasPanel from "./containers/cameras";
+import MainPanel from "./containers/main";
+import FontAwesomeIcons from "./fa-icons";
+
+FontAwesomeIcons.init();
 
 class App extends Component {
   render() {
@@ -17,7 +21,7 @@ class App extends Component {
               <CamerasPanel />
             </div>
             <div className="col-12">
-              <CamerasPanel />
+              <MainPanel />
             </div>
           </div>
         </main>

@@ -12,14 +12,24 @@ const Select = props => {
   ));
 
   return (
-    <InputGroup size={props.size}>
+    <InputGroup {...props}>
       <InputGroupPrepend>
-        <InputGroupText>{props.prepend}</InputGroupText>
+        {typeof props.prepend == "string" || props.prepend instanceof String ? (
+          <InputGroupText>{props.prepend}</InputGroupText>
+        ) : (
+          props.prepend
+        )}
       </InputGroupPrepend>
       <select className="custom-select" id={props.id}>
         {options}
       </select>
-      <InputGroupAppend />
+      <InputGroupAppend>
+        {typeof props.append == "string" || props.append instanceof String ? (
+          <InputGroupText>{props.append}</InputGroupText>
+        ) : (
+          props.append
+        )}
+      </InputGroupAppend>
     </InputGroup>
   );
 };

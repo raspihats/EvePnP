@@ -85,3 +85,11 @@ text.park {
   font-family: Arial;
   pointer-events: none;
 }
+
+circle.std {
+  stroke: black;
+  fill: silver;
+  stroke-width: 1;
+  filter: url(#f1);
+  cursor: pointer;
+}

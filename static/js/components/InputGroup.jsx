@@ -2,9 +2,9 @@ import React from "react";
 
 const InputGroup = props => {
   let className = "input-group";
-  if (props.size == "small") {
+  if (props.small) {
     className += " input-group-sm";
-  } else if (props.size == "large") {
+  } else if (props.large) {
     className += " input-group-lg";
   }
   if (props.className) {

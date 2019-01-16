@@ -1,19 +1,18 @@
 import React from "react";
-import { Card, CardHeader, CardBody, CardFooter } from "../../bootstrap/Card";
-// import { Tabs, TabPane } from "../../bootstrap/Tabs";
+import { Card, CardHeader, CardBody } from "../../components/Card";
 import {
   PillsNav,
   PillsNavPane,
-  PillsNavExtractor
-} from "../../bootstrap/PillsNav";
-import Select from "../../bootstrap/Select";
+  PillsNavPart
+} from "../../components/PillsNav";
+import Select from "../../components/Select";
 import JogDial from "./JogDial";
 
 const ControlsPanel = props => {
   const pillsNav = (
-    <PillsNav className="py-0" onlyPanes>
+    <PillsNav small>
       <PillsNavPane title="Jog" active>
-        <Select prepend="Nozzle:" size="small" options={["N1", "N2"]} />
+        <Select small prepend="Nozzle:" options={["N1", "N2"]} />
         <JogDial />
       </PillsNavPane>
       <PillsNavPane title="Actuators">Actuators</PillsNavPane>
@@ -27,12 +26,14 @@ const ControlsPanel = props => {
             <span className="font-weight-bold text-info">Controls</span>
           </div>
           <div className="col-auto">
-            <PillsNavExtractor pillsNav={pillsNav} />
+            <PillsNavPart.Nav pillsNav={pillsNav} />
           </div>
         </div>
       </CardHeader>
-      <CardBody className="text-center">{pillsNav}</CardBody>
-      <CardFooter>
+      <CardBody className="text-center">
+        <PillsNavPart.Panes pillsNav={pillsNav} />
+      </CardBody>
+      {/* <CardFooter>
         <div className="row">
           <div className="col-auto">
             <span>Speed[%]:</span>
@@ -45,7 +46,7 @@ const ControlsPanel = props => {
             />
           </div>
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 };

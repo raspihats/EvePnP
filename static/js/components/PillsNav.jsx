@@ -1,13 +1,13 @@
 import React from "react";
 
-const PillsNavExtractor = props => {
+const Nav = props => {
   const items = props.pillsNav.props.children.map(tab => {
     return (
       <li className="nav-item" key={tab.props.title}>
         <a
           className={
-            "nav-link " +
-            props.pillsNav.props.className +
+            "nav-link" +
+            (props.pillsNav.props.small ? " py-0" : "") +
             (tab.props.active ? " active" : "")
           }
           id={tab.props.title + "-tab"}
@@ -26,14 +26,18 @@ const PillsNavExtractor = props => {
   return (
     <ul
       className={
-        "nav nav-pills" + (props.className ? " " + props.className : "")
+        "nav nav-pills" +
+        (props.pillsNav.props.center ? " justify-content-center" : "")
       }
-      // id={props.id ? props.id : ""}
       role="tablist"
     >
       {items}
     </ul>
   );
+};
+
+const Panes = props => {
+  return <div className="tab-content">{props.pillsNav.props.children}</div>;
 };
 
 const PillsNavPane = props => {
@@ -50,14 +54,14 @@ const PillsNavPane = props => {
 };
 
 const PillsNav = props => {
-  const nav = <PillsNavExtractor pillsNav={{ props: props }} />;
-
   return (
     <React.Fragment>
-      {props.onlyPanes ? "" : nav}
-      <div className="tab-content">{props.children}</div>
+      <PillsNavMenu pillsNav={{ props: props }} />
+      <PillsNavPanes pillsNav={{ props: props }} />
     </React.Fragment>
   );
 };
 
-export { PillsNav, PillsNavPane, PillsNavExtractor };
+const PillsNavPart = { Nav, Panes };
+
+export { PillsNav, PillsNavPane, PillsNavPart };

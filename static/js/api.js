@@ -1,13 +1,11 @@
 import axios from "axios";
 
-export default axios.create({
-  baseURL: "http://jsonplaceholder.typicode.com/"
-});
+const baseURL = window.location.href + "/api";
 
-// const Api = {
-//   job: {
-//     list: ["job1", "j0b2", "DI16ac I2C-HAT"]
-//   }
-// };
+const api = {
+  jobs: axios.create({
+    baseURL: baseURL + "/jobs"
+  })
+};
 
-// export default Api;
+export default api;

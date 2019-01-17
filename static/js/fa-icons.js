@@ -1,4 +1,5 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
+// following import uses babel-transform-imports to reduce size
 import {
   faPlay,
   faPause,

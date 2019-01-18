@@ -47,6 +47,17 @@ class AxisHome(Resource):
         return '', 200
 
 
+@api.route('/park')
+class AxisPark(Resource):
+
+    @api.doc('axis_parking')
+    @api.expect([axis_model])
+    def put(self):
+        '''Axis parking'''
+        axis_service.park(api.payload)
+        return '', 200
+
+
 @api.route('/jog')
 class AxisJog(Resource):
 

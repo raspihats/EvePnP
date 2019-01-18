@@ -1,9 +1,5 @@
 import React from "react";
 
-const jogClick = (axis, step) => {
-  console.log(axis + " " + step);
-};
-
 const JogDialZ = props => {
   return (
     <g transform="translate(260, 0)">
@@ -29,7 +25,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z+10"
-        data-ng-click="motoVM.jogZClick('Z10')"
+        onClick={() => props.onJog("z", 10)}
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
@@ -42,7 +38,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z+1"
-        data-ng-click="motoVM.jogZClick('Z1')"
+        onClick={() => props.onJog("z", 1)}
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
@@ -55,7 +51,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z+0.1"
-        data-ng-click="motoVM.jogZClick('Z0.1')"
+        onClick={() => props.onJog("z", 0.1)}
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
@@ -68,7 +64,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="ParkZ"
-        data-ng-click="motoVM.jogZClick('Zpark')"
+        onClick={() => props.onPark("z")}
         fill="DarkSeaGreen"
         transform="translate(10, 10)"
       >
@@ -78,7 +74,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z-0.1"
-        data-ng-click="motoVM.jogZClick('Z-0.1')"
+        onClick={() => props.onJog("z", -0.1)}
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
@@ -87,7 +83,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z-1"
-        data-ng-click="motoVM.jogZClick('Z-1')"
+        onClick={() => props.onJog("z", -1)}
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
@@ -96,7 +92,7 @@ const JogDialZ = props => {
       </g>
       <g
         id="Z-10"
-        data-ng-click="motoVM.jogZClick('Z-10')"
+        onClick={() => props.onJog("z", -10)}
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >

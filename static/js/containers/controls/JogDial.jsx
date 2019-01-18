@@ -5,16 +5,12 @@ import JogDialAngle from "./JogDialAngle";
 import SpeedKnob from "./SpeedKnob";
 import "../../../css/jogdial.css";
 
-const jogXYClick = (axis, step) => {
-  console.log(axis + " " + step);
-};
-
 const JogDial = props => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
-      <JogDialXY />
-      <JogDialZ />
-      <JogDialAngle />
+      <JogDialXY {...props} />
+      <JogDialZ {...props} />
+      <JogDialAngle {...props} />
       <SpeedKnob />
       <defs>
         <filter id="f1" x="-1" y="-1" width="300%" height="300%">

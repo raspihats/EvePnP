@@ -1,6 +1,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 // following import uses babel-transform-imports to reduce size
 import {
+  faUpload,
   faPlay,
   faPause,
   faStop,
@@ -10,6 +11,7 @@ import {
 
 const FontAwesomeIcons = {
   init: () => {
+    library.add(faUpload);
     library.add(faPlay);
     library.add(faPause);
     library.add(faStop);

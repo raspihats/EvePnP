@@ -1,64 +1,69 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "../../components/Select";
-import JobDetails from "./JobDetails";
 import api from "../../api";
+import JobControl from "./JobControl";
+import JobDetails from "./JobDetails";
 
-class JobControl extends React.Component {
-  state = { jobList: ["Upload..."] };
+class Job extends React.Component {
+  state = { jobs: [], job: null };
+
+  onSelect(name) {
+    if (name == null) {
+      this.setState({ job: null });
+    } else {
+      api.get("/jobs/" + name).then(response => {
+        this.setState({
+          job: response.data
+        });
+      });
+    }
+  }
+
+  onUpload() {
+    alert("Uploading a job is not implemented yet!");
+  }
+
+  onStart(name) {}
+
+  onDelete(name) {
+    api.delete("/jobs/" + name).then(response => {
+      this.setState({
+        jobs: response.data.map(job => job.name).sort()
+      });
+    });
+  }
+
+  onPause(name) {}
+
+  onStop(name) {}
+
+  componentDidMount() {
+    api.get("/jobs").then(response => {
+      this.setState({
+        jobs: response.data.map(job => job.name).sort()
+      });
+    });
+  }
+
   render() {
     return (
-      <Select
-        prepend="Job:"
-        options={this.state.jobList}
-        append={
-          <React.Fragment>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              title="Start job"
-            >
-              <FontAwesomeIcon icon="play" />
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              title="Stop job"
-            >
-              <FontAwesomeIcon icon="pause" />
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              title="Stop job"
-            >
-              <FontAwesomeIcon icon="stop" />
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              title="Delete job"
-            >
-              <FontAwesomeIcon icon="trash" />
-            </button>
-          </React.Fragment>
-        }
-      />
+      <div className="row">
+        <div className="col-12 col-md-8 col-lg-6">
+          <JobControl
+            jobs={this.state.jobs}
+            onSelect={name => this.onSelect(name)}
+            onUpload={() => this.onUpload()}
+            onStart={name => this.onStart(name)}
+            onDelete={name => this.onDelete(name)}
+            onPause={name => this.onPause(name)}
+            onStop={name => this.onStop(name)}
+          />
+        </div>
+        <div className="col-12 pt-3">
+          {this.state.job && <JobDetails job={this.state.job} />}
+        </div>
+      </div>
     );
   }
 }
-
-const Job = () => {
-  return (
-    <div className="row">
-      <div className="col-12 col-md-8 col-lg-6">
-        <JobControl />
-      </div>
-      <div className="col-12">
-        <JobDetails />
-      </div>
-    </div>
-  );
-};
 
 export default Job;

@@ -1,12 +1,12 @@
 import React from "react";
 
 const JogDialAngle = props => {
-  const axis = props.axis ? props.axis : "A";
+  const axis = props.rotationAxis.toLowerCase();
 
   return (
     <g transform="translate(0, 260)">
       <g
-        id={"ccw" + axis}
+        id={"ccw" + axis.toUpperCase()}
         fill="#b0b0b0"
         transform="translate(10, 10)"
         pointerEvents="none"
@@ -23,12 +23,12 @@ const JogDialAngle = props => {
           d="M24 0.6 h3.2 v10 h-10 v-3.2 h4 a 10 10 0 1 0 2.8 6.6 h3.2 a 13.4 13.4 0 1 1 -3.2 -8.4 z"
         />
         <text x="12" y="24" fontSize="12">
-          {axis}
+          {axis.toUpperCase()}
         </text>
       </g>
       <g
-        id={"ccw" + axis + "10"}
-        data-ng-click="motoVM.jogZClick('Z10')"
+        id={"ccw" + axis.toUpperCase() + "-10"}
+        onClick={() => props.onJog(axis.toLowerCase(), -10)}
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
@@ -36,8 +36,8 @@ const JogDialAngle = props => {
         <rect className="std" x="32" y="0" width="28" height="40" />
       </g>
       <g
-        id={"ccw" + axis + "1"}
-        data-ng-click="motoVM.jogZClick('Z1')"
+        id={"ccw" + axis.toUpperCase() + "-1"}
+        onClick={() => props.onJog(axis.toLowerCase(), -1)}
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
@@ -45,8 +45,8 @@ const JogDialAngle = props => {
         <rect className="std" x="60" y="0" width="25" height="40" />
       </g>
       <g
-        id={"ccw" + axis + "0.1"}
-        data-ng-click="motoVM.jogZClick('Z0.1')"
+        id={"ccw" + axis.toUpperCase() + "-0.1"}
+        onClick={() => props.onJog(axis, -0.1)}
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
@@ -54,18 +54,18 @@ const JogDialAngle = props => {
         <rect className="std" x="85" y="0" width="22" height="40" />
       </g>
       <g
-        id={"Park" + axis}
-        data-ng-click="motoVM.jogZClick('Zpark')"
+        id={"Park" + axis.toUpperCase()}
+        onClick={() => props.onPark(axis)}
         fill="DarkSeaGreen"
         transform="translate(10, 10)"
       >
-        <title>{"Park " + axis}</title>
+        <title>{"Park " + axis.toUpperCase()}</title>
         <rect className="std" x="107" y="0" width="26" height="40" />
         <use x="110" y="10" width="20" height="20" xlinkHref="#ParkIcon" />
       </g>
       <g
-        id={"cw" + axis + "0.1"}
-        data-ng-click="motoVM.jogZClick('Z-0.1')"
+        id={"cw" + axis.toUpperCase() + "0.1"}
+        onClick={() => props.onJog(axis, 0.1)}
         fill="#f0f0f0"
         transform="translate(10, 10)"
       >
@@ -77,8 +77,8 @@ const JogDialAngle = props => {
         </text>
       </g>
       <g
-        id={"cw" + axis + "1"}
-        data-ng-click="motoVM.jogZClick('Z-1')"
+        id={"cw" + axis.toUpperCase() + "1"}
+        onClick={() => props.onJog(axis, 1)}
         fill="#e0e0e0"
         transform="translate(10, 10)"
       >
@@ -90,8 +90,8 @@ const JogDialAngle = props => {
         </text>
       </g>
       <g
-        id={"cw" + axis + "10"}
-        data-ng-click="motoVM.jogZClick('Z-10')"
+        id={"cw" + axis.toUpperCase() + "10"}
+        onClick={() => props.onJog(axis, 10)}
         fill="#d0d0d0"
         transform="translate(10, 10)"
       >
@@ -103,7 +103,7 @@ const JogDialAngle = props => {
         </text>
       </g>
       <g
-        id={"cw" + axis}
+        id={"cw" + axis.toUpperCase()}
         fill="#b0b0b0"
         transform="translate(10, 10)"
         pointerEvents="none"
@@ -120,7 +120,7 @@ const JogDialAngle = props => {
           d="M24 0.6 h3.2 v10 h-10 v-3.2 h4 a 10 10 0 1 0 2.8 6.6 h3.2 a 13.4 13.4 0 1 1 -3.2 -8.4 z"
         />
         <text x="220" y="24" fontSize="12">
-          {props.axis ? props.axis : "A"}
+          {axis.toUpperCase()}
         </text>
       </g>
     </g>

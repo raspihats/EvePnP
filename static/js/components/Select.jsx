@@ -20,7 +20,7 @@ const Select = props => {
           props.prepend
         )}
       </InputGroupPrepend>
-      <select className="custom-select" id={props.id}>
+      <select className="custom-select" id={props.id} onChange={props.onChange}>
         {options}
       </select>
       <InputGroupAppend>

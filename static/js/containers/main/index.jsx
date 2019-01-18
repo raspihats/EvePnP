@@ -9,7 +9,7 @@ import Job from "./Job";
 
 const MainPanel = () => {
   const pillsNav = (
-    <PillsNav small center>
+    <PillsNav center>
       <PillsNavPane title="Jobs" active>
         <Job />
       </PillsNavPane>

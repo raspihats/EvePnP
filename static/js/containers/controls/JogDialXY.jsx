@@ -3,7 +3,11 @@ import React from "react";
 const JogDialXY = props => {
   return (
     <g>
-      <g id="HomeAll" onClick={() => jog("G28")} transform="translate(10, 10)">
+      <g
+        id="HomeAll"
+        onClick={() => props.onHome()}
+        transform="translate(10, 10)"
+      >
         <title>Home all axis</title>
         <path
           className="std"
@@ -13,7 +17,11 @@ const JogDialXY = props => {
         <use x="3" y="217" width="20" height="18" xlinkHref="#HomeIcon" />
       </g>
 
-      <g id="ParkX" onClick={() => jog("G28 X0")} transform="translate(10, 10)">
+      <g
+        id="ParkX"
+        onClick={() => props.onPark("x")}
+        transform="translate(10, 10)"
+      >
         <title>Park X axis</title>
         <path
           className="std"
@@ -25,7 +33,11 @@ const JogDialXY = props => {
           X
         </text>
       </g>
-      <g id="ParkY" onClick={() => jog("G28 Y0")} transform="translate(10, 10)">
+      <g
+        id="ParkY"
+        onClick={() => props.onPark("y")}
+        transform="translate(10, 10)"
+      >
         <title>Park Y axis</title>
         <path
           className="std"
@@ -40,7 +52,7 @@ const JogDialXY = props => {
 
       <g
         id="ParkXY"
-        onClick={() => jog("G28 Z0")}
+        onClick={() => props.onPark("xy")}
         transform="translate(10, 10)"
       >
         <title>Park X and Y axis</title>
@@ -66,7 +78,7 @@ const JogDialXY = props => {
       >
         <g
           id="Y+100"
-          onClick={() => jogXYClick("Y", 100)}
+          onClick={() => props.onJog("y", 100)}
           transform="translate(120 120)"
         >
           <title>+100 mm</title>
@@ -77,7 +89,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X+100"
-          onClick={() => jogXYClick("X", 100)}
+          onClick={() => props.onJog("x", 100)}
           transform="translate(120 120)"
         >
           <title>+100 mm</title>
@@ -88,7 +100,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="Y-100"
-          onClick={() => jogXYClick("Y", -100)}
+          onClick={() => props.onJog("y", -100)}
           transform="translate(120 120)"
         >
           <title>-100 mm</title>
@@ -99,7 +111,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X-100"
-          onClick={() => jogXYClick("X", -100)}
+          onClick={() => props.onJog("x", -100)}
           transform="translate(120 120)"
         >
           <title>-100 mm</title>
@@ -113,7 +125,7 @@ const JogDialXY = props => {
       <g id="Jog10" fill="#d0d0d0" transform="translate(10, 10)">
         <g
           id="Y+10"
-          onClick={() => jogXYClick("Y", 10)}
+          onClick={() => props.onJog("y", 10)}
           transform="translate(120 120)"
         >
           <title>+10 mm</title>
@@ -124,7 +136,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X+10"
-          onClick={() => jogXYClick("X", 10)}
+          onClick={() => props.onJog("x", 10)}
           transform="translate(120 120)"
         >
           <title>+10 mm</title>
@@ -135,7 +147,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="Y-10"
-          onClick={() => jogXYClick("Y", -10)}
+          onClick={() => props.onJog("y", -10)}
           transform="translate(120 120)"
         >
           <title>-10 mm</title>
@@ -146,7 +158,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X-10"
-          onClick={() => jogXYClick("X", -10)}
+          onClick={() => props.onJog("x", -10)}
           transform="translate(120 120)"
         >
           <title>-10 mm</title>
@@ -160,7 +172,7 @@ const JogDialXY = props => {
       <g id="Jog1" fill="#e0e0e0" transform="translate(10, 10)">
         <g
           id="Y+1"
-          onClick={() => jogXYClick("Y", 1)}
+          onClick={() => props.onJog("y", 1)}
           transform="translate(120 120)"
         >
           <title>+1 mm</title>
@@ -171,7 +183,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X+1"
-          onClick={() => jogXYClick("X", 1)}
+          onClick={() => props.onJog("x", 1)}
           transform="translate(120 120)"
         >
           <title>+1 mm</title>
@@ -182,7 +194,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="Y-1"
-          onClick={() => jogXYClick("Y", -1)}
+          onClick={() => props.onJog("y", -1)}
           transform="translate(120 120)"
         >
           <title>-1 mm</title>
@@ -193,7 +205,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X-1"
-          onClick={() => jogXYClick("X", -1)}
+          onClick={() => props.onJog("x", -1)}
           transform="translate(120 120)"
         >
           <title>-1 mm</title>
@@ -207,7 +219,7 @@ const JogDialXY = props => {
       <g id="Jog0_1" fill="#f0f0f0" transform="translate(10, 10)">
         <g
           id="Y+0.1"
-          onClick={() => jogXYClick("Y", 0.1)}
+          onClick={() => props.onJog("y", 0.1)}
           transform="translate(120 120)"
         >
           <title>+0.1 mm</title>
@@ -218,7 +230,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X+0.1"
-          onClick={() => jogXYClick("X", 0.1)}
+          onClick={() => props.onJog("x", 0.1)}
           transform="translate(120 120)"
         >
           <title>+0.1 mm</title>
@@ -229,7 +241,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="Y-0.1"
-          onClick={() => jogXYClick("Y", -0.1)}
+          onClick={() => props.onJog("y", -0.1)}
           transform="translate(120 120)"
         >
           <title>-0.1 mm</title>
@@ -240,7 +252,7 @@ const JogDialXY = props => {
         </g>
         <g
           id="X-0.1"
-          onClick={() => jogXYClick("X", -0.1)}
+          onClick={() => props.onJog("x", -0.1)}
           transform="translate(120 120)"
         >
           <title>-0.1 mm</title>

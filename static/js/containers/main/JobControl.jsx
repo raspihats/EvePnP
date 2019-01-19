@@ -71,13 +71,13 @@ class JobControl extends React.Component {
   render() {
     return (
       <Select
-        onChange={e => {
-          e.target.blur();
-
-          let option = e.target.value == uploadString ? null : e.target.value;
-          this.props.onSelect(option);
-
-          this.setState({ option: e.target.value });
+        onChange={value => {
+          if (value === uploadString) {
+            this.props.onSelect(null);
+          } else {
+            this.props.onSelect(value);
+          }
+          this.setState({ option: value });
         }}
         prepend="Job:"
         options={[uploadString].concat(this.props.jobs)}

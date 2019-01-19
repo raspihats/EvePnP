@@ -3,14 +3,14 @@ import JogDialXY from "./JogDialXY";
 import JogDialZ from "./JogDialZ";
 import JogDialAngle from "./JogDialAngle";
 import SpeedKnob from "./SpeedKnob";
-import "../../../css/jogdial.css";
+import "../../../../css/jogdial.css";
 
 const JogDial = props => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
       <JogDialXY {...props} />
-      <JogDialZ {...props} />
-      <JogDialAngle {...props} />
+      {props.nozzle && <JogDialZ {...props} />}
+      {props.nozzle && <JogDialAngle {...props} />}
       <SpeedKnob />
       <defs>
         <filter id="f1" x="-1" y="-1" width="300%" height="300%">

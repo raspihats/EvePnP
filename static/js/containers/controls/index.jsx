@@ -6,6 +6,7 @@ import {
   PillsNavPart
 } from "../../components/PillsNav";
 import Jog from "./jog";
+import Actuators from "./actuators";
 
 class ControlsPanel extends React.Component {
   state = {};
@@ -16,7 +17,9 @@ class ControlsPanel extends React.Component {
         <PillsNavPane title="Jog" active>
           <Jog />
         </PillsNavPane>
-        <PillsNavPane title="Actuators">Actuators</PillsNavPane>
+        <PillsNavPane title="Actuators">
+          <Actuators />
+        </PillsNavPane>
       </PillsNav>
     );
     return (

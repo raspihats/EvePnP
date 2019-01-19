@@ -3,7 +3,8 @@ import axios from "axios";
 const baseURL = window.location.href + "api/";
 
 let api = axios.create({
-  baseURL: baseURL
+  baseURL: baseURL,
+  timeout: 1000
 });
 
 api.errorHandler = (title, error) => {

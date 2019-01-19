@@ -18,7 +18,6 @@ class Select extends React.Component {
       ) {
         let selectedValue = newProps.options[0];
         this.setState({ selectedValue: selectedValue });
-        // console.log("firing for: " + selectedValue);
         this.props.onChange(selectedValue);
       }
     }

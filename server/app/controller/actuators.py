@@ -6,6 +6,7 @@ api = Namespace('actuators', description='Actuators related operations')
 actuator_model = api.model('Actuator', {
     'id': fields.String(required=True, description='Actuator id'),
     'type': fields.String(required=True, description='Actuator type'),
+    'value': fields.Float(required=True, description='Actuator value'),
 })
 
 
@@ -28,6 +29,16 @@ class Actuator(Resource):
     def get(self, id):
         '''Fetch an actuator given its id'''
         actuator = actuators_service.get_actuator(id)
+        if actuator is None:
+            api.abort(404)
+        return actuator
+
+    @api.doc('update_actuator')
+    @api.expect(actuator_model)
+    @api.marshal_with(actuator_model)
+    def put(self, id):
+        '''Update an actuator given its id'''
+        actuator = actuators_service.update_actuator(id, api.payload)
         if actuator is None:
             api.abort(404)
         return actuator

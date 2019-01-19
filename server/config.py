@@ -19,3 +19,69 @@ DEBUG = True
 
 # Validation for api models
 RESTPLUS_VALIDATE = True
+
+# Machine config
+MACHINE_CONFIG = {
+    'axis': [
+        {
+            'id': 'x',
+            'limit': 450,
+            'feed_rate': 25000,
+            'acc': 600,
+            'park': 5
+        },
+        {
+            'id': 'y',
+            'limit': 400,
+            'feed_rate': 25000,
+            'acc': 600,
+            'park': 5
+        },
+        {
+            'id': 'z',
+            'limit': 120,
+            'feed_rate': 25000,
+            'acc': 600,
+            'park': 59
+        },
+        {
+            'id': 'a',
+            'limit': 360,
+            'feed_rate': 100,
+            'acc': 100,
+            'park': 0
+        },
+        {
+            'id': 'b',
+            'limit': 360,
+            'feed_rate': 100,
+            'acc': 100,
+            'park': 0
+        }
+    ],
+    'actuators': [
+        {'id': 'VacuumPump', 'type': 'toggle'},
+        {'id': 'Valve1', 'type': 'toggle'},
+        {'id': 'Valve2', 'type': 'toggle'}
+    ],
+    'heads': [
+        {
+            'id': 'H1',
+            'nozzles': [
+                {
+                    'id': 'N1',
+                    'rotation_axis_id': 'a',
+                    'pnp_axis_id': 'z',
+                    'vacuum_actuator_id': 'Valve1'
+                },
+                {
+                    'id': 'N2',
+                    'rotation_axis_id': 'b',
+                    'pnp_axis': 'z',
+                    'vacuum_actuator_id': 'Valve2'
+                }
+            ]
+        }
+    ]
+
+}

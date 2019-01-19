@@ -5,16 +5,16 @@ api = Namespace('axis', description='Axis position related operations')
 
 
 axis_model = api.model('Axis', {
-    'axis': fields.String(required=True, description='Axis name'),
+    'id': fields.String(required=True, description='Axis id'),
 })
 
 axis_position_model = api.model('AxisPosition', {
-    'axis': fields.String(required=True, description='Axis name'),
+    'id': fields.String(required=True, description='Axis id'),
     'position': fields.Float(required=True, description='Position on axis')
 })
 
 axis_jog_model = api.model('AxisJog', {
-    'axis': fields.String(required=True, description='Axis name'),
+    'id': fields.String(required=True, description='Axis id'),
     'step': fields.Float(required=True, description='Step on axis')
 })
 

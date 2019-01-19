@@ -3,6 +3,7 @@ import glob
 import json
 from flask import current_app as app
 
+
 def _run_for_all(func):
     job_files = glob.glob(app.config['JOBS_DIR'] + '/*.json')
     for job_file in job_files:
@@ -11,14 +12,14 @@ def _run_for_all(func):
             func(job)
 
 
-def get_job_list():
+def get_jobs_list():
     job_list = []
 
     def func(job):
-        job_list.append({'name' : job['name']})
-    
+        job_list.append({'name': job['name']})
+
     _run_for_all(func)
-    
+
     return job_list
 
 

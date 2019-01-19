@@ -29,7 +29,7 @@ class JobList(Resource):
     @api.marshal_list_with(job_name_model)
     def get(self):
         '''List all jobs'''
-        return jobs_service.get_job_list()
+        return jobs_service.get_jobs_list()
 
 
 @api.route('/<name>')

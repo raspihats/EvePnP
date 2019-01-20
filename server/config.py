@@ -82,6 +82,17 @@ MACHINE_CONFIG = {
                 }
             ]
         }
+    ],
+    'controllers': [
+        {
+            'name': 'grbl',
+            'port': {
+                'name': '/dev/ttyAMA0',
+                'baudrate': 115200,
+                'bytesize': 8,
+                'parity': 'N',
+                'stopbits': 1
+            }
+        }
     ]
-
 }

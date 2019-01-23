@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, Resource, fields
-from ..service import heads as heads_service
+from ..dao import heads_dao, DAO
 
 api = Namespace('heads', description='Heads related operations')
 
@@ -21,7 +21,7 @@ class HeadsList(Resource):
     @api.marshal_list_with(head_model)
     def get(self):
         '''List all heads'''
-        return heads_service.get_heads_list()
+        return heads_dao.get_list()
 
 
 @api.route('/<id>')
@@ -33,7 +33,8 @@ class Head(Resource):
     @api.marshal_with(head_model)
     def get(self, id):
         '''Fetch a head given its id'''
-        head = heads_service.get_head(id)
-        if head is None:
+        try:
+            head = heads_dao.get(id)
+            return head
+        except DAO.ObjectNotFoundError:
             api.abort(404)
-        return head

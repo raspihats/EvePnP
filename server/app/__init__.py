@@ -1,6 +1,6 @@
 from flask import Flask, Response, render_template
-from .controller import blueprint as api
-from .machine import machine
+from .api import blueprint as api
+from .dao import hardware_config_db
 
 app = Flask(__name__, static_folder="../../static/dist",
             template_folder="../../static")
@@ -16,7 +16,8 @@ def index():
 
 def run_app():
     try:
-        machine.open(app.config['MACHINE_CONFIG'])
         app.run(host='0.0.0.0', port=5000)
     finally:
+        # make sure that all data is safely written when using Caching
+        hardware_config_db.close()
         print("Finally_app_id: ", '{}'.format(id(app)))

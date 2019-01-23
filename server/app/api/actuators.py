@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, Resource, fields
-from ..service import actuators as actuators_service
+# from ..service import actuators as actuators_service
 
 api = Namespace('actuators', description='Actuators related operations')
 

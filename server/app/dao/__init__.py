@@ -2,8 +2,10 @@ from tinydb import TinyDB, where
 from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
 
-hardware_config_db = TinyDB('hardware_config.json',
-                            storage=CachingMiddleware(JSONStorage))
+db_hardware = TinyDB('db_hardware.json',
+                     storage=CachingMiddleware(JSONStorage))
+
+db_jobs = TinyDB('db_jobs.json', storage=CachingMiddleware(JSONStorage))
 
 
 class DAO(object):
@@ -26,11 +28,6 @@ class DAO(object):
 
     def register_on_change(self, func):
         self._on_change = func
-
-    # def load_config(self, config):
-    #     self._list = config
-    #     if self._on_change is not None:
-    #         self._on_change()
 
     def get_list(self):
         return self._db_table.all()
@@ -79,9 +76,9 @@ class DAO(object):
                 self._on_change()
 
 
-axis_dao = DAO(hardware_config_db, 'axis')
-actuators_dao = DAO(hardware_config_db, 'actuators')
-heads_dao = DAO(hardware_config_db, 'axis')
-controllers_dao = DAO(hardware_config_db, 'controllers')
-feeders_dao = DAO(hardware_config_db, 'feeders')
-# jobs_dao = DAO(hardware_config_db, 'axis')
+axis_dao = DAO(db_hardware, 'axis')
+actuators_dao = DAO(db_hardware, 'actuators')
+heads_dao = DAO(db_hardware, 'axis')
+controllers_dao = DAO(db_hardware, 'controllers')
+feeders_dao = DAO(db_hardware, 'feeders')
+jobs_dao = DAO(db_jobs, 'jobs')

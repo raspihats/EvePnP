@@ -3,17 +3,6 @@ from ..dao import feeders_dao, DAO
 
 api = Namespace('feeders', description='Feeders related operations')
 
-{
-    'count': 48,
-    'type': 'strip_feeder',
-    'end_point': {'y': 141.6, 'x': 37.925, 'z': 23},
-    'id': 'SripFeeder_12',
-    'increment': 3.98,
-    'size': 48,
-    'component': {'value': 'OSG050603', 'package': '0603', 'type': 'led'},
-    'point': {'y': 139.4, 'x': 225.0, 'z': 23}
-}
-
 point_model = api.model('Point', {
     'x': fields.Float(required=True, description='X axis position'),
     'y': fields.Float(required=True, description='Y axis position'),
@@ -25,7 +14,6 @@ component_model = api.model('Component', {
     'package': fields.String(required=True, description='Component package'),
     'type': fields.String(required=True, description='Component type')
 })
-
 
 feeder_model = api.model('Feeder', {
     'id': fields.String(required=True, description='Feeder id'),
@@ -65,7 +53,7 @@ class AxisList(Resource):
 @api.response(404, 'Feeder not found')
 @api.param('id', 'The feeder identifier')
 class Axis(Resource):
-    '''Operations on a single feeder item given its idnetifier'''
+    '''Operations on a single feeder item given its identifier'''
 
     @api.doc('get_feeder')
     @api.marshal_with(feeder_model)
@@ -89,7 +77,7 @@ class Axis(Resource):
     @api.doc('delete_feeder')
     @api.response(204, 'Feeder deleted')
     def delete(self, id):
-        '''Delete a feder given its identifier'''
+        '''Delete a feeder given its identifier'''
         try:
             feeders_dao.delete(id)
             return '', 204

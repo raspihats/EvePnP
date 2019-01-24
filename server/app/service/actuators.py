@@ -1,34 +1,36 @@
-# from flask import current_app as app
-from ..machine import machine
-
-# _actuators = None
+from ..dao import actuators_dao
+from .controllers import controllers_service
 
 
-# def _init():
-#     global _actuators
+class ActuatorsService(object):
 
-#     _actuators = app.config['MACHINE_CONFIG']['actuators']
-#     # add 'value' key
-#     for actuator in _actuators:
-#         actuator['value'] = 0
+    def _load_func(self, code):
+        def func(value=None):
+            _globals = {}
+            _locals = {
+                'controller': controllers_service.controllers,
+                'value': value,
+                'result': None}
+            exec(code, _globals, _locals)
+            return _locals['result']
+        return func
 
+    def get_values_list(self):
+        actuators = actuators_dao.get_list()
+        for actuator in actuators:
+            f = self._load_func(actuator['get_code'])
+            actuator['value'] = f()
+        return actuators
 
-def get_actuators_list():
-    return machine.actuators
-
-
-def get_actuator(id):
-    for actuator in machine.actuators:
-        if actuator['id'] == id:
-            return actuator
-    return None
-
-
-def update_actuator(id, data):
-    actuator = get_actuator(id)
-    if actuator is None:
+    def get_value(self, id):
+        actuator = actuators_dao.get(id)
+        actuator['value'] = 0
         return None
 
-    if data['value'] != actuator['value']:
-        actuator['value'] = data['value']
-    return actuator
+    def update_value(self, id, data):
+        actuator = actuators_dao.get(id)
+        # update value
+        return actuator
+
+
+actuators_service = ActuatorsService()

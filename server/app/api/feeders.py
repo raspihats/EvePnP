@@ -29,7 +29,7 @@ feeder_model = api.model('Feeder', {
 @api.route('/')
 @api.response(201, 'Feeder created')
 @api.response(400, 'Feeder not created')
-class AxisList(Resource):
+class FeedersList(Resource):
     '''Shows a list of all feeders and lets you add new ones'''
 
     @api.doc('list_feeders')
@@ -50,9 +50,9 @@ class AxisList(Resource):
 
 
 @api.route('/<string:id>')
-@api.response(404, 'Feeder not found')
 @api.param('id', 'The feeder identifier')
-class Axis(Resource):
+@api.response(404, 'Feeder not found')
+class Feeder(Resource):
     '''Operations on a single feeder item given its identifier'''
 
     @api.doc('get_feeder')

@@ -18,7 +18,7 @@ api = Api(
 
 
 api.add_namespace(ns_axis)
-# api.add_namespace(ns_heads)
+api.add_namespace(ns_heads)
 api.add_namespace(ns_actuators)
 api.add_namespace(ns_feeders)
 api.add_namespace(ns_jobs)

@@ -23,18 +23,49 @@ class HeadsList(Resource):
         '''List all heads'''
         return heads_dao.get_list()
 
+    @api.doc('create_head')
+    @api.expect(head_model)
+    @api.marshal_with(head_model, code=201)
+    def post(self):
+        '''Create a new head'''
+        try:
+            return heads_dao.create(api.payload), 201
+        except DAO.DocumentAlreadyExistsError:
+            api.abort(400)
+
 
 @api.route('/<id>')
-@api.param('id', 'The head id')
-@api.response(200, 'Head found')
+@api.param('id', 'The head identifier')
 @api.response(404, 'Head not found')
 class Head(Resource):
+    '''Operations on a single feeder item given its identifier'''
+
     @api.doc('get_head')
     @api.marshal_with(head_model)
     def get(self, id):
-        '''Fetch a head given its id'''
+        '''Fetch a head given its identifier'''
         try:
             head = heads_dao.get(id)
             return head
-        except DAO.ObjectNotFoundError:
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+    @api.doc('update_head')
+    @api.expect(head_model)
+    @api.marshal_with(head_model)
+    def put(self, id):
+        '''Update a head given its identifier'''
+        try:
+            return heads_dao.update(id, api.payload)
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+    @api.doc('delete_head')
+    @api.response(204, 'Head deleted')
+    def delete(self, id):
+        '''Delete a head given its identifier'''
+        try:
+            heads_dao.delete(id)
+            return '', 204
+        except DAO.DocumentDoesNotExistError:
             api.abort(404)

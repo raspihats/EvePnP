@@ -24,10 +24,14 @@ class DAO(object):
 
     def __init__(self, db, table):
         self._db_table = db.table(table)
-        self._on_change = None
+        self._on_change = []
+
+    def _fire_on_change(self):
+        for on_change in self._on_change:
+            on_change()
 
     def register_on_change(self, func):
-        self._on_change = func
+        self._on_change.append(func)
 
     def get_list(self):
         return self._db_table.all()
@@ -39,8 +43,7 @@ class DAO(object):
                 "Cant' create document for id: {}".format(data['id']))
         else:
             self._db_table.insert(data)
-            if self._on_change is not None:
-                self._on_change()
+            self._fire_on_change()
             return self._db_table.get(where('id') == data['id'])
 
     def get(self, id):
@@ -59,8 +62,7 @@ class DAO(object):
             raise DAO.DocumentIdNotUniqueError(
                 "Multiple documents found for id: {}".format(id))
         else:
-            if self._on_change is not None:
-                self._on_change()
+            self._fire_on_change()
             return self.get(id)
 
     def delete(self, id):
@@ -72,13 +74,12 @@ class DAO(object):
             raise DAO.DocumentIdNotUniqueError(
                 "Multiple documents found for id: {}".format(id))
         else:
-            if self._on_change is not None:
-                self._on_change()
+            self._fire_on_change()
 
 
-axis_dao = DAO(db_hardware, 'axis')
 actuators_dao = DAO(db_hardware, 'actuators')
-heads_dao = DAO(db_hardware, 'axis')
+axis_dao = DAO(db_hardware, 'axis')
+heads_dao = DAO(db_hardware, 'heads')
 controllers_dao = DAO(db_hardware, 'controllers')
 feeders_dao = DAO(db_hardware, 'feeders')
 jobs_dao = DAO(db_jobs, 'jobs')

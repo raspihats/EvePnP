@@ -1,7 +1,7 @@
 from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
-db = TinyDB('db_jobs.json', storage=CachingMiddleware(JSONStorage))
+db = TinyDB("db_jobs.json", storage=CachingMiddleware(JSONStorage))
 
 db.purge()
 

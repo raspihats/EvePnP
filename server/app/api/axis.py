@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, Resource, fields
-from ..service import motion_service
+from ..service.motion import motion_service
 from ..dao import axis_dao, DAO
 
 api = Namespace('axis', description='Axis position related operations')
@@ -52,8 +52,8 @@ class AxisList(Resource):
 
 
 @api.route('/<string:id>')
-@api.response(404, 'Axis not found')
 @api.param('id', 'The axis identifier')
+@api.response(404, 'Axis not found')
 class Axis(Resource):
     '''Operations on a single axis item given its idnetifier'''
 

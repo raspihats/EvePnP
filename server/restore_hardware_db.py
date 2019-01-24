@@ -72,23 +72,27 @@ actuators_table.insert_multiple([
 ])
 
 
-nozzles_table = db.table("nozzles")
-nozzles_table.purge()
-nozzles_table.insert_multiple([
+heads_table = db.table("heads")
+heads_table.purge()
+heads_table.insert_multiple([
     {
-        "id": "N1",
-        "head_id": "H1",
-        "rotation_axis_id": "a",
-        "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve1"
-    },
-    {
-        "id": "N2",
-        "head_id": "H1",
-        "rotation_axis_id": "b",
-        "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve2"
+        'id': 'H1',
+        'nozzles': [
+            {
+                "id": "N1",
+                "rotation_axis_id": "a",
+                "pnp_axis_id": "z",
+                "vacuum_actuator_id": "Valve1"
+            },
+            {
+                "id": "N2",
+                "rotation_axis_id": "b",
+                "pnp_axis_id": "z",
+                "vacuum_actuator_id": "Valve2"
+            }
+        ]
     }
+
 ])
 
 

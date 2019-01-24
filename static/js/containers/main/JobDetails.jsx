@@ -3,7 +3,7 @@ import React from "react";
 const Row = props => {
   return (
     <tr className="text-muted">
-      <th scope="row">{props.data.name}</th>
+      <th scope="row">{props.data.id}</th>
       <td>{props.data.value}</td>
       <td>{props.data.package}</td>
       <td>{props.data.x}</td>
@@ -20,7 +20,7 @@ const JobDetails = props => {
     <table id="jobDetails" className="table table-hover table-sm border">
       <thead className="text-secondary">
         <tr>
-          <th scope="col">Name</th>
+          <th scope="col">ID</th>
           <th scope="col">Value</th>
           <th scope="col">Package</th>
           <th scope="col">X</th>

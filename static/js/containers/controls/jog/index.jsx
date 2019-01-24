@@ -39,38 +39,6 @@ class Jog extends React.Component {
     this.setState({ nozzles: nozzles });
   }
 
-  onHome() {
-    api
-      .put(
-        "axis/home",
-        [..."xyz"].map(c => {
-          return { id: c };
-        })
-      )
-      .catch(error => {
-        api.errorHandler("Homing error!", error);
-      });
-  }
-
-  onPark(axis) {
-    api
-      .put(
-        "axis/park",
-        [...axis].map(c => {
-          return { id: c };
-        })
-      )
-      .catch(error => {
-        api.errorHandler("Parking error!", error);
-      });
-  }
-
-  onJog(axis, step) {
-    api.put("axis/park", { id: axis, step: step }).catch(error => {
-      api.errorHandler("Parking error!", error);
-    });
-  }
-
   componentDidMount() {
     api
       .get("heads")
@@ -101,9 +69,9 @@ class Jog extends React.Component {
           }}
         />
         <JogDial
-          onHome={this.onHome}
-          onPark={this.onPark}
-          onJog={this.onJog}
+          onHome={api.axis.home}
+          onPark={api.axis.park}
+          onJog={api.axis.jog}
           nozzle={this.getSelectedNozzle()}
         />
       </React.Fragment>

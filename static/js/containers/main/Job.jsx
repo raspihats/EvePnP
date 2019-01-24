@@ -6,11 +6,11 @@ import JobDetails from "./JobDetails";
 class Job extends React.Component {
   state = { jobs: [], job: null };
 
-  onSelect(name) {
-    if (name == null) {
+  onSelect(id) {
+    if (id == null) {
       this.setState({ job: null });
     } else {
-      api.get("/jobs/" + name).then(response => {
+      api.get("/jobs/" + id).then(response => {
         this.setState({
           job: response.data
         });
@@ -22,24 +22,24 @@ class Job extends React.Component {
     alert("Uploading a job is not implemented yet!");
   }
 
-  onStart(name) {}
+  onStart(id) {}
 
-  onDelete(name) {
-    api.delete("/jobs/" + name).then(response => {
+  onDelete(id) {
+    api.delete("/jobs/" + id).then(response => {
       this.setState({
-        jobs: response.data.map(job => job.name).sort()
+        jobs: response.data.map(job => job.id).sort()
       });
     });
   }
 
-  onPause(name) {}
+  onPause(id) {}
 
-  onStop(name) {}
+  onStop(id) {}
 
   componentDidMount() {
     api.get("/jobs").then(response => {
       this.setState({
-        jobs: response.data.map(job => job.name).sort()
+        jobs: response.data.map(job => job.id).sort()
       });
     });
   }
@@ -50,12 +50,12 @@ class Job extends React.Component {
         <div className="col-12 col-md-8 col-lg-6">
           <JobControl
             jobs={this.state.jobs}
-            onSelect={name => this.onSelect(name)}
+            onSelect={id => this.onSelect(id)}
             onUpload={() => this.onUpload()}
-            onStart={name => this.onStart(name)}
-            onDelete={name => this.onDelete(name)}
-            onPause={name => this.onPause(name)}
-            onStop={name => this.onStop(name)}
+            onStart={id => this.onStart(id)}
+            onDelete={id => this.onDelete(id)}
+            onPause={id => this.onPause(id)}
+            onStop={id => this.onStop(id)}
           />
         </div>
         <div className="col-12 pt-3">

@@ -87,7 +87,7 @@ class Axis(Resource):
             api.abort(404)
 
 
-@api.route('/position')
+@api.route('/positions')
 class AxisPositionsList(Resource):
 
     @api.doc('list_axis_positions')
@@ -104,7 +104,7 @@ class AxisPositionsList(Resource):
         return '', 200
 
 
-@api.route('/position/home')
+@api.route('/positions/home')
 class AxisHome(Resource):
 
     @api.doc('axis_homing')
@@ -116,7 +116,7 @@ class AxisHome(Resource):
         return '', 200
 
 
-@api.route('/position/park')
+@api.route('/positions/park')
 class AxisPark(Resource):
 
     @api.doc('axis_parking')
@@ -127,7 +127,7 @@ class AxisPark(Resource):
         return '', 200
 
 
-@api.route('/position/jog')
+@api.route('/positions/jog')
 class AxisJog(Resource):
 
     @api.doc('axis_jog')

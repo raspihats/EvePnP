@@ -94,7 +94,7 @@ class AxisPositionsList(Resource):
     @api.marshal_list_with(axis_position_model)
     def get(self):
         '''Get axis current positions'''
-        return motion_service.get_current_position()
+        return motion_service.get_position()
 
     @api.doc('update_axis_positions')
     @api.expect([axis_position_model])
@@ -116,7 +116,7 @@ class AxisHome(Resource):
         return '', 200
 
 
-@api.route('position/park')
+@api.route('/position/park')
 class AxisPark(Resource):
 
     @api.doc('axis_parking')
@@ -127,7 +127,7 @@ class AxisPark(Resource):
         return '', 200
 
 
-@api.route('position/jog')
+@api.route('/position/jog')
 class AxisJog(Resource):
 
     @api.doc('axis_jog')

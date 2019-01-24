@@ -50,10 +50,10 @@ actuators_table.purge()
 actuators_table.insert_multiple([
     {
         "id": "VacuumPump",
-        "type": "toggle_actuator",
+        "type": "range_actuator",
         "inital_value": 0,
-        "set_code": "controllers['MC1'].spindle = value",
-        "get_code": "result = controllers['MC1'].spindle"
+        "set_code": "controllers['MC1'].spindle_duty = value * 100",
+        "get_code": "result = 1 if controllers['MC1'].spindle_duty else 0"
     },
     {
         "id": "Valve1",

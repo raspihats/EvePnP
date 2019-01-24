@@ -14,8 +14,8 @@ actuator_model = api.model('Actuator', {
 
 actuator_value_model = api.model('ActuatorValue', {
     'id': fields.String(required=True, description='Actuator id'),
-    'type': fields.String(required=True, description='Actuator type'),
-    'value': fields.Float(required=False, description='Actuator value')
+    'type': fields.String(required=False, description='Actuator type'),
+    'value': fields.Float(required=True, description='Actuator value')
 })
 
 

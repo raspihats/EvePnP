@@ -40,5 +40,14 @@ class MotionService(object):
         controllers_service.motion_controller.move(
             axis_list, min_feed_rate * speed_factor)
 
+    def get_position(self):
+        position = controllers_service.motion_controller.position
+        response = []
+        for axis_config in axis_dao.get_list():
+            _id = axis_config['id']
+            if _id in position:
+                response.append({'id': _id,  'position': position[_id]})
+        return response
+
 
 motion_service = MotionService()

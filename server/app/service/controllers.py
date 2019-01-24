@@ -13,10 +13,9 @@ class ControllersService(object):
             if controller['type'] == 'motion':
                 if controller['driver'] == 'grbl':
                     from ..drivers import grbl
-                    grbl = grbl.Grbl()
-                    # add 'axis' controller config
+                    # add 'axis' to controller config
                     controller['axis'] = axis_dao.get_list()
-                    grbl.open(controller)
+                    grbl = grbl.Grbl(controller)
                     self.motion_controller = grbl
                     self.controllers[controller['id']] = grbl
                     return

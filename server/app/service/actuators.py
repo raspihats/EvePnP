@@ -8,7 +8,7 @@ class ActuatorsService(object):
         def func(value=None):
             _globals = {}
             _locals = {
-                'controller': controllers_service.controllers,
+                'controllers': controllers_service.controllers,
                 'value': value,
                 'result': None}
             exec(code, _globals, _locals)
@@ -24,13 +24,15 @@ class ActuatorsService(object):
 
     def get_value(self, id):
         actuator = actuators_dao.get(id)
-        actuator['value'] = 0
-        return None
+        f = self._load_func(actuator['get_code'])
+        actuator['value'] = f()
+        return actuator
 
     def update_value(self, id, data):
         actuator = actuators_dao.get(id)
-        # update value
-        return actuator
+        f = self._load_func(actuator['set_code'])
+        f(data['value'])
+        return self.get_value(id)
 
 
 actuators_service = ActuatorsService()

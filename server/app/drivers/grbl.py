@@ -65,8 +65,7 @@ class RT_COMMANDS(Enum):
 
 class Status(object):
 
-    def __init__(self, report, axis):
-        self.axis = axis
+    def __init__(self, report):
         if STATUS_REPORT_START in report \
                 and STATUS_REPORT_END in report:
             start_index = report.index(STATUS_REPORT_START)
@@ -92,27 +91,16 @@ class Status(object):
         coord = [-float(x) for x in field.split(",")]
         mpos = {}
         i = 0
-        for axis in self.axis:
-            mpos[axis['name']] = coord[i]
+        for axis in ['x', 'y', 'z', 'a', 'b']:
+            mpos[axis] = coord[i]
             i += 1
         self.mpos = mpos
 
 
-class Grbl(threading.Thread):
-    def __init__(self):
+class Grbl(object):
+    def __init__(self, config):
         super().__init__()
-        self._port = None
-        self._running = False
-        self._port_lock = threading.Lock()
 
-        self._status_lock = threading.Lock()
-        self._state = None
-        self._position = None
-
-        self._coolant_flood = False
-        self._coolant_mist = False
-
-    def open(self, config):
         self.config = config
         self._port = serial.Serial(
             port=self.config['port']['name'],
@@ -121,33 +109,16 @@ class Grbl(threading.Thread):
             parity=self.config['port']['parity'],
             stopbits=self.config['port']['stopbits']
         )
+        self._port_lock = threading.Lock()
 
         self.exec("$X")
 
-        # self.exec("M09")   # deactivate all coolant
+        self._spindle_duty = 0
+        self.spindle_duty = 0
+
         self._coolant_flood = False
         self._coolant_mist = False
-
-        # self._running = True
-        # self.start()
-
-    def run(self):
-        while self._running:
-            time.sleep(0.1)
-            status = None
-            try:
-                response = self.exec("?", timeout=0.5)
-                status = Status(response, self.config['axis'])
-            except:
-                status = None
-            finally:
-                with self._status_lock:
-                    if status is None:
-                        self._state = None
-                        self._position = None
-                    else:
-                        self._state = status.state
-                        self._position = status.mpos
+        self.exec("M09")   # deactivate all coolant
 
     def exec(self, command, expected="ok", timeout=5):
         with self._port_lock:
@@ -186,14 +157,13 @@ class Grbl(threading.Thread):
             self._port.write(command.value.to_bytes(1, 'big'))
 
     @property
-    def state(self):
-        with self._status_lock:
-            return self._state
-
-    @property
     def position(self):
-        with self._status_lock:
-            return self._position
+        response = self.exec("?", timeout=0.5)
+        status = Status(response)
+        if hasattr(status, 'mpos'):
+            return status.mpos
+        else:
+            return None
 
     def home(self):
         self.exec("$H", timeout=20)
@@ -216,16 +186,19 @@ class Grbl(threading.Thread):
         self.exec(g_code)
 
     @property
-    def spindle(self):
-        pass
+    def spindle_duty(self):
+        return self._spindle_duty
 
-    @spindle.setter
-    def spindle(self, value):
-        if value:
-            self.exec("M03S1000")   # cw
+    @spindle_duty.setter
+    def spindle_duty(self, value):
+        if value > 0:
+            _max = 1000
+            self.exec("M03S{}".format(float(value) * 10))   # cw
             # self.exec("M04S1000")   # ccw
+            self._spindle_duty = value
         else:
             self.exec("M05")
+            self._spindle_duty = 0
 
     @property
     def coolant_flood(self):
@@ -269,13 +242,3 @@ class Grbl(threading.Thread):
                 else:
                     self.exec("M09")    # deactivate all coolant
                     self._coolant_mist = False
-
-    def close(self):
-        self.spindle = False
-        self.coolant_flood = False
-        self.coolant_mist = False
-        self._running = False
-        if self._port is not None:
-            self._port.close()             # close port
-        if self.is_alive():
-            self.join()

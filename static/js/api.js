@@ -23,7 +23,7 @@ const axis = {
   home: () => {
     api
       .put(
-        "axis/position/home",
+        "axis/positions/home",
         [..."xyz"].map(c => {
           return { id: c };
         }),
@@ -38,7 +38,7 @@ const axis = {
   park: axis => {
     api
       .put(
-        "axis/position/park",
+        "axis/positions/park",
         [...axis].map(c => {
           return { id: c };
         })
@@ -48,7 +48,7 @@ const axis = {
       });
   },
   jog: (axis, step) => {
-    api.put("axis/position/jog", { id: axis, step: step }).catch(error => {
+    api.put("axis/positions/jog", { id: axis, step: step }).catch(error => {
       errorHandler("Jog error!", error);
     });
   }

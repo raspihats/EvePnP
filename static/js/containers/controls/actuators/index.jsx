@@ -16,7 +16,7 @@ class Actuators extends React.Component {
     clone.value = value;
 
     api
-      .put("actuators/" + actuator.id, clone)
+      .put("actuators/values/" + actuator.id, clone)
       .then(response => {
         let actuators = this.state.actuators.map(actuator => {
           if (actuator.id == response.data.id) {
@@ -33,7 +33,7 @@ class Actuators extends React.Component {
 
   updateActuatorsValues() {
     api
-      .get("actuators")
+      .get("actuators/values")
       .then(response => {
         this.setState({ actuators: response.data });
       })

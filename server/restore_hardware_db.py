@@ -50,21 +50,21 @@ actuators_table.purge()
 actuators_table.insert_multiple([
     {
         "id": "VacuumPump",
-        "type": "range_actuator",
+        "type": "ToggleActuator",
         "inital_value": 0,
         "set_code": "controllers['MC1'].spindle_duty = value * 100",
         "get_code": "result = 1 if controllers['MC1'].spindle_duty else 0"
     },
     {
         "id": "Valve1",
-        "type": "toggle_actuator",
+        "type": "ToggleActuator",
         "inital_value": 0,
         "set_code": "controllers['MC1'].coolant_flood = value",
         "get_code": "result = controllers['MC1'].coolant_flood"
     },
     {
         "id": "Valve2",
-        "type": "toggle_actuator",
+        "type": "ToggleActuator",
         "inital_value": 0,
         "set_code": "controllers['MC1'].coolant_mist = value",
         "get_code": "result = controllers['MC1'].coolant_mist"
@@ -72,27 +72,32 @@ actuators_table.insert_multiple([
 ])
 
 
+nozzle_carriages_table = db.table("nozzle_carriages")
+nozzle_carriages_table.purge()
+nozzle_carriages_table.insert_multiple([
+    {
+        "id": "NC1",
+        "rotation_axis_id": "a",
+        "pnp_axis_id": "z",
+        "vacuum_actuator_id": "Valve1",
+        "offset": {"x": 0.0, "y": 0.0}
+    },
+    {
+        "id": "NC2",
+        "rotation_axis_id": "b",
+        "pnp_axis_id": "z",
+        "vacuum_actuator_id": "Valve2",
+        "offset": {"x": 45.0, "y": 0.0}
+    }
+])
+
 heads_table = db.table("heads")
 heads_table.purge()
 heads_table.insert_multiple([
     {
         'id': 'H1',
-        'nozzles': [
-            {
-                "id": "N1",
-                "rotation_axis_id": "a",
-                "pnp_axis_id": "z",
-                "vacuum_actuator_id": "Valve1"
-            },
-            {
-                "id": "N2",
-                "rotation_axis_id": "b",
-                "pnp_axis_id": "z",
-                "vacuum_actuator_id": "Valve2"
-            }
-        ]
+        'nozzle_carriages_id': ['NC1', 'NC2']
     }
-
 ])
 
 
@@ -124,7 +129,7 @@ feeders_table.purge()
 feeders_table.insert_multiple([
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_1",
         "size": 48,
@@ -138,7 +143,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_2",
         "size": 48,
@@ -153,7 +158,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_3",
         "size": 48,
@@ -167,7 +172,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_4",
         "size": 48,
@@ -181,7 +186,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_5",
         "size": 48,
@@ -195,7 +200,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_6",
         "size": 48,
@@ -210,7 +215,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_7",
         "size": 48,
@@ -225,7 +230,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_8",
         "size": 48,
@@ -240,7 +245,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_9",
         "size": 48,
@@ -249,7 +254,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_10",
         "size": 48,
@@ -263,7 +268,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_11",
         "size": 48,
@@ -277,7 +282,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_12",
         "size": 48,
@@ -286,7 +291,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_13",
         "size": 48,
@@ -299,7 +304,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_14",
         "size": 48,
@@ -313,7 +318,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_15",
         "size": 48,
@@ -327,7 +332,7 @@ feeders_table.insert_multiple([
     },
     {
         "count": 48,
-        "type": "strip_feeder",
+        "type": "StripFeeder",
         "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_16",
         "size": 48,

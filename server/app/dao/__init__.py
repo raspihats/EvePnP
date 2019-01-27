@@ -79,6 +79,7 @@ class DAO(object):
 
 actuators_dao = DAO(db_hardware, 'actuators')
 axis_dao = DAO(db_hardware, 'axis')
+nozzle_carriages_dao = DAO(db_hardware, 'nozzle_carriages')
 heads_dao = DAO(db_hardware, 'heads')
 controllers_dao = DAO(db_hardware, 'controllers')
 feeders_dao = DAO(db_hardware, 'feeders')

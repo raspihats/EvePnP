@@ -7,15 +7,9 @@ class Dro extends React.Component {
   state = { axis: [] };
 
   updateAxisPositions() {
-    api
-      .get("axis/positions")
-      .then(response => {
-        // build Nozzle list, add 'head' and 'selected' attributes
-        this.setState({ axis: response.data });
-      })
-      .catch(error => {
-        // api.errorHandler("Axis positions error!", error);
-      });
+    api.axis.positions.list(data => {
+      this.setState({ axis: data });
+    }, false);
   }
 
   componentDidMount() {

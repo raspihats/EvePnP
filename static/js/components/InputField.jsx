@@ -7,7 +7,7 @@ import {
 } from "../components/InputGroup";
 import { isString } from "../utils";
 
-const InputText = props => {
+const InputField = props => {
   const prepend = props.prepend;
   return (
     <InputGroup>
@@ -21,7 +21,7 @@ const InputText = props => {
         </InputGroupPrepend>
       )}
       <input
-        type="text"
+        type={props.type ? props.type : "text"}
         className="form-control"
         id={props.id}
         placeholder={props.placeholder}
@@ -41,4 +41,4 @@ const InputText = props => {
   );
 };
 
-export default InputText;
+export default InputField;

@@ -1,32 +1,24 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import api from "../../../api";
-import Component from "./Component";
-import Point from "./Point";
-import Edit from "./Edit";
-
-const Button = props => {
-  return (
-    <button
-      className="btn btn-outline-secondary btn-lg px-1 py-0"
-      type="button"
-      title={props.title}
-      onClick={e => {
-        // e.preventDefault();
-        // e.target.blur();
-        props.onClick(e);
-      }}
-    >
-      <FontAwesomeIcon icon={props.icon} />
-    </button>
-  );
-};
+import ComponentDisplay from "../ComponentDisplay";
+import PointDisplay from "../PointDisplay";
+import IconButton from "./IconButton";
+import UpdateForm from "./UpdateForm";
 
 class Feeders extends React.Component {
   state = { feeders: [], editId: null };
 
+  listFeeders() {
+    api.feeders.list(data => this.setState({ feeders: data }));
+  }
+
+  updateFeeder(id, feeder) {
+    api.feeders.update(id, feeder, () => this.listFeeders());
+  }
+
   componentWillMount() {
-    api.feeders.getList(data => this.setState({ feeders: data }));
+    this.listFeeders();
   }
 
   render() {
@@ -49,10 +41,10 @@ class Feeders extends React.Component {
               <div className="col-1">{feeder.size}</div>
               <div className="col-1">{feeder.count}</div>
               <div className="col-2">
-                <Component {...feeder.component} />
+                <ComponentDisplay {...feeder.component} />
               </div>
               <div className="col-2">
-                <Point {...feeder.point} />
+                <PointDisplay {...feeder.point} />
               </div>
               <div className="col-2">
                 {/* <Button
@@ -60,17 +52,17 @@ class Feeders extends React.Component {
                   icon="edit"
                   onClick={e => this.setState({ editId: feeder.id })}
                 /> */}
-                <Button
+                <IconButton
                   title="Move Camera"
                   icon="bullseye"
                   onClick={e => console.log(e)}
                 />
-                <Button
+                <IconButton
                   title="Move Nozzle: N1"
                   icon="dot-circle"
                   onClick={e => console.log(e)}
                 />
-                <Button
+                <IconButton
                   title="Move Nozzle: N2"
                   icon="dot-circle"
                   data-toggle="collapse"
@@ -95,7 +87,12 @@ class Feeders extends React.Component {
               {/* {feeder.id === this.state.editId && ( */}
               <div className="col-12">
                 <div className="collapse" id={feeder.id}>
-                  <Edit {...feeder} />
+                  <UpdateForm
+                    feeder={feeder}
+                    onUpdate={updatedFeeder =>
+                      this.updateFeeder(feeder.id, updatedFeeder)
+                    }
+                  />
                 </div>
               </div>
               {/* )} */}

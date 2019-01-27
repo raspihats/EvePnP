@@ -3,15 +3,20 @@ from ..dao import heads_dao, DAO
 
 api = Namespace('heads', description='Heads related operations')
 
-nozzle_model = api.model('Nozzle', {
-    'id': fields.String(required=True, description='Nozzle id'),
-    'rotation_axis_id': fields.String(required=True, description='Nozzle rotation axis'),
-    'pnp_axis_id': fields.String(required=True, description='Nozzle pick n place axis'),
+offset_model = api.model('Offset', {
+    'x': fields.Float(required=True, description='X axis offset'),
+    'y': fields.Float(required=True, description='Y axis offset')
+})
+
+head_offset_model = api.model('Head offset', {
+    'id': fields.String(required=True, description='Head id'),
+    'offset': fields.Nested(offset_model, required=True)
 })
 
 head_model = api.model('Head', {
     'id': fields.String(required=True, description='Head id'),
-    'nozzles': fields.List(fields.Nested(nozzle_model))
+    'nozzle_carriages': fields.List(fields.Nested(head_offset_model), description='Installed nozzle carriages offsets', required=True),
+    'cameras': fields.List(fields.Nested(head_offset_model), description='Installed cameras offsets', required=True)
 })
 
 

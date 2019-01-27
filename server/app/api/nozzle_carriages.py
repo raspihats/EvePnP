@@ -4,17 +4,11 @@ from ..dao import nozzle_carriages_dao, DAO
 api = Namespace('nozzle_carriages',
                 description='Nozzles carriages related operations')
 
-nozzle_carriage_offset_model = api.model('NozzleCarriageOffset', {
-    'x': fields.Float(required=True, description='X axis offset'),
-    'y': fields.Float(required=True, description='Y axis offset')
-})
-
 nozzle_carriage_model = api.model('NozzleCarriage', {
-    'id': fields.String(required=True, description='Nozzle identifier'),
-    'rotation_axis_id': fields.String(required=True, description='Nozzle rotation axis'),
-    'pnp_axis_id': fields.String(required=True, description='Nozzle pick n place axis'),
-    'vacuum_actuator_id': fields.String(required=True, description='Actuator identifier'),
-    'offset': fields.Nested(nozzle_carriage_offset_model, required=True)
+    'id': fields.String(required=True, description='Nozzle carriage identifier'),
+    'rotation_axis_id': fields.String(required=True, description='Nozzle carriage rotation axis'),
+    'pnp_axis_id': fields.String(required=True, description='Nozzle carriage pick n place axis'),
+    'vacuum_actuator_id': fields.String(required=True, description='Actuator identifier')
 })
 
 

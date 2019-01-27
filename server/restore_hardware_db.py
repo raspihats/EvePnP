@@ -79,15 +79,27 @@ nozzle_carriages_table.insert_multiple([
         "id": "NC1",
         "rotation_axis_id": "a",
         "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve1",
-        "offset": {"x": 0.0, "y": 0.0}
+        "vacuum_actuator_id": "Valve1"
     },
     {
         "id": "NC2",
         "rotation_axis_id": "b",
         "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve2",
-        "offset": {"x": 45.0, "y": 0.0}
+        "vacuum_actuator_id": "Valve2"
+
+    }
+])
+
+cameras_table = db.table("cameras")
+cameras_table.purge()
+cameras_table.insert_multiple([
+    {
+        "id": "C1",
+        "description": "Up looking camera"
+    },
+    {
+        "id": "C2",
+        "description": "Down looking camera",
     }
 ])
 
@@ -95,8 +107,23 @@ heads_table = db.table("heads")
 heads_table.purge()
 heads_table.insert_multiple([
     {
-        'id': 'H1',
-        'nozzle_carriages_id': ['NC1', 'NC2']
+        "id": "H1",
+        "nozzle_carriages": [
+            {
+                "id": "NC1",
+                "offset": {"x": 0.0, "y": 0.0}
+            },
+            {
+                "id": "NC2",
+                "offset": {"x": 45.0, "y": 0.0}
+            }
+        ],
+        "cameras": [
+            {
+                "id": "C2",
+                "offset": {"x": 22.5, "y": -20.0}
+            }
+        ]
     }
 ])
 

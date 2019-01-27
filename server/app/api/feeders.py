@@ -11,10 +11,10 @@ point_model = api.model('Point', {
 
 component_model = api.model('Component', {
     'value': fields.String(required=True, description='Component value'),
-    'package': fields.String(required=True, description='Component package'),
-    'type': fields.String(required=True, description='Component type'),
-    'tolerance': fields.String(required=True, description='Component tolerance'),
-    'voltage': fields.String(required=False, description='Component voltage')
+    'package': fields.String(required=True, description='Component package')
+    # 'type': fields.String(required=True, description='Component type'),
+    # 'tolerance': fields.String(required=False, description='Component tolerance'),
+    # 'voltage': fields.String(required=False, description='Component voltage')
 })
 
 feeder_model = api.model('Feeder', {

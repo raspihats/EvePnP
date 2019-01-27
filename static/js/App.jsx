@@ -4,9 +4,6 @@ import Dro from "./containers/dro";
 import ControlsPanel from "./containers/controls";
 import CamerasPanel from "./containers/cameras";
 import MainPanel from "./containers/main";
-import FontAwesomeIcons from "./fa-icons";
-
-FontAwesomeIcons.init();
 
 class App extends Component {
   render() {

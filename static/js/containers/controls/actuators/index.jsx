@@ -1,68 +1,50 @@
 import React from "react";
-import Switch from "../../../components/Switch";
+import ToggleActuator from "./ToggleActuator";
 import api from "../../../api";
-
-const Actuator = props => {
-  return (
-    <Switch label={props.id} checked={props.value} onChange={props.onChange} />
-  );
-};
 
 class Actuators extends React.Component {
   state = { actuators: [] };
 
-  setActuatorValue(actuator, value) {
-    let clone = { ...actuator };
-    clone.value = value;
-
-    api
-      .put("actuators/values/" + actuator.id, clone)
-      .then(response => {
-        let actuators = this.state.actuators.map(actuator => {
-          if (actuator.id == response.data.id) {
-            actuator.value = response.data.value;
-          }
-          return actuator;
-        });
-        this.setState({ actuators: actuators });
-      })
-      .catch(error => {
-        api.errorHandler("Actuators error!", error);
+  setActuatorValue(id, value) {
+    api.actuators.updateValue(id, value, data => {
+      let actuators = this.state.actuators.map(actuator => {
+        if (actuator.id == data.id) {
+          actuator.value = data.value;
+        }
+        return actuator;
       });
+      this.setState({ actuators: actuators });
+    });
   }
 
   updateActuatorsValues() {
-    api
-      .get("actuators/values")
-      .then(response => {
-        this.setState({ actuators: response.data });
-      })
-      .catch(error => {
-        api.errorHandler("Actuators error!", error);
-      });
+    api.actuators.getValuesList(data => {
+      this.setState({ actuators: data });
+    });
   }
 
   componentDidMount() {
     this.updateActuatorsValues();
     // setInterval(() => {
     //   this.updateActuatorsValues();
-    // }, 2000);
+    // }, 100);
   }
 
   render() {
-    // this.updateActuatorsValues();
     return (
       <div className="d-flex flex-column">
         <div className="p-2">
           {this.state.actuators.map(actuator => {
-            let props = {
-              ...actuator,
-              key: actuator.id,
-              onChange: value => {
-                this.setActuatorValue(actuator, value);
-              }
-            };
-            return <Actuator {...props} />;
+            return (
+              <ToggleActuator
+                key={actuator.id}
+                label={actuator.id}
+                value={actuator.value}
+                onChange={value => {
+                  this.setActuatorValue(actuator.id, value);
+                }}
+              />
+            );
           })}
         </div>
       </div>

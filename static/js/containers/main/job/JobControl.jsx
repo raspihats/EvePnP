@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "../../components/Select";
+import Select from "../../../components/Select";
 
 const Button = props => {
   return (

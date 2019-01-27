@@ -5,7 +5,8 @@ import {
   PillsNavPane,
   PillsNavPart
 } from "../../components/PillsNav";
-import Job from "./Job";
+import Job from "./job";
+import Feeders from "./feeders";
 
 const MainPanel = () => {
   const pillsNav = (
@@ -13,7 +14,9 @@ const MainPanel = () => {
       <PillsNavPane title="Jobs" active>
         <Job />
       </PillsNavPane>
-      <PillsNavPane title="Feeders">Feeders</PillsNavPane>
+      <PillsNavPane title="Feeders">
+        <Feeders />
+      </PillsNavPane>
     </PillsNav>
   );
   return (
@@ -21,7 +24,7 @@ const MainPanel = () => {
       <CardHeader>
         <PillsNavPart.Nav pillsNav={pillsNav} />
       </CardHeader>
-      <CardBody className="text-center">
+      <CardBody>
         <PillsNavPart.Panes pillsNav={pillsNav} />
       </CardBody>
     </Card>

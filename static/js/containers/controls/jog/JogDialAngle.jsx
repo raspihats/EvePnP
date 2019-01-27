@@ -1,7 +1,7 @@
 import React from "react";
 
 const JogDialAngle = props => {
-  const axis = props.nozzle.rotation_axis_id.toLowerCase();
+  const axis = props.nozzleCarriage.rotation_axis_id.toLowerCase();
 
   return (
     <g transform="translate(0, 260)">

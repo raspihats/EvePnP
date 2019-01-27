@@ -4,57 +4,30 @@ import JogDial from "./JogDial";
 import api from "../../../api";
 
 class Jog extends React.Component {
-  state = { nozzles: [] };
+  state = { nozzleCarriages: [], selectedId: null };
 
-  getNozzlesDescription() {
-    let nozzles = [];
-    this.state.nozzles.forEach(nozzle => {
-      nozzles.push(nozzle.id + " (Head: " + nozzle.headId + ")");
+  getNozzleCarriagesIds() {
+    let nozzleCarriageIds = [];
+    this.state.nozzleCarriages.forEach(nozzleCarriage => {
+      nozzleCarriageIds.push(nozzleCarriage.id);
     });
-    return nozzles;
+    return nozzleCarriageIds;
   }
 
-  getSelectedNozzle() {
-    let n = null;
-    this.state.nozzles.forEach(nozzle => {
-      if (nozzle.selected) {
-        n = nozzle;
+  getSelectedNozzleCarriage() {
+    let nozzleCarriage = null;
+    this.state.nozzleCarriages.forEach(element => {
+      if (element.id === this.state.selectedId) {
+        nozzleCarriage = element;
       }
     });
-    return n;
-  }
-
-  onSelectNozzle(nozzleDescription) {
-    let nozzles = this.state.nozzles.map(nozzle => {
-      if (
-        nozzleDescription.search(nozzle.headId) !== -1 &&
-        nozzleDescription.search(nozzle.id) !== -1
-      ) {
-        nozzle.selected = true;
-      } else {
-        nozzle.selected = false;
-      }
-      return nozzle;
-    });
-    this.setState({ nozzles: nozzles });
+    return nozzleCarriage;
   }
 
   componentDidMount() {
-    api
-      .get("heads")
-      .then(response => {
-        // build Nozzle list, add 'head' and 'selected' attributes
-        let nozzles = [];
-        response.data.forEach(head => {
-          head.nozzles.forEach(nozzle => {
-            nozzles.push({ ...nozzle, headId: head.id, selected: false });
-          });
-        });
-        this.setState({ nozzles: nozzles });
-      })
-      .catch(error => {
-        api.errorHandler("Heads error!", error);
-      });
+    api.nozzleCarriages.list(data => {
+      this.setState({ nozzleCarriages: data, selectedId: data[0].id });
+    });
   }
 
   render() {
@@ -62,17 +35,17 @@ class Jog extends React.Component {
       <React.Fragment>
         <Select
           small
-          prepend="Nozzle:"
-          options={this.getNozzlesDescription()}
+          prepend="Nozzle Carriage:"
+          options={this.getNozzleCarriagesIds()}
           onChange={value => {
-            this.onSelectNozzle(value);
+            this.setState({ selectedId: value });
           }}
         />
         <JogDial
           onHome={api.axis.home}
           onPark={api.axis.park}
           onJog={api.axis.jog}
-          nozzle={this.getSelectedNozzle()}
+          nozzleCarriage={this.getSelectedNozzleCarriage()}
         />
       </React.Fragment>
     );

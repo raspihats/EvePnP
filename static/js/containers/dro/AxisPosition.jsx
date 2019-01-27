@@ -13,7 +13,7 @@ const AxisPosition = props => {
       </InputGroupPrepend>
       <input
         type="text"
-        className="form-control text-right"
+        className="form-control text-right text-mono"
         maxLength="5"
         size="5"
         value={props.position}

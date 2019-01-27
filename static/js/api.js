@@ -15,8 +15,36 @@ const errorHandler = (title, error) => {
   //   message += ", " + error.response.statusText + "\n";
   // }
   // message += "message: " + error.response.data.message
-
+  console.log(error);
   alert(message);
+};
+
+const actuators = {
+  getValuesList: callback => {
+    api
+      .get("actuators/values")
+      .then(response => callback(response.data))
+      .catch(error => {
+        errorHandler("Api, actuators list values error!", error);
+      });
+  },
+  getValue: (id, callback) => {
+    api
+      .get("actuators/values/" + id)
+      .then(response => callback(response.data))
+      .catch(error => {
+        errorHandler("Api, actuators get value error!", error);
+      });
+  },
+  updateValue: (id, value, callback) => {
+    api
+      .put("actuators/values/" + id, { id: id, value: value })
+      .then(response => callback(response.data))
+      .catch(error => {
+        console.log(error);
+        errorHandler("Api, actuators update value error!", error);
+      });
+  }
 };
 
 const axis = {
@@ -54,6 +82,34 @@ const axis = {
   }
 };
 
+const nozzleCarriages = {
+  list: callback => {
+    api
+      .get("nozzle_carriages")
+      .then(response => callback(response.data))
+      .catch(error => {
+        errorHandler("Api, list nozzle carriages error!", error);
+      });
+  },
+  get: (id, callback) => {
+    api
+      .get("nozzle_carriages/" + id)
+      .then(response => callback(response.data))
+      .catch(error => {
+        errorHandler("Api, get nozzle carriages error!", error);
+      });
+  },
+  update: (id, value, callback) => {
+    api
+      .put("nozzle_carriages/" + id, { id: id, value: value })
+      .then(response => callback(response.data))
+      .catch(error => {
+        console.log(error);
+        errorHandler("Api, update nozzle carriages error!", error);
+      });
+  }
+};
+
 const heads = {
   list: () => {
     api
@@ -74,7 +130,22 @@ const heads = {
   }
 };
 
+const feeders = {
+  getList: callback => {
+    api
+      .get("feeders")
+      .then(response => callback(response.data))
+      .catch(error => {
+        errorHandler("Api, feeders error!", error);
+      });
+  }
+};
+
 api.errorHandler = errorHandler;
+api.actuators = actuators;
 api.axis = axis;
+api.nozzleCarriages = nozzleCarriages;
+api.heds = heads;
+api.feeders = feeders;
 
 export default api;

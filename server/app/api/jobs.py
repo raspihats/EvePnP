@@ -7,18 +7,27 @@ job_id_model = api.model('JobId', {
     'id': fields.String(required=True, description='Job identifier or name'),
 })
 
+board_model = api.model('Board', {
+    'id': fields.String(required=True, description='Board identifier'),
+    'x': fields.Float(required=True, description='Board origin x position'),
+    'y': fields.Float(required=True, description='Board origin y position'),
+    'angle': fields.Float(required=True, description='Board rotation angle')
+})
+
 component_model = api.model('Component', {
-    'id': fields.String(description='Component identifier'),
-    'value': fields.String(description='Component value'),
-    'package': fields.String(description='Component package'),
-    'x': fields.Float(description='Component x position'),
-    'y': fields.Float(description='Component y position'),
-    'angle': fields.Float(description='Component rotation'),
-    'type': fields.String(description='Component type')
+    'id': fields.String(required=True, description='Component identifier'),
+    'value': fields.String(required=True, description='Component value'),
+    'package': fields.String(required=False, description='Component package'),
+    'footprint': fields.String(required=False, description='Component footprint'),
+    'x': fields.Float(required=True, description='Component x position'),
+    'y': fields.Float(required=True, description='Component y position'),
+    'angle': fields.Float(required=False, description='Component rotation'),
+    'operation': fields.String(required=True, description='Component action')
 })
 
 job_model = api.model('Job', {
     'id': fields.String(required=True, description='Job name'),
+    'boards': fields.List(fields.Nested(board_model), required=True),
     'components': fields.List(fields.Nested(component_model), required=True)
 })
 

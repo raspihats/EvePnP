@@ -9,36 +9,39 @@ jobs_table = db.table('jobs')
 jobs_table.purge()
 jobs_table.insert({
     "id": "DI16ac-I2C-HAT-caps",
+    "boards": [
+        {
+            "id": "Board_1",
+            "x": 84.16,
+            "y": 50.0,
+            "angle": 0
+        },
+        {
+            "id": "Board_2",
+            "x": 170,
+            "y": 50.0,
+            "angle": 0
+        },
+    ],
     "components": [
         {
-          "type": "origin",
-          "x": 84.16,
-          "value": "origin",
-          "angle": 0,
-          "package": "origin",
-          "id": "ORIGIN",
-          "y": 50.0
-        },
-        {
-            "type": "fiducial",
-            "x": 10.64,
-            "value": "FIDUCIAL1X3",
-            "angle": 0,
-            "package": "FIDUCIAL-1X3",
             "id": "FID1",
-            "y": 2.22
+            "x": 10.64,
+            "y": 2.22,
+            "operation": "ignore",
+            "value": "fiducial",
+            "footprint": "FID1x3"
         },
         {
-            "type": "fiducial",
-            "x": 83.03,
-            "value": "FIDUCIAL1X3",
-            "angle": 0,
-            "package": "FIDUCIAL-1X3",
             "id": "FID2",
-            "y": 45.56
+            "x": 83.03,
+            "y": 45.56,
+            "operation": "ignore",
+            "value": "fiducial",
+            "footprint": "FID1x3"
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 8.26,
             "value": "10nF",
             "angle": 90,
@@ -47,7 +50,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 13.18,
             "value": "10nF",
             "angle": 90,
@@ -56,7 +59,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 18.1,
             "value": "10nF",
             "angle": 90,
@@ -65,7 +68,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 23.02,
             "value": "10nF",
             "angle": 90,
@@ -74,7 +77,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 28.26,
             "value": "10nF",
             "angle": 90,
@@ -83,7 +86,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 33.18,
             "value": "10nF",
             "angle": 90,
@@ -92,7 +95,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 38.1,
             "value": "10nF",
             "angle": 90,
@@ -101,7 +104,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 43.02,
             "value": "10nF",
             "angle": 90,
@@ -110,7 +113,7 @@ jobs_table.insert({
             "y": 12.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -119,7 +122,7 @@ jobs_table.insert({
             "y": 12.54
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -128,7 +131,7 @@ jobs_table.insert({
             "y": 17.46
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -137,7 +140,7 @@ jobs_table.insert({
             "y": 22.38
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -146,7 +149,7 @@ jobs_table.insert({
             "y": 27.3
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -155,7 +158,7 @@ jobs_table.insert({
             "y": 32.54
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -164,7 +167,7 @@ jobs_table.insert({
             "y": 37.47
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -173,7 +176,7 @@ jobs_table.insert({
             "y": 42.39
         },
         {
-            "type": "component",
+            "operation": "place",
             "x": 72.71,
             "value": "10nF",
             "angle": 0,
@@ -186,20 +189,35 @@ jobs_table.insert({
 
 jobs_table.insert({
     "id": "Test1",
+    "boards": [
+        {
+            "id": "Board_1",
+            "x": 84.16,
+            "y": 50.0,
+            "angle": 0
+        },
+    ],
     "components": [
         {
-          "y": 23.5,
-          "id": "Origin",
-          "type": "origin",
-          "x": 95.8,
-          "angle": 0,
-          "value": "",
-          "package": ""
+            "id": "FID1",
+            "x": 10.64,
+            "y": 2.22,
+            "operation": "ignore",
+            "value": "fiducial",
+            "footprint": "FID1x3"
+        },
+        {
+            "id": "FID2",
+            "x": 83.03,
+            "y": 45.56,
+            "operation": "ignore",
+            "value": "fiducial",
+            "footprint": "FID1x3"
         },
         {
             "y": 3.97,
             "id": "LD1",
-            "type": "component",
+            "operation": "place",
             "x": 47.47,
             "angle": 0,
             "value": "OSG50603C1E",
@@ -208,7 +226,7 @@ jobs_table.insert({
         {
             "y": 3.97,
             "id": "LD2",
-            "type": "component",
+            "operation": "place",
             "x": 48.97,
             "angle": 0,
             "value": "OSG50603C1E",
@@ -217,7 +235,7 @@ jobs_table.insert({
         {
             "y": 3.97,
             "id": "LD3",
-            "type": "component",
+            "operation": "place",
             "x": 50.48,
             "angle": 0,
             "value": "OSG50603C1E",
@@ -226,29 +244,11 @@ jobs_table.insert({
         {
             "y": 3.97,
             "id": "LD4",
-            "type": "component",
+            "operation": "place",
             "x": 51.99,
             "angle": 0,
             "value": "OSG50603C1E",
             "package": "0603"
-        },
-        {
-            "y": 100,
-            "id": "FID1",
-            "type": "fiducial",
-            "x": 100,
-            "angle": 0,
-            "value": "",
-            "package": ""
-        },
-        {
-            "y": 200,
-            "id": "FID2",
-            "type": "fiducial",
-            "x": 200,
-            "angle": 0,
-            "value": "",
-            "package": ""
         }
     ]
 })

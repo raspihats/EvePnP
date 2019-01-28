@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import api from "../../../api";
 import ComponentDisplay from "../ComponentDisplay";
 import PointDisplay from "../PointDisplay";
-import IconButton from "./IconButton";
+import OffsetButtons from "./OffsetButtons";
 import UpdateForm from "./UpdateForm";
 
 class Feeders extends React.Component {
@@ -47,43 +47,39 @@ class Feeders extends React.Component {
                 <PointDisplay {...feeder.point} />
               </div>
               <div className="col-2">
-                {/* <Button
-                  title="Edit Feeder"
-                  icon="edit"
-                  onClick={e => this.setState({ editId: feeder.id })}
-                /> */}
-                <IconButton
-                  title="Move Camera"
-                  icon="bullseye"
-                  onClick={e => console.log(e)}
-                />
-                <IconButton
-                  title="Move Nozzle: N1"
-                  icon="dot-circle"
-                  onClick={e => console.log(e)}
-                />
-                <IconButton
-                  title="Move Nozzle: N2"
-                  icon="dot-circle"
-                  data-toggle="collapse"
-                  data-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                  onClick={e => console.log(e)}
-                />
-                <button
-                  className="btn btn-outline-secondary btn-lg px-1 py-0"
-                  type="button"
-                  title="Show edit panel"
-                  data-toggle="collapse"
-                  data-target={"#" + feeder.id}
-                  aria-expanded="false"
-                  aria-controls={feeder.id}
-                  onClick={e => console.log(e)}
-                >
-                  <FontAwesomeIcon icon="angle-double-down" />
-                </button>
+                <div className="row">
+                  <div className="col-12">
+                    <OffsetButtons
+                      title="Move"
+                      onClick={offset => {
+                        let positions = {};
+                        Object.keys(feeder.point).map(key => {
+                          positions[key] = feeder.point[key];
+                          if (offset.hasOwnProperty(key)) {
+                            positions[key] += offset[key];
+                          }
+                        });
+                        api.axis.positions.update(positions);
+                      }}
+                    />
+                  </div>
+                  <div className="col-12">
+                    <button
+                      className="btn btn-block btn-outline-secondary btn-lg px-1 py-0"
+                      type="button"
+                      title="Show edit panel"
+                      data-toggle="collapse"
+                      data-target={"#" + feeder.id}
+                      aria-expanded="false"
+                      aria-controls={feeder.id}
+                      onClick={e => console.log(e)}
+                    >
+                      <FontAwesomeIcon icon="angle-double-down" />
+                    </button>
+                  </div>
+                </div>
               </div>
+
               {/* {feeder.id === this.state.editId && ( */}
               <div className="col-12">
                 <div className="collapse" id={feeder.id}>

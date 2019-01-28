@@ -42,9 +42,9 @@ class Jog extends React.Component {
           }}
         />
         <JogDial
-          onHome={api.axis.home}
-          onPark={api.axis.park}
-          onJog={api.axis.jog}
+          onHome={api.axis.positions.home}
+          onPark={api.axis.positions.park}
+          onJog={api.axis.positions.jog}
           nozzleCarriage={this.getSelectedNozzleCarriage()}
         />
       </React.Fragment>

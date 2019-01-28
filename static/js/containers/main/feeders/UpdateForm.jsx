@@ -7,9 +7,11 @@ import CodeEditorFormGroup from "./CodeEditorFormGroup";
 
 class UpdateFrom extends React.Component {
   state = {};
+  code = ""; // code change will not trigger render
 
   componentWillMount() {
     this.setState({ feeder: { ...this.props.feeder } });
+    this.code = this.props.feeder.code;
   }
 
   render() {
@@ -86,13 +88,20 @@ class UpdateFrom extends React.Component {
               </div>
             </div>
             <div className="form-group col-md-6">
-              <CodeEditorFormGroup />
+              <CodeEditorFormGroup
+                code={this.code}
+                onChange={code => (this.code = code)}
+              />
             </div>
             <div className="form-group col-md-12">
               <button
                 type="button"
                 className="btn btn-primary btn-lg btn-block"
-                onClick={e => this.props.onUpdate(this.state.feeder)}
+                onClick={e => {
+                  let feeder = this.state.feeder;
+                  feeder.code = this.code;
+                  this.props.onUpdate(feeder);
+                }}
               >
                 Update
               </button>

@@ -7,9 +7,11 @@ import "brace/ext/language_tools";
 class CodeEditorFormGroup extends React.Component {
   state = {};
 
-  onLoad() {}
+  // onLoad() {}
 
-  onChange() {}
+  // onChange(value) {
+  //   console.log(value);
+  // }
 
   render() {
     return (
@@ -20,20 +22,20 @@ class CodeEditorFormGroup extends React.Component {
           mode="python"
           theme="monokai"
           name="code"
-          onLoad={this.onLoad}
-          onChange={this.onChange}
+          // onLoad={this.onLoad}
+          onChange={this.props.onChange}
           fontSize={14}
           showPrintMargin={true}
           showGutter={true}
           highlightActiveLine={true}
           height="320px"
-          value={`def fnc():
-  pass`}
+          value={this.props.code}
           setOptions={{
             enableBasicAutocompletion: false,
             enableLiveAutocompletion: false,
             enableSnippets: false,
             showLineNumbers: true,
+            useSoftTabs: true,
             tabSize: 4
           }}
           editorProps={{

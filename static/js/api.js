@@ -9,13 +9,18 @@ let api = axios.create({
 
 const errorHandler = (title, error) => {
   let message = title + "\n";
-  message += JSON.stringify(error);
+  try {
+    message += JSON.stringify(error);
+  } catch (err) {
+    message += error;
+    console.log(error);
+  }
   // if (error.hasOwnProperty("response")) {
   //   message += "status: " + error.response.status;
   //   message += ", " + error.response.statusText + "\n";
   // }
   // message += "message: " + error.response.data.message
-  console.log(error);
+
   alert(message);
 };
 
@@ -60,39 +65,51 @@ const axis = {
             api.errorHandler("Axis positions error!", error);
           }
         });
+    },
+    home: () => {
+      api
+        .put(
+          "axis/positions/home",
+          [..."xyz"].map(c => {
+            return { id: c };
+          }),
+          {
+            timeout: 30000
+          }
+        )
+        .catch(error => {
+          errorHandler("Homing error!", error);
+        });
+    },
+    park: axis => {
+      api
+        .put(
+          "axis/positions/park",
+          [...axis].map(c => {
+            return { id: c };
+          })
+        )
+        .catch(error => {
+          errorHandler("Parking error!", error);
+        });
+    },
+    jog: (axis, step) => {
+      api.put("axis/positions/jog", { id: axis, step: step }).catch(error => {
+        errorHandler("Jog error!", error);
+      });
+    },
+    update: positions => {
+      api
+        .put(
+          "axis/positions",
+          Object.keys(positions).map(key => {
+            return { id: key, position: positions[key] };
+          })
+        )
+        .catch(error => {
+          errorHandler("Jog error!", error);
+        });
     }
-  },
-  home: () => {
-    api
-      .put(
-        "axis/positions/home",
-        [..."xyz"].map(c => {
-          return { id: c };
-        }),
-        {
-          timeout: 30000
-        }
-      )
-      .catch(error => {
-        errorHandler("Homing error!", error);
-      });
-  },
-  park: axis => {
-    api
-      .put(
-        "axis/positions/park",
-        [...axis].map(c => {
-          return { id: c };
-        })
-      )
-      .catch(error => {
-        errorHandler("Parking error!", error);
-      });
-  },
-  jog: (axis, step) => {
-    api.put("axis/positions/jog", { id: axis, step: step }).catch(error => {
-      errorHandler("Jog error!", error);
-    });
   }
 };
 

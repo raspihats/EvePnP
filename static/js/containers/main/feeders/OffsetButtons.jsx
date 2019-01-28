@@ -2,7 +2,7 @@ import React from "react";
 import IconButton from "./IconButton";
 import api from "../../../api";
 
-class CaptureButtons extends React.Component {
+class OffsetButtons extends React.Component {
   state = { devices: [] };
 
   componentDidMount() {
@@ -22,20 +22,6 @@ class CaptureButtons extends React.Component {
     });
   }
 
-  calcPosition(offset) {
-    api.axis.positions.list(data => {
-      let positions = {};
-      Object.keys(offset).forEach(key => {
-        data.forEach(axis => {
-          if (axis.id === key) {
-            positions[key] = axis.position + offset[key];
-          }
-        });
-      });
-      this.props.onClick(positions);
-    });
-  }
-
   render() {
     return (
       <React.Fragment>
@@ -47,7 +33,7 @@ class CaptureButtons extends React.Component {
                 this.props.title + "[" + device.type + ": " + device.id + "]"
               }
               icon={device.type === "camera" ? "bullseye" : "dot-circle"}
-              onClick={e => this.calcPosition(device.offset)}
+              onClick={e => this.props.onClick(device.offset)}
             />
           );
         })}
@@ -56,4 +42,4 @@ class CaptureButtons extends React.Component {
   }
 }
 
-export default CaptureButtons;
+export default OffsetButtons;

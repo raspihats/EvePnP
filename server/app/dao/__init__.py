@@ -1,10 +1,8 @@
 from tinydb import TinyDB, where
 from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
-
 db_hardware = TinyDB('db_hardware.json',
                      storage=CachingMiddleware(JSONStorage))
-
 db_jobs = TinyDB('db_jobs.json', storage=CachingMiddleware(JSONStorage))
 
 

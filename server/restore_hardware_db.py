@@ -151,6 +151,11 @@ controllers_table.insert_multiple([
     }
 ])
 
+feeders_default_code = """# get_point gets called before pick operation 
+# and should return the next pick point
+def get_point(point, count, size):
+    return point"""
+
 feeders_table = db.table("feeders")
 feeders_table.purge()
 feeders_table.insert_multiple([
@@ -166,7 +171,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -181,7 +187,8 @@ feeders_table.insert_multiple([
             "type": "capacitor",
             "tolerance": "10%"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23}
+        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -195,7 +202,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -209,7 +217,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -223,7 +232,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -238,7 +248,8 @@ feeders_table.insert_multiple([
             "type": "capacitor",
             "tolerance": "5%"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23}
+        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -253,7 +264,8 @@ feeders_table.insert_multiple([
             "type": "capacitor",
             "tolerance": "5%"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23}
+        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -268,7 +280,8 @@ feeders_table.insert_multiple([
             "type": "capacitor",
             "tolerance": "5%"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23}
+        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -277,7 +290,8 @@ feeders_table.insert_multiple([
         "id": "StripFeeder_9",
         "size": 48,
         "component": {"value": "BSS84", "package": "SOT23", "type": "nmos"},
-        "point": {"y": 136.5, "x": 39.0, "z": 23}
+        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -291,7 +305,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "5%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -305,7 +320,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -314,7 +330,8 @@ feeders_table.insert_multiple([
         "id": "StripFeeder_12",
         "size": 48,
         "component": {"value": "OSG050603", "package": "0603", "type": "led"},
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -327,7 +344,8 @@ feeders_table.insert_multiple([
             "package": "SOT23",
             "type": "transistor"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -341,7 +359,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "1%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -355,7 +374,8 @@ feeders_table.insert_multiple([
             "type": "resistor",
             "tolerance": "5%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     },
     {
         "count": 48,
@@ -369,7 +389,8 @@ feeders_table.insert_multiple([
             "type": "diode",
             "tolerance": "5%"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23}
+        "point": {"y": 139.4, "x": 225.0, "z": 23},
+        "code": feeders_default_code
     }
 ])
 

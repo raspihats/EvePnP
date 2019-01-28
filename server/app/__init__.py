@@ -1,6 +1,6 @@
 from flask import Flask, Response, render_template
 from .api import blueprint as api
-from .dao import db_hardware, db_jobs
+
 
 app = Flask(__name__, static_folder="../../static/dist",
             template_folder="../../static")
@@ -16,8 +16,9 @@ def index():
 
 def run_app():
     try:
-        app.run(host='0.0.0.0', port=5000)
+        app.run(host='0.0.0.0', port=5000, use_reloader=False)
     finally:
+        from .dao import db_hardware, db_jobs
         # make sure that all data is safely written when using Caching
         db_hardware.close()
         db_jobs.close()

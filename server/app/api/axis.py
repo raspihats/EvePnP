@@ -100,7 +100,7 @@ class AxisPositionsList(Resource):
     @api.expect([axis_position_model])
     def put(self):
         '''Update axis current positions'''
-        motion_service.move(api.payload)
+        motion_service.move_safe(api.payload)
         return '', 200
 
 

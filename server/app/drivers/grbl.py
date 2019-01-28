@@ -166,7 +166,7 @@ class Grbl(object):
             return None
 
     def home(self):
-        self.exec("$H", timeout=20)
+        self.exec("$H", timeout=60)
 
     def pause(self, interval):
         self.exec("G4P{}".format(interval))

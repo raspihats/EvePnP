@@ -40,6 +40,19 @@ class MotionService(object):
         controllers_service.motion_controller.move(
             axis_list, min_feed_rate * speed_factor)
 
+    def move_safe(self, axis_list, speed_factor=1):
+        self.park([{'id': 'z'}])
+
+        z_axis = None
+        for axis in axis_list:
+            if axis['id'] == 'z':
+                z_axis = axis
+                break
+        axis_list.remove(z_axis)
+
+        self.move(axis_list, speed_factor)
+        self.move([z_axis], speed_factor)
+
     def get_position(self):
         position = controllers_service.motion_controller.position
         response = []

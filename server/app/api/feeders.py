@@ -24,7 +24,7 @@ feeder_model = api.model('Feeder', {
     'count': fields.Integer(required=True, description='Feeder component count'),
     'component': fields.Nested(component_model, required=True),
     'point': fields.Nested(point_model, required=True),
-    'end_point': fields.Nested(point_model, required=False)
+    'code': fields.String(required=True, description='Code')
 })
 
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-const InputSelectFormGroup = props => {
+const SelectFormGroup = props => {
   let targetId = "inputSelect" + props.label;
   return (
     <div className="form-group">
@@ -19,4 +19,4 @@ const InputSelectFormGroup = props => {
   );
 };
 
-export default InputSelectFormGroup;
+export default SelectFormGroup;

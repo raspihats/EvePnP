@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = window.location.protocol + "/api/";
+const baseURL = window.location.protocol + "/api";
 
 let api = axios.create({
   baseURL: baseURL,
@@ -27,7 +27,7 @@ const errorHandler = (title, error) => {
 const actuators = {
   getValuesList: callback => {
     api
-      .get("actuators/values")
+      .get("/actuators/values")
       .then(response => callback(response.data))
       .catch(error => {
         errorHandler("Api, actuators list values error!", error);
@@ -35,7 +35,7 @@ const actuators = {
   },
   getValue: (id, callback) => {
     api
-      .get("actuators/values/" + id)
+      .get("/actuators/values/" + id)
       .then(response => callback(response.data))
       .catch(error => {
         errorHandler("Api, actuators get value error!", error);
@@ -43,7 +43,7 @@ const actuators = {
   },
   updateValue: (id, value, callback) => {
     api
-      .put("actuators/values/" + id, { id: id, value: value })
+      .put("/actuators/values/" + id, { id: id, value: value })
       .then(response => callback(response.data))
       .catch(error => {
         console.log(error);
@@ -56,7 +56,7 @@ const axis = {
   positions: {
     list: (callback, reportError = true) => {
       api
-        .get("axis/positions")
+        .get("/axis/positions")
         .then(response => {
           callback(response.data);
         })
@@ -69,7 +69,7 @@ const axis = {
     home: () => {
       api
         .put(
-          "axis/positions/home",
+          "/axis/positions/home",
           [..."xyz"].map(c => {
             return { id: c };
           }),
@@ -84,7 +84,7 @@ const axis = {
     park: axis => {
       api
         .put(
-          "axis/positions/park",
+          "/axis/positions/park",
           [...axis].map(c => {
             return { id: c };
           })
@@ -94,14 +94,14 @@ const axis = {
         });
     },
     jog: (axis, step) => {
-      api.put("axis/positions/jog", { id: axis, step: step }).catch(error => {
+      api.put("/axis/positions/jog", { id: axis, step: step }).catch(error => {
         errorHandler("Jog error!", error);
       });
     },
     update: positions => {
       api
         .put(
-          "axis/positions",
+          "/axis/positions",
           Object.keys(positions).map(key => {
             return { id: key, position: positions[key] };
           })
@@ -113,76 +113,110 @@ const axis = {
   }
 };
 
-const nozzleCarriages = {
-  list: callback => {
+// const nozzleCarriages = {
+//   list: callback => {
+//     api
+//       .get("nozzle_carriages")
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, list nozzle carriages error!", error);
+//       });
+//   },
+//   get: (id, callback) => {
+//     api
+//       .get("nozzle_carriages/" + id)
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, get nozzle carriages error!", error);
+//       });
+//   },
+//   update: (id, value, callback) => {
+//     api
+//       .put("nozzle_carriages/" + id, { id: id, value: value })
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, update nozzle carriages error!", error);
+//       });
+//   }
+// };
+
+// const heads = {
+//   list: callback => {
+//     api
+//       .get("heads")
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         api.errorHandler("Heads error!", error);
+//       });
+//   }
+// };
+
+// const feeders = {
+//   list: callback => {
+//     api
+//       .get("feeders")
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, list feeders error!", error);
+//       });
+//   },
+//   get: (id, callback) => {
+//     api
+//       .get("feeders/" + id)
+//       .then(response => callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, get feeder error!", error);
+//       });
+//   },
+//   update: (id, feeder, callback = null) => {
+//     api
+//       .put("feeders/" + id, feeder)
+//       .then(response => callback && callback(response.data))
+//       .catch(error => {
+//         errorHandler("Api, update feeder error!", error);
+//       });
+//   }
+// };
+
+class ApiEndpoint {
+  constructor(endpoint) {
+    this.endpoint = endpoint;
+  }
+
+  list(callback) {
     api
-      .get("nozzle_carriages")
+      .get(this.endpoint)
       .then(response => callback(response.data))
       .catch(error => {
-        errorHandler("Api, list nozzle carriages error!", error);
-      });
-  },
-  get: (id, callback) => {
-    api
-      .get("nozzle_carriages/" + id)
-      .then(response => callback(response.data))
-      .catch(error => {
-        errorHandler("Api, get nozzle carriages error!", error);
-      });
-  },
-  update: (id, value, callback) => {
-    api
-      .put("nozzle_carriages/" + id, { id: id, value: value })
-      .then(response => callback(response.data))
-      .catch(error => {
-        errorHandler("Api, update nozzle carriages error!", error);
+        errorHandler("Api error, list " + this.endpoint, error);
       });
   }
-};
 
-const heads = {
-  list: callback => {
+  get(id, callback) {
     api
-      .get("heads")
+      .get(this.endpoint + id)
       .then(response => callback(response.data))
       .catch(error => {
-        api.errorHandler("Heads error!", error);
+        errorHandler("Api error, get " + this.endpoint, error);
       });
   }
-};
 
-const feeders = {
-  list: callback => {
+  update(id, feeder, callback = null) {
     api
-      .get("feeders")
-      .then(response => callback(response.data))
-      .catch(error => {
-        errorHandler("Api, list feeders error!", error);
-      });
-  },
-  get: (id, callback) => {
-    api
-      .get("feeders/" + id)
-      .then(response => callback(response.data))
-      .catch(error => {
-        errorHandler("Api, get feeder error!", error);
-      });
-  },
-  update: (id, feeder, callback = null) => {
-    api
-      .put("feeders/" + id, feeder)
+      .put(this.endpoint + id, feeder)
       .then(response => callback && callback(response.data))
       .catch(error => {
-        errorHandler("Api, update feeder error!", error);
+        errorHandler("Api error, update " + this.endpoint, error);
       });
   }
-};
+}
 
 api.errorHandler = errorHandler;
 api.actuators = actuators;
 api.axis = axis;
-api.nozzleCarriages = nozzleCarriages;
-api.heads = heads;
-api.feeders = feeders;
+api.nozzleCarriages = new ApiEndpoint("/nozzle_carriages");
+api.heads = new ApiEndpoint("/heads");
+api.feeders = new ApiEndpoint("/feeders");
+api.jobs = new ApiEndpoint("/jobs");
 
 export default api;

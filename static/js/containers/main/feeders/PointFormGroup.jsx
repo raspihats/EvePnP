@@ -1,6 +1,6 @@
 import React from "react";
 import InputField from "../../../components/InputField";
-import OffsetButtons from "./OffsetButtons";
+import OffsetButtons from "../OffsetButtons";
 import api from "../../../api";
 
 class PointFormGroup extends React.Component {
@@ -43,6 +43,7 @@ class PointFormGroup extends React.Component {
           <div className="form-group col-6 mb-1">
             <OffsetButtons
               title="Capture position"
+              heads={this.props.heads}
               onClick={offset => this.calcPosition(offset)}
             />
           </div>

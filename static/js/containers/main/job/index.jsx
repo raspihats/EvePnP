@@ -1,10 +1,26 @@
 import React from "react";
 import api from "../../../api";
 import JobControl from "./JobControl";
-import JobDetails from "./JobDetails";
+import JobBoards from "./JobBoards";
+import JobComponents from "./JobComponents";
 
 class Job extends React.Component {
-  state = { jobs: [], job: null };
+  state = { heads: [], jobs: [], job: null };
+
+  listHeads() {
+    api.heads.list(data => this.setState({ heads: data }));
+  }
+
+  listJobs() {
+    api.jobs.list(data =>
+      this.setState({ jobs: data.map(job => job.id).sort() })
+    );
+  }
+
+  componentDidMount() {
+    this.listHeads();
+    this.listFeeders();
+  }
 
   onSelect(id) {
     if (id == null) {
@@ -37,11 +53,8 @@ class Job extends React.Component {
   onStop(id) {}
 
   componentDidMount() {
-    api.get("/jobs").then(response => {
-      this.setState({
-        jobs: response.data.map(job => job.id).sort()
-      });
-    });
+    this.listHeads();
+    this.listJobs();
   }
 
   render() {
@@ -59,7 +72,10 @@ class Job extends React.Component {
           />
         </div>
         <div className="col-12 pt-3">
-          {this.state.job && <JobDetails job={this.state.job} />}
+          {this.state.job && <JobBoards job={this.state.job} />}
+        </div>
+        <div className="col-12 pt-3">
+          {this.state.job && <JobComponents job={this.state.job} />}
         </div>
       </div>
     );

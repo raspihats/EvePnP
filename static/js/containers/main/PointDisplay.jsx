@@ -8,7 +8,7 @@ const format = position => {
   return result;
 };
 
-const PointDisplay = props => {
+const ObjectProps = props => {
   let text = [];
   text.push("x:" + format(props.x));
   text.push("y:" + format(props.y));
@@ -46,4 +46,4 @@ const PointDisplay = props => {
   }
 };
 
-export default PointDisplay;
+export default ObjectProps;

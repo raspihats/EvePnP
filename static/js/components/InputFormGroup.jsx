@@ -1,9 +1,11 @@
 import React from "react";
 
-const InputFieldFormGroup = props => {
+const InputFormGroup = props => {
   let targetId = "inputText" + props.label;
   return (
-    <div className="form-group">
+    <div
+      className={"form-group" + (props.className ? " " + props.className : "")}
+    >
       <label htmlFor={targetId}>{props.label}</label>
       <input
         type={props.type ? props.type : "text"}
@@ -17,4 +19,4 @@ const InputFieldFormGroup = props => {
   );
 };
 
-export default InputFieldFormGroup;
+export default InputFormGroup;

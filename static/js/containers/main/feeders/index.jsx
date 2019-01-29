@@ -1,13 +1,20 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import api from "../../../api";
-import ComponentDisplay from "../ComponentDisplay";
-import PointDisplay from "../PointDisplay";
-import OffsetButtons from "./OffsetButtons";
+import ObjectProps from "../ObjectProps";
+import OffsetButtons from "../OffsetButtons";
+import {
+  Collapsible,
+  CollapsibleControlButton
+} from "../../../components/Collapsible";
 import UpdateForm from "./UpdateForm";
 
 class Feeders extends React.Component {
-  state = { feeders: [], editId: null };
+  state = { feeders: [], heads: [] };
+
+  listHeads() {
+    api.heads.list(data => this.setState({ heads: data }));
+  }
 
   listFeeders() {
     api.feeders.list(data => this.setState({ feeders: data }));
@@ -17,13 +24,14 @@ class Feeders extends React.Component {
     api.feeders.update(id, feeder, () => this.listFeeders());
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.listHeads();
     this.listFeeders();
   }
 
   render() {
     return (
-      <React.Fragment>
+      <div className="container-fluid">
         <div className="row border bg-light py-2 text-info font-weight-bold">
           <div className="col-2">ID</div>
           <div className="col-2">Type</div>
@@ -41,16 +49,17 @@ class Feeders extends React.Component {
               <div className="col-1">{feeder.size}</div>
               <div className="col-1">{feeder.count}</div>
               <div className="col-2">
-                <ComponentDisplay {...feeder.component} />
+                <ObjectProps object={feeder.component} />
               </div>
               <div className="col-2">
-                <PointDisplay {...feeder.point} />
+                <ObjectProps object={feeder.point} />
               </div>
               <div className="col-2">
                 <div className="row">
                   <div className="col-12">
                     <OffsetButtons
                       title="Move"
+                      heads={this.state.heads}
                       onClick={offset => {
                         let positions = {};
                         Object.keys(feeder.point).map(key => {
@@ -64,38 +73,32 @@ class Feeders extends React.Component {
                     />
                   </div>
                   <div className="col-12">
-                    <button
-                      className="btn btn-block btn-outline-secondary btn-lg px-1 py-0"
-                      type="button"
+                    <CollapsibleControlButton
+                      className="btn-block btn-outline-secondary btn-lg px-1 py-0"
                       title="Show edit panel"
-                      data-toggle="collapse"
-                      data-target={"#" + feeder.id}
-                      aria-expanded="false"
-                      aria-controls={feeder.id}
-                      onClick={e => console.log(e)}
+                      target={feeder.id}
                     >
                       <FontAwesomeIcon icon="angle-double-down" />
-                    </button>
+                      <FontAwesomeIcon icon="angle-double-up" />
+                    </CollapsibleControlButton>
                   </div>
                 </div>
               </div>
-
-              {/* {feeder.id === this.state.editId && ( */}
               <div className="col-12">
-                <div className="collapse" id={feeder.id}>
+                <Collapsible id={feeder.id}>
                   <UpdateForm
+                    heads={this.state.heads}
                     feeder={feeder}
                     onUpdate={updatedFeeder =>
                       this.updateFeeder(feeder.id, updatedFeeder)
                     }
                   />
-                </div>
+                </Collapsible>
               </div>
-              {/* )} */}
             </div>
           );
         })}
-      </React.Fragment>
+      </div>
     );
   }
 }

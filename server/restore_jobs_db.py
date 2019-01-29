@@ -12,177 +12,224 @@ jobs_table.insert({
     "boards": [
         {
             "id": "Board_1",
-            "x": 84.16,
-            "y": 50.0,
-            "angle": 0
+            "origin": {
+                "x": 84.16,
+                "y": 50.0,
+                "z": 20
+            },
+            "rotation": 0,
+            "operation": "place"
         },
         {
             "id": "Board_2",
-            "x": 170,
-            "y": 50.0,
-            "angle": 0
+            "origin": {
+                "x": 170,
+                "y": 50.0,
+                "z": 20
+            },
+            "rotation": 0,
+            "operation": "place"
         },
     ],
     "components": [
         {
             "id": "FID1",
-            "x": 10.64,
-            "y": 2.22,
+            "offset": {
+                "x": 10.64,
+                "y": 2.22
+            },
+            "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "footprint": "FID1x3"
+            "package": "FID1x3"
         },
         {
             "id": "FID2",
-            "x": 83.03,
-            "y": 45.56,
+            "offset": {
+                "x": 83.03,
+                "y": 45.56
+            },
+            "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "footprint": "FID1x3"
+            "package": "FID1x3"
         },
         {
             "operation": "place",
-            "x": 8.26,
+            "offset": {
+                "x": 8.26,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
-            "id": "C1",
-            "y": 12.38
+            "id": "C1"
         },
         {
             "operation": "place",
-            "x": 13.18,
+            "offset": {
+                "x": 13.18,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
-            "id": "C2",
-            "y": 12.38
+            "id": "C2"
         },
         {
             "operation": "place",
-            "x": 18.1,
+            "offset": {
+                "x": 18.1,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C3",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 23.02,
+            "offset": {
+                "x": 23.02,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C4",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 28.26,
+            "offset": {
+                "x": 28.26,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C5",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 33.18,
+            "offset": {
+                "x": 33.18,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C6",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 38.1,
+            "offset": {
+                "x": 38.1,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C7",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 43.02,
+            "offset": {
+                "x": 43.02,
+                "y": 12.38
+            },
             "value": "10nF",
-            "angle": 90,
+            "rotation": 90,
             "package": "CAP-0603",
             "id": "C8",
-            "y": 12.38
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 12.54
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C9",
-            "y": 12.54
+            "id": "C9"
+
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 17.46
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C10",
-            "y": 17.46
+            "id": "C10"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 22.38
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C11",
-            "y": 22.38
+            "id": "C11"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 27.3
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C12",
-            "y": 27.3
+            "id": "C12"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 32.54
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C13",
-            "y": 32.54
+            "id": "C13"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 37.47
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C14",
-            "y": 37.47
+            "id": "C14"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 42.39
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C15",
-            "y": 42.39
+            "id": "C15"
         },
         {
             "operation": "place",
-            "x": 72.71,
+            "offset": {
+                "x": 72.71,
+                "y": 47.31
+            },
             "value": "10nF",
-            "angle": 0,
+            "rotation": 0,
             "package": "CAP-0603",
-            "id": "C16",
-            "y": 47.31
+            "id": "C16"
         }
     ]
 })
@@ -192,61 +239,80 @@ jobs_table.insert({
     "boards": [
         {
             "id": "Board_1",
-            "x": 84.16,
-            "y": 50.0,
-            "angle": 0
+            "origin": {
+                "x": 84.16,
+                "y": 50.0,
+                "z": 20
+            },
+            "rotation": 0,
+            "operation": "place"
         },
     ],
     "components": [
         {
             "id": "FID1",
-            "x": 10.64,
-            "y": 2.22,
+            "offset": {
+                "x": 10.64,
+                "y": 2.22
+            },
+            "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "footprint": "FID1x3"
+            "package": "FID1x3"
         },
         {
             "id": "FID2",
-            "x": 83.03,
-            "y": 45.56,
+            "offset": {
+                "x": 83.03,
+                "y": 45.56
+            },
+            "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "footprint": "FID1x3"
+            "package": "FID1x3"
         },
         {
-            "y": 3.97,
             "id": "LD1",
             "operation": "place",
-            "x": 47.47,
-            "angle": 0,
+            "offset": {
+                "x": 47.47,
+                "y": 3.97
+            },
+            "rotation": 0,
             "value": "OSG50603C1E",
             "package": "0603"
         },
         {
-            "y": 3.97,
             "id": "LD2",
             "operation": "place",
-            "x": 48.97,
-            "angle": 0,
+            "offset": {
+                "x": 48.97,
+                "y": 3.97
+            },
+            "rotation": 0,
             "value": "OSG50603C1E",
             "package": "0603"
         },
         {
-            "y": 3.97,
             "id": "LD3",
             "operation": "place",
-            "x": 50.48,
-            "angle": 0,
+            "offset": {
+                "x": 50.48,
+                "y": 3.97
+            },
+            "rotation": 0,
             "value": "OSG50603C1E",
             "package": "0603"
         },
         {
-            "y": 3.97,
+
             "id": "LD4",
             "operation": "place",
-            "x": 51.99,
-            "angle": 0,
+            "offset": {
+                "y": 3.97,
+                "x": 51.99
+            },
+            "rotation": 0,
             "value": "OSG50603C1E",
             "package": "0603"
         }

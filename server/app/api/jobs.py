@@ -7,21 +7,30 @@ job_id_model = api.model('JobId', {
     'id': fields.String(required=True, description='Job identifier or name'),
 })
 
+origin_model = api.model('Board origin point', {
+    'x': fields.Float(required=True, description='X axis position'),
+    'y': fields.Float(required=True, description='Y axis position'),
+    'z': fields.Float(required=True, description='Z axis position')
+})
+
 board_model = api.model('Board', {
     'id': fields.String(required=True, description='Board identifier'),
-    'x': fields.Float(required=True, description='Board origin x position'),
-    'y': fields.Float(required=True, description='Board origin y position'),
-    'angle': fields.Float(required=True, description='Board rotation angle')
+    'origin': fields.Nested(origin_model, required=True, description='Board origin'),
+    'rotation': fields.Float(required=True, description='Board rotation angle'),
+    'operation': fields.String(required=True, description='Board action')
+})
+
+offset_model = api.model('Component offset point', {
+    'x': fields.Float(required=True, description='X axis position'),
+    'y': fields.Float(required=True, description='Y axis position')
 })
 
 component_model = api.model('Component', {
     'id': fields.String(required=True, description='Component identifier'),
     'value': fields.String(required=True, description='Component value'),
-    'package': fields.String(required=False, description='Component package'),
-    'footprint': fields.String(required=False, description='Component footprint'),
-    'x': fields.Float(required=True, description='Component x position'),
-    'y': fields.Float(required=True, description='Component y position'),
-    'angle': fields.Float(required=False, description='Component rotation'),
+    'package': fields.String(required=True, description='Component package'),
+    'offset': fields.Nested(offset_model, required=True, description='Component ofsset point'),
+    'rotation': fields.Float(required=True, description='Component rotation angle'),
     'operation': fields.String(required=True, description='Component action')
 })
 

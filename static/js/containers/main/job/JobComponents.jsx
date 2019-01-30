@@ -9,11 +9,11 @@ import {
 } from "../../../components/Collapsible";
 
 class JobComponents extends React.Component {
-  state = { heads: [] };
+  // state = { heads: [] };
 
-  componentDidMount() {
-    api.heads.list(data => this.setState({ heads: data }));
-  }
+  // componentDidMount() {
+  //   api.heads.list(data => this.setState({ heads: data }));
+  // }
 
   render() {
     return (
@@ -49,16 +49,18 @@ class JobComponents extends React.Component {
                         <div className="col-12">
                           <OffsetButtons
                             title="Move"
-                            heads={this.state.heads}
+                            heads={this.props.heads}
                             onClick={offset => {
-                              let positions = {};
-                              Object.keys(feeder.point).map(key => {
-                                positions[key] = feeder.point[key];
-                                if (offset.hasOwnProperty(key)) {
-                                  positions[key] += offset[key];
-                                }
+                              let point = { ...this.props.origin };
+                              Object.keys(point).forEach(key => {
+                                // component offset
+                                component.offset.hasOwnProperty(key) &&
+                                  (point[key] += component.offset[key]);
+                                // head offset
+                                offset.hasOwnProperty(key) &&
+                                  (point[key] += offset[key]);
                               });
-                              api.axis.positions.update(positions);
+                              api.axis.positions.update(point);
                             }}
                           />
                         </div>

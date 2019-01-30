@@ -66,6 +66,7 @@ class UpdateFrom extends React.Component {
               </div>
               <div className="col-md-12">
                 <PointFormGroup
+                  label="Point:"
                   point={this.state.feeder.point}
                   heads={this.props.heads}
                   onChange={(axis, value) => {

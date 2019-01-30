@@ -5,16 +5,23 @@ import {
   Collapsible,
   CollapsibleControlButton
 } from "../../../components/Collapsible";
+import CheckBox from "../../../components/CheckBox";
 import ObjectProps from "../ObjectProps";
 import OffsetButtons from "../OffsetButtons";
 import UpdateBoardForm from "./UpdateBoardForm";
+import { timingSafeEqual } from "crypto";
 
 class JobBoards extends React.Component {
-  state = { heads: [] };
+  // state = { heads: [], refId: null };
 
-  componentDidMount() {
-    api.heads.list(data => this.setState({ heads: data }));
-  }
+  // changeRefId() {
+  //   this.props.onRefIdChange();
+  // }
+
+  // componentDidMount() {
+  //   api.heads.list(data => this.setState({ heads: data }));
+  //   this.setState({ refId: this.props.boards[0].id });
+  // }
 
   render() {
     return (
@@ -37,7 +44,16 @@ class JobBoards extends React.Component {
                 <React.Fragment key={board.id}>
                   <tr className="border-left border-right">
                     <th scope="row">{board.id}</th>
-                    <td>ref</td>
+                    <td>
+                      <CheckBox
+                        checked={
+                          board.id === this.props.referenceId ? true : false
+                        }
+                        onChange={value =>
+                          value && this.props.onReferenceIdChange(board.id)
+                        }
+                      />
+                    </td>
                     <td>
                       <ObjectProps object={board.origin} />
                     </td>
@@ -48,16 +64,15 @@ class JobBoards extends React.Component {
                         <div className="col-12">
                           <OffsetButtons
                             title="Move"
-                            heads={this.state.heads}
+                            heads={this.props.heads}
                             onClick={offset => {
-                              let positions = {};
-                              Object.keys(feeder.point).map(key => {
-                                positions[key] = feeder.point[key];
-                                if (offset.hasOwnProperty(key)) {
-                                  positions[key] += offset[key];
+                              let origin = { ...board.origin }; //shallow clone
+                              Object.keys(offset).forEach(key => {
+                                if (origin.hasOwnProperty(key)) {
+                                  origin[key] += offset[key];
                                 }
                               });
-                              api.axis.positions.update(positions);
+                              api.axis.positions.update(origin);
                             }}
                           />
                         </div>
@@ -77,10 +92,22 @@ class JobBoards extends React.Component {
                   <tr className="border border-top-0">
                     <td colSpan="7" className="py-0">
                       <Collapsible id={board.id}>
-                        <hr className="mt-0 px-2" />
+                        <hr
+                          className="mt-0 px-2"
+                          style={{ borderStyle: "dotted" }}
+                        />
                         <UpdateBoardForm
-                          heads={this.state.heads}
+                          heads={this.props.heads}
                           board={board}
+                          onUpdate={updatedBoard => {
+                            let job = { ...this.props.job };
+                            job.boards.forEach(b => {
+                              if (b.id === board.id) {
+                                b = updatedBoard;
+                              }
+                            });
+                            api.jobs.update(job.id, job);
+                          }}
                         />
                       </Collapsible>
                     </td>

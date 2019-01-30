@@ -214,9 +214,9 @@ class ApiEndpoint {
 api.errorHandler = errorHandler;
 api.actuators = actuators;
 api.axis = axis;
-api.nozzleCarriages = new ApiEndpoint("/nozzle_carriages");
-api.heads = new ApiEndpoint("/heads");
-api.feeders = new ApiEndpoint("/feeders");
-api.jobs = new ApiEndpoint("/jobs");
+api.nozzleCarriages = new ApiEndpoint("/nozzle_carriages/");
+api.heads = new ApiEndpoint("/heads/");
+api.feeders = new ApiEndpoint("/feeders/");
+api.jobs = new ApiEndpoint("/jobs/");
 
 export default api;

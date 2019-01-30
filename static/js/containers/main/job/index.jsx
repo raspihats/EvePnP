@@ -5,7 +5,7 @@ import JobBoards from "./JobBoards";
 import JobComponents from "./JobComponents";
 
 class Job extends React.Component {
-  state = { heads: [], jobs: [], job: null };
+  state = { heads: [], jobs: [], job: null, referenceId: null };
 
   listHeads() {
     api.heads.list(data => this.setState({ heads: data }));
@@ -17,18 +17,14 @@ class Job extends React.Component {
     );
   }
 
-  componentDidMount() {
-    this.listHeads();
-    this.listFeeders();
-  }
-
   onSelect(id) {
     if (id == null) {
       this.setState({ job: null });
     } else {
-      api.get("/jobs/" + id).then(response => {
+      api.jobs.get(id, data => {
         this.setState({
-          job: response.data
+          job: data,
+          referenceId: data.boards[0].id
         });
       });
     }
@@ -41,10 +37,9 @@ class Job extends React.Component {
   onStart(id) {}
 
   onDelete(id) {
-    api.delete("/jobs/" + id).then(response => {
-      this.setState({
-        jobs: response.data.map(job => job.id).sort()
-      });
+    api.jobs.delete(id, () => {
+      this.setState({ job: null });
+      this.listJobs();
     });
   }
 
@@ -58,6 +53,14 @@ class Job extends React.Component {
   }
 
   render() {
+    let origin = null;
+    this.state.job &&
+      this.state.job.boards.forEach(board => {
+        if (board.id === this.state.referenceId) {
+          origin = board.origin;
+        }
+      });
+
     return (
       <div className="row">
         <div className="col-12 col-md-8 col-lg-6">
@@ -72,10 +75,23 @@ class Job extends React.Component {
           />
         </div>
         <div className="col-12 pt-3">
-          {this.state.job && <JobBoards job={this.state.job} />}
+          {this.state.job && (
+            <JobBoards
+              heads={this.state.heads}
+              job={this.state.job}
+              referenceId={this.state.referenceId}
+              onReferenceIdChange={id => this.setState({ referenceId: id })}
+            />
+          )}
         </div>
         <div className="col-12 pt-3">
-          {this.state.job && <JobComponents job={this.state.job} />}
+          {this.state.job && (
+            <JobComponents
+              heads={this.state.heads}
+              job={this.state.job}
+              origin={origin}
+            />
+          )}
         </div>
       </div>
     );

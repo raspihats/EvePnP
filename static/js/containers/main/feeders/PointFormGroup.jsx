@@ -23,7 +23,7 @@ class PointFormGroup extends React.Component {
   render() {
     return (
       <div className="form-group">
-        <label htmlFor="code">Point:</label>
+        <label htmlFor="code">{this.props.label}</label>
         <div className="form-row">
           <div className="form-group col-6 mb-1">
             {Object.keys(this.props.point)

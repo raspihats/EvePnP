@@ -394,5 +394,134 @@ feeders_table.insert_multiple([
     }
 ])
 
+
+packages_table = db.table("packages")
+packages_table.purge()
+# resistors
+packages_table.insert_multiple([
+    {
+        "id": "RES-0201",
+        "length": 0.60,
+        "width": 0.30,
+        "height": 0.25
+    },
+    {
+        "id": "RES-0402",
+        "length": 1.00,
+        "width": 0.50,
+        "height": 0.35
+    },
+    {
+        "id": "RES-0603",
+        "length": 1.55,
+        "width": 0.85,
+        "height": 0.45
+    },
+    {
+        "id": "RES-0805",
+        "length": 2.00,
+        "width": 1.20,
+        "height": 0.45
+    },
+    {
+        "id": "RES-1206",
+        "length": 3.20,
+        "width": 1.60,
+        "height": 0.55
+    },
+    {
+        "id": "RES-1210",
+        "length": 3.20,
+        "width": 2.20,
+        "height": 0.55
+    },
+    {
+        "id": "RES-1218",
+        "length": 3.20,
+        "width": 4.60,
+        "height": 0.55
+    },
+    {
+        "id": "RES-2010",
+        "length": 5.00,
+        "width": 2.50,
+        "height": 0.60
+    },
+    {
+        "id": "RES-2512",
+        "length": 6.30,
+        "width": 3.20,
+        "height": 0.60
+    }
+])
+
+# capacitors
+packages_table.insert_multiple([
+    {
+        "id": "CAP-0201",
+        "length": 0.60,
+        "width": 0.30,
+        "height": 0.50
+    },
+    {
+        "id": "CAP-0402",
+        "length": 1.00,
+        "width": 0.50,
+        "height": 0.50
+    },
+    {
+        "id": "CAP-0603",
+        "length": 1.55,
+        "width": 0.85,
+        "height": 1.00
+    },
+    {
+        "id": "CAP-0805",
+        "length": 2.00,
+        "width": 1.20,
+        "height": 1.00
+    },
+    {
+        "id": "CAP-1206",
+        "length": 3.20,
+        "width": 1.60,
+        "height": 1.00
+    },
+    {
+        "id": "CAP-1210",
+        "length": 3.20,
+        "width": 2.20,
+        "height": 1.00
+    }
+])
+
+# leds
+packages_table.insert_multiple([
+    {
+        "id": "LED-0603",
+        "length": 1.55,
+        "width": 0.85,
+        "height": 1.00
+    }
+])
+
+# diodes, transistors
+packages_table.insert_multiple([
+    {
+        "id": "SOD-80",
+        "length": 3.70,
+        "width": 1.7,
+        "height": 1.7
+    },
+    {
+        "id": "SOT-23",
+        "length": 3.10,
+        "width": 2.60,
+        "height": 1.20
+    },
+
+])
+
+
 # make sure that all data is safely written when using Caching
 db.close()

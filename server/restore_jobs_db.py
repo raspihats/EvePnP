@@ -280,7 +280,7 @@ jobs_table.insert({
             },
             "rotation": 0,
             "value": "OSG50603C1E",
-            "package": "0603"
+            "package": "LED-0603"
         },
         {
             "id": "LD2",
@@ -291,7 +291,7 @@ jobs_table.insert({
             },
             "rotation": 0,
             "value": "OSG50603C1E",
-            "package": "0603"
+            "package": "LED-0603"
         },
         {
             "id": "LD3",
@@ -302,7 +302,7 @@ jobs_table.insert({
             },
             "rotation": 0,
             "value": "OSG50603C1E",
-            "package": "0603"
+            "package": "LED-0603"
         },
         {
 
@@ -314,7 +314,7 @@ jobs_table.insert({
             },
             "rotation": 0,
             "value": "OSG50603C1E",
-            "package": "0603"
+            "package": "LED-0603"
         }
     ]
 })

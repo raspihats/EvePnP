@@ -9,7 +9,7 @@ point_model = api.model('Point', {
     'z': fields.Float(required=True, description='Z axis position')
 })
 
-component_model = api.model('Component', {
+component_model = api.model('FeederComponent', {
     'value': fields.String(required=True, description='Component value'),
     'package': fields.String(required=True, description='Component package')
     # 'type': fields.String(required=True, description='Component type'),

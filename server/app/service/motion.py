@@ -13,14 +13,15 @@ class MotionService(object):
     def park(self, axis_list, speed_factor=1):
         # add park position to axis in axis_list and determine minimum feed_rate
         min_feed_rate = None
+        positions = {}
         for axis_config in axis_dao.get_list():
             for axis in axis_list:
                 if axis['id'] == axis_config['id']:
-                    axis['position'] = axis_config['park']
+                    positions[axis['id']] = axis_config['park']
                     if min_feed_rate is None or min_feed_rate > axis_config['feed_rate']:
                         min_feed_rate = axis_config['feed_rate']
         controllers_service.motion_controller.move(
-            axis_list, min_feed_rate * speed_factor)
+            positions, min_feed_rate * speed_factor)
 
     def jog(self, axis, speed_factor=1):
         feed_rate = None
@@ -28,17 +29,19 @@ class MotionService(object):
             if axis['id'] == axis_config['id']:
                 feed_rate = axis_config['feed_rate']
         controllers_service.motion_controller.jog(
-            axis, feed_rate * speed_factor)
+            axis['id'], axis['step'], feed_rate * speed_factor)
 
     def move(self, axis_list, speed_factor=1):
         min_feed_rate = None
+        positions = {}
         for axis_config in axis_dao.get_list():
             for axis in axis_list:
                 if axis['id'] == axis_config['id']:
+                    positions[axis['id']] = axis['position']
                     if min_feed_rate is None or min_feed_rate > axis_config['feed_rate']:
                         min_feed_rate = axis_config['feed_rate']
         controllers_service.motion_controller.move(
-            axis_list, min_feed_rate * speed_factor)
+            positions, min_feed_rate * speed_factor)
 
     def move_safe(self, axis_list, speed_factor=1):
         self.park([{'id': 'z'}])

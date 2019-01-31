@@ -74,6 +74,15 @@ class DAO(object):
         else:
             self._fire_on_change()
 
+    def search(self, query):
+        # query = None
+        # for key in d:
+        #     if query is None:
+        #         query = (where(key) == d[key])
+        #     else:
+        #         query &= (where(key) == d[key])
+        return self._db_table.search(query)
+
 
 actuators_dao = DAO(db_hardware, 'actuators')
 axis_dao = DAO(db_hardware, 'axis')

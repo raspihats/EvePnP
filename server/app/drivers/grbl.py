@@ -171,18 +171,18 @@ class Grbl(object):
     def pause(self, interval):
         self.exec("G4P{}".format(interval))
 
-    def move(self, axis_list, feed_rate):
+    def move(self, positions, feed_rate):
         g_code = "G1"
-        for axis in axis_list:
-            g_code += " {}{}".format(axis['id'].upper(), -axis['position'])
+        for axis in positions:
+            g_code += " {}{}".format(axis.upper(), -positions[axis])
         g_code += " F{}".format(feed_rate)
         self.exec(g_code)
 
-    def jog(self, axis, feed_rate):
+    def jog(self, axis, step, feed_rate):
         # G20 or G21 - Inch and millimeter mode
         # G90 or G91 - Absolute and incremental distances
         g_code = "$J=G91 G21 {}{} F{}".format(
-            axis['id'].upper(), -axis['step'], feed_rate)
+            axis.upper(), -step, feed_rate)
         self.exec(g_code)
 
     @property

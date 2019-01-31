@@ -151,9 +151,16 @@ controllers_table.insert_multiple([
     }
 ])
 
-feeders_default_code = """# get_point gets called before pick operation 
+feeders_code_xn = """# get_point gets called before pick operation 
 # and should return the next pick point
 def get_point(point, count, size):
+    point['x'] -= (size-count) * 3.98
+    return point"""
+
+feeders_code_xp = """# get_point gets called before pick operation 
+# and should return the next pick point
+def get_point(point, count, size):
+    point['x'] += (size-count) * 3.98
     return point"""
 
 feeders_table = db.table("feeders")
@@ -162,235 +169,188 @@ feeders_table.insert_multiple([
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_1",
         "size": 48,
         "component": {
-            "value": "5.6K",
-            "package": "1206",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "5.6K 1%",
+            "package": "RES-1206"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_2",
         "size": 48,
         "component": {
-            "value": "10nF",
-            "voltage": "50V",
-            "package": "0603",
-            "type": "capacitor",
-            "tolerance": "10%"
+            "value": "10nF 50V 10%",
+            "package": "CAP-0603"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.7, "y": 142.1, "z": 30},
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_3",
         "size": 48,
         "component": {
-            "value": "24K",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "24K 1%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_4",
         "size": 48,
         "component": {
-            "value": "18K",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "18K 1%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_5",
         "size": 48,
         "component": {
-            "value": "47K",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "47K 1%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_6",
         "size": 48,
         "component": {
-            "value": "12pF",
-            "voltage": "50V",
-            "package": "0603",
-            "type": "capacitor",
-            "tolerance": "5%"
+            "value": "12pF 50V 5%",
+            "package": "CAP-0603"
         },
         "point": {"y": 136.5, "x": 39.0, "z": 23},
-        "code": feeders_default_code
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_7",
         "size": 48,
         "component": {
-            "value": "1uF",
-            "voltage": "50V",
-            "package": "0603",
-            "type": "capacitor",
-            "tolerance": "5%"
+            "value": "1uF 50V 5%",
+            "package": "CAP-0603"
         },
         "point": {"y": 136.5, "x": 39.0, "z": 23},
-        "code": feeders_default_code
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_8",
         "size": 48,
         "component": {
-            "value": "100nF",
-            "voltage": "10V",
-            "package": "0603",
-            "type": "capacitor",
-            "tolerance": "5%"
+            "value": "100nF 10V 5%",
+            "package": "CAP-0603"
         },
         "point": {"y": 136.5, "x": 39.0, "z": 23},
-        "code": feeders_default_code
+        "code": feeders_code_xn
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 136.5, "x": 39.0, "z": 23},
         "id": "StripFeeder_9",
         "size": 48,
-        "component": {"value": "BSS84", "package": "SOT23", "type": "nmos"},
+        "component": {"value": "BSS84", "package": "SOT-23"},
         "point": {"y": 136.5, "x": 39.0, "z": 23},
-        "code": feeders_default_code
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_10",
         "size": 48,
         "component": {
-            "value": "680R",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "5%"
+            "value": "680R 5%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_11",
         "size": 48,
         "component": {
-            "value": "10K",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "10K 1%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_12",
         "size": 48,
-        "component": {"value": "OSG050603", "package": "0603", "type": "led"},
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "component": {"value": "OSG050603", "package": "LED-0603"},
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_13",
         "size": 48,
         "component": {
             "value": "PDTC114ET",
-            "package": "SOT23",
-            "type": "transistor"
+            "package": "SOT-23",
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_14",
         "size": 48,
         "component": {
-            "value": "0R",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "1%"
+            "value": "0R 1%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_15",
         "size": 48,
         "component": {
-            "value": "150R",
-            "package": "0603",
-            "type": "resistor",
-            "tolerance": "5%"
+            "value": "150R 5%",
+            "package": "RES-0603"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     },
     {
         "count": 48,
         "type": "StripFeeder",
-        "end_point": {"y": 141.6, "x": 37.925, "z": 23},
         "id": "StripFeeder_16",
         "size": 48,
         "component": {
             "value": "LL4148",
-            "package": "SOD80",
-            "type": "diode",
-            "tolerance": "5%"
+            "package": "SOD-80"
         },
-        "point": {"y": 139.4, "x": 225.0, "z": 23},
-        "code": feeders_default_code
+        "point": {"x": 225.9, "y": 130, "z": 30},
+        "code": feeders_code_xp
     }
 ])
 

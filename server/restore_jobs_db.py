@@ -13,9 +13,9 @@ jobs_table.insert({
         {
             "id": "Board_1",
             "origin": {
-                "x": 84.16,
-                "y": 50.0,
-                "z": 20
+                "x": 87.80,
+                "y": 54.00,
+                "z": 15
             },
             "rotation": 0,
             "operation": "place"
@@ -23,12 +23,12 @@ jobs_table.insert({
         {
             "id": "Board_2",
             "origin": {
-                "x": 170,
-                "y": 50.0,
-                "z": 20
+                "x": 172.80,
+                "y": 54.00,
+                "z": 15
             },
             "rotation": 0,
-            "operation": "place"
+            "operation": "ignore"
         },
     ],
     "components": [
@@ -60,7 +60,7 @@ jobs_table.insert({
                 "x": 8.26,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C1"
@@ -71,7 +71,7 @@ jobs_table.insert({
                 "x": 13.18,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C2"
@@ -82,7 +82,7 @@ jobs_table.insert({
                 "x": 18.1,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C3",
@@ -93,7 +93,7 @@ jobs_table.insert({
                 "x": 23.02,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C4",
@@ -104,7 +104,7 @@ jobs_table.insert({
                 "x": 28.26,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C5",
@@ -115,7 +115,7 @@ jobs_table.insert({
                 "x": 33.18,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C6",
@@ -126,7 +126,7 @@ jobs_table.insert({
                 "x": 38.1,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C7",
@@ -137,7 +137,7 @@ jobs_table.insert({
                 "x": 43.02,
                 "y": 12.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 90,
             "package": "CAP-0603",
             "id": "C8",
@@ -148,7 +148,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 12.54
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C9"
@@ -160,7 +160,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 17.46
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C10"
@@ -171,7 +171,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 22.38
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C11"
@@ -182,7 +182,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 27.3
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C12"
@@ -193,7 +193,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 32.54
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C13"
@@ -204,7 +204,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 37.47
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C14"
@@ -215,7 +215,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 42.39
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C15"
@@ -226,7 +226,7 @@ jobs_table.insert({
                 "x": 72.71,
                 "y": 47.31
             },
-            "value": "10nF",
+            "value": "10nF 50V 10%",
             "rotation": 0,
             "package": "CAP-0603",
             "id": "C16"

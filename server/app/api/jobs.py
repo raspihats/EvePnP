@@ -1,5 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from ..dao import jobs_dao, DAO
+from ..service.job_runner import job_runner_service
 
 api = Namespace('jobs', description='Jobs related operations')
 
@@ -100,5 +101,38 @@ class Job(Resource):
         try:
             jobs_dao.delete(id)
             return '', 204
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+
+# job_runner_model = api.model('Jobrunner', {
+#     'id': fields.String(required=True, description='Job name'),
+#     'board': fields.List(fields.Nested(board_model), required=True),
+#     'placed':
+#     fields.String(required=True, description='Job name')
+# })
+
+@api.route('/runner')
+# @api.param('id', 'The job identifier')
+@api.response(404, 'Job not found')
+class JobRunner(Resource):
+    '''Operations on a single job item given its identifier'''
+
+    @api.doc('get_job')
+    # @api.marshal_with(job_model)
+    def get(self):
+        '''Fetch a job given its identifier'''
+        try:
+            return jobs_dao.get(id)
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+    @api.doc('run_job')
+    @api.expect(job_id_model)
+    # @api.marshal_with(job_model)
+    def put(self):
+        '''Update a job given its identifier'''
+        try:
+            job_runner_service.start(jobs_dao.get(api.payload['id']))
         except DAO.DocumentDoesNotExistError:
             api.abort(404)

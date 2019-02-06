@@ -49,7 +49,11 @@ class Feeder(object):
 
 
 class Head(object):
-    class HeadFullException(Exception):
+    class FullException(Exception):
+        def __init__(self, *args, **kwargs):
+            Exception.__init__(self, *args, **kwargs)
+
+    class EmptyException(Exception):
         def __init__(self, *args, **kwargs):
             Exception.__init__(self, *args, **kwargs)
 
@@ -95,7 +99,9 @@ class Head(object):
 
             place = self._get_function('place')
             place(point, rotation, package)
+            placed_component = self._component
             self._component = None
+            return placed_component
 
     def __init__(self, config):
         self.id = config['id']
@@ -108,16 +114,23 @@ class Head(object):
             if nc.isEmpty():
                 nc.pick(component)
                 return
-        raise self.HeadFullException()
+        raise self.FullException()
 
     def place(self):
         for nc in self.nozzle_carriages:
             if not nc.isEmpty():
-                nc.place()
+                return nc.place()
+        raise self.EmptyException()
 
     def isLoaded(self):
         for nc in self.nozzle_carriages:
             if nc.isEmpty():
+                return False
+        return True
+
+    def isEmpty(self):
+        for nc in self.nozzle_carriages:
+            if not nc.isEmpty():
                 return False
         return True
 
@@ -137,7 +150,7 @@ class JobRunnerService(object):
 
     def __init__(self):
         self._job = None
-        self._placed = []
+        self._progress = {'id': None}
         self._pause = False
         self._stop = False
         self._heads = []
@@ -167,12 +180,8 @@ class JobRunnerService(object):
             if self._job['id'] == id:
                 self._stop = True
 
-    def getProgress(self):
-        _id = self._job['id'] if self._job is not None else None
-        return {
-            'id': _id,
-            'placed': self._placed
-        }
+    def get_progress(self):
+        return self._progress
 
     def _select_feeder(self, component):
         from tinydb import Query
@@ -203,7 +212,10 @@ class JobRunnerService(object):
     def _run(self):
         self._pause = False
         self._stop = False
-        self._placed = []
+        self._progress = {
+            'id': self._job['id'],
+            'boards': []
+        }
 
         print("Starting job: {}".format(self._job['id']))
         actuators_service.actuators['VacuumPump'].set(True)
@@ -215,6 +227,9 @@ class JobRunnerService(object):
         boards = [x for x in self._job['boards'] if x['operation'] == 'place']
 
         for board in boards:
+            board_progress = {'id': board['id'], 'components_ids': []}
+            self._progress['boards'].append(board_progress)
+
             # build new components list including only the ones that should be placed
             components = [x for x in self._job['components']
                           if x['operation'] == 'place']
@@ -226,7 +241,7 @@ class JobRunnerService(object):
             while len(components):
                 if self._stop:
                     self._job = None
-                    return
+                    break
 
                 if not self._pause:
                     # pick multiple components
@@ -246,9 +261,12 @@ class JobRunnerService(object):
 
                     # place multiple components
                     for head in self._heads:
-                        head.place()
+                        while not head.isEmpty():
+                            placed_component = head.place()
+                            board_progress['components_ids'].append(
+                                placed_component['id'])
 
-            gevent.sleep(0.1)
+                gevent.sleep(0.1)
 
         motion_service.park([{'id': 'z'}])
         motion_service.park([{'id': 'x'}, {'id': 'y'}])

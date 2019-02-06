@@ -1,4 +1,4 @@
-import threading
+import gevent
 import time
 import serial
 from enum import Enum
@@ -76,8 +76,8 @@ class Status(object):
             raise Exception("Unable to parse status report: {}".format(report))
 
     def _parseFields(self, fields):
-        self.state = fields[0]
-        for field in fields:
+        self.machine_state = fields[0]
+        for field in fields[1:]:
             if field.startswith("MPos:"):
                 self._parseMpos(field)
             # elif field.startswith("A:"):
@@ -109,7 +109,7 @@ class Grbl(object):
             parity=self.config['port']['parity'],
             stopbits=self.config['port']['stopbits']
         )
-        self._port_lock = threading.Lock()
+        self._port_lock = gevent.lock.Semaphore()
 
         self.exec("$X")
 
@@ -129,7 +129,7 @@ class Grbl(object):
             self._port.write((command + '\n').encode())
             response = ""
             while(True):
-                time.sleep(0.001)
+                gevent.sleep(0.01)
 
                 while self._port.in_waiting > 0:
                     response_bytes = self._port.read(self._port.in_waiting)
@@ -157,6 +157,15 @@ class Grbl(object):
             self._port.write(command.value.to_bytes(1, 'big'))
 
     @property
+    def machine_state(self):
+        response = self.exec("?", timeout=0.5)
+        status = Status(response)
+        if hasattr(status, 'machine_state'):
+            return status.machine_state
+        else:
+            return None
+
+    @property
     def position(self):
         response = self.exec("?", timeout=0.5)
         status = Status(response)
@@ -177,6 +186,9 @@ class Grbl(object):
             g_code += " {}{}".format(axis.upper(), -positions[axis])
         g_code += " F{}".format(feed_rate)
         self.exec(g_code)
+        # wait for place operation to complete
+        while self.machine_state == "Run":
+            gevent.sleep(0.1)
 
     def jog(self, axis, step, feed_rate):
         # G20 or G21 - Inch and millimeter mode
@@ -184,6 +196,9 @@ class Grbl(object):
         g_code = "$J=G91 G21 {}{} F{}".format(
             axis.upper(), -step, feed_rate)
         self.exec(g_code)
+        # wait for place operation to complete
+        while self.machine_state == "Run":
+            gevent.sleep(0.1)
 
     @property
     def spindle_duty(self):

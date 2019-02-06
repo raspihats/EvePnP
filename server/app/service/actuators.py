@@ -36,12 +36,13 @@ class ActuatorsService(object):
 
     def get_values_list(self):
         actuators = []
-        for _id, _actuator in self.actuators:
+        for key in self.actuators:
             actuators.append({
-                'id': _actuator.id,
-                'type': _actuator.type,
-                'value': _actuator.get()
+                'id': self.actuators[key].id,
+                'type': self.actuators[key].type,
+                'value': self.actuators[key].get()
             })
+        return actuators
 
     def get_value(self, id):
         actuator = self.actuators[id]

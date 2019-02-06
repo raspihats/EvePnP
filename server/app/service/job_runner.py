@@ -1,6 +1,125 @@
 import gevent
-from ..dao import feeders_dao
+from ..dao import feeders_dao, heads_dao, nozzle_carriages_dao, axis_dao, packages_dao, jobs_dao
 from .controllers import controllers_service
+from .actuators import actuators_service
+from .motion import motion_service
+
+
+def _add_points(p1, p2):
+    result = dict(p1)
+    for key in p2:
+        if key in p1:
+            result[key] = p1[key] + p2[key]
+        else:
+            result[key] = p2[key]
+    return result
+
+
+class Package(object):
+    def __init__(self, config):
+        self._config = dict(config)
+
+    def __getattr__(self, attribute):
+        return self._config[attribute]
+
+
+class Axis(object):
+    def __init__(self, config):
+        self._config = dict(config)
+
+    def __getattr__(self, attribute):
+        return self._config[attribute]
+
+
+class Feeder(object):
+    def __init__(self, config):
+        self._config = config
+
+    def get_point(self):
+        _globals = {}
+        _locals = {}
+        exec(self._config['code'], _globals, _locals)
+        get_point = _locals['get_point']
+
+        point = get_point(
+            dict(self._config['point']), self._config['count'], self._config['size'])
+        self._config['count'] -= 1
+        feeders_dao.update(self._config['id'], self._config)
+        return point
+
+
+class Head(object):
+    class HeadFullException(Exception):
+        def __init__(self, *args, **kwargs):
+            Exception.__init__(self, *args, **kwargs)
+
+    class NozzleCarriage(object):
+        def __init__(self, config):
+            self._config = nozzle_carriages_dao.get(config['id'])
+            self._config['offset'] = config['offset']
+            self._component = None
+
+        def isEmpty(self):
+            return self._component == None
+
+        def _get_function(self, name):
+            axis = {}
+            for axis_config in axis_dao.get_list():
+                axis[axis_config['id']] = Axis(axis_config)
+
+            _locals = {}
+            _globals = dict(self._config)
+            _globals['controllers'] = controllers_service.controllers
+            _globals['actuators'] = actuators_service.actuators
+            _globals['axis'] = axis
+            exec(self._config['code'], _globals, _locals)
+            return(_locals[name])
+
+        def pick(self, component):
+            point = _add_points(
+                component['pick_point'], self._config['offset'])
+
+            print('Pick point: {}'.format(point))
+
+            pick = self._get_function('pick')
+            pick(point)
+            self._component = component
+
+        def place(self):
+            point = _add_points(
+                self._component['place_point'], self._config['offset'])
+            rotation = self._component['rotation']
+            package = Package(packages_dao.get(self._component['package']))
+
+            print('Place point: {}'.format(point))
+
+            place = self._get_function('place')
+            place(point, rotation, package)
+            self._component = None
+
+    def __init__(self, config):
+        self.id = config['id']
+        self.nozzle_carriages = []
+        for nc_config in config['nozzle_carriages']:
+            self.nozzle_carriages.append(self.NozzleCarriage(nc_config))
+
+    def pick(self, component):
+        for nc in self.nozzle_carriages:
+            if nc.isEmpty():
+                nc.pick(component)
+                return
+        raise self.HeadFullException()
+
+    def place(self):
+        for nc in self.nozzle_carriages:
+            if not nc.isEmpty():
+                nc.place()
+
+    def isLoaded(self):
+        for nc in self.nozzle_carriages:
+            if nc.isEmpty():
+                return False
+        return True
 
 
 class JobRunnerService(object):
@@ -21,19 +140,32 @@ class JobRunnerService(object):
         self._placed = []
         self._pause = False
         self._stop = False
+        self._heads = []
+        self._load_heads()
 
-    def start(self, job):
+    def _load_heads(self):
+        self._heads = []
+        for head_config in heads_dao.get_list():
+            self._heads.append(Head(head_config))
+
+    def start(self, id):
         if self._job is None:
-            self._job = job
+            self._job = jobs_dao.get(id)
             gevent.spawn(lambda: self._run())
+        elif self._pause:
+            self._pause = False
         else:
             raise Exception("Job {} is already running".format(self._job.id))
 
-    def pause(self):
-        self._pause = True
+    def pause(self, id):
+        if self._job is not None:
+            if self._job['id'] == id:
+                self._pause = True
 
-    def stop(self):
-        self._stop = True
+    def stop(self, id):
+        if self._job is not None:
+            if self._job['id'] == id:
+                self._stop = True
 
     def getProgress(self):
         _id = self._job['id'] if self._job is not None else None
@@ -57,56 +189,16 @@ class JobRunnerService(object):
         feeders_pvm = [x for x in feeders if x['component']
                        ['value'] == component['value']]
         if len(feeders_pvm) > 0:
-            return feeders_pvm[0]
+            return Feeder(feeders_pvm[0])
 
         # search for value match
         feeders_vm = [x for x in feeders if component['value']
                       in x['component']['value']]
         if len(feeders_vm) > 0:
-            return feeders_vm[0]
+            return Feeder(feeders_vm[0])
 
         raise self.FeederNotFoundError("Can't find feeder for: {} {} {}".format(
             component['id'], component['value'], component['package']))
-
-    def _pick(self, component):
-        feeder = self._select_feeder(component)
-        if feeder is not None:
-            _globals = {}
-            _locals = {}
-            exec(feeder['code'], _globals, _locals)
-            get_point = _locals['get_point']
-
-            point = get_point(
-                dict(feeder['point']), feeder['count'], feeder['size'])
-            print(point)
-            z = point.pop('z', None)
-
-            controllers_service.motion_controller.move(
-                point, 25000)
-            controllers_service.motion_controller.move(
-                {'z': z}, 10000)
-            controllers_service.motion_controller.move(
-                {'z': 59}, 10000)
-
-            feeder['count'] -= 1
-            feeders_dao.update(feeder['id'], feeder)
-
-            return True
-
-        return False
-
-    def _place(self, board, component):
-        point = dict(board['origin'])
-        point['x'] += component['offset']['x']
-        point['y'] += component['offset']['y']
-        z = point.pop('z', None)
-
-        controllers_service.motion_controller.move(
-            point, 25000)
-        controllers_service.motion_controller.move(
-            {'z': z}, 10000)
-        controllers_service.motion_controller.move(
-            {'z': 59}, 10000)
 
     def _run(self):
         self._pause = False
@@ -114,23 +206,54 @@ class JobRunnerService(object):
         self._placed = []
 
         print("Starting job: {}".format(self._job['id']))
+        actuators_service.actuators['VacuumPump'].set(True)
 
-        for board in self._job['boards']:
-            if board['operation'] == 'place':
-                for component in self._job['components']:
-                    if component['operation'] == 'place':
-                        if self._stop:
-                            self._job = None
-                            return
-                        if not self._pause:
-                            print("part: {}".format(component['id']))
+        motion_service.park([{'id': 'z'}])
+        motion_service.park([{'id': 'x'}, {'id': 'y'}])
+
+        # build new boards list including only the ones that should be placed
+        boards = [x for x in self._job['boards'] if x['operation'] == 'place']
+
+        for board in boards:
+            # build new components list including only the ones that should be placed
+            components = [x for x in self._job['components']
+                          if x['operation'] == 'place']
+
+            # sort components, group them using packages and values
+            components.sort(key=lambda x: '{} {}'.format(
+                x['package'], x['value']))
+
+            while len(components):
+                if self._stop:
+                    self._job = None
+                    return
+
+                if not self._pause:
+                    # pick multiple components
+                    for head in self._heads:
+                        while not head.isLoaded() and len(components):
+                            component = components[0]
                             try:
-                                self._pick(component)
-                                self._place(board, component)
+                                feeder = self._select_feeder(component)
+                                component['pick_point'] = feeder.get_point()
+                                component['place_point'] = _add_points(
+                                    board['origin'], component['offset'])
+                                head.pick(component)
                             except self.FeederNotFoundError as e:
                                 print(e)
+                            finally:
+                                components.remove(component)
 
-                        gevent.sleep(0.1)
+                    # place multiple components
+                    for head in self._heads:
+                        head.place()
+
+            gevent.sleep(0.1)
+
+        motion_service.park([{'id': 'z'}])
+        motion_service.park([{'id': 'x'}, {'id': 'y'}])
+
+        actuators_service.actuators['VacuumPump'].set(False)
 
         print("Finished job: {}".format(self._job['id']))
         self._job = None

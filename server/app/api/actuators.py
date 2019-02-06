@@ -8,8 +8,7 @@ actuator_model = api.model('Actuator', {
     'id': fields.String(required=True, description='Actuator id'),
     'type': fields.String(required=True, description='Actuator type'),
     'initial_value': fields.Float(required=True, description='Actuator initial value'),
-    'set_code': fields.String(required=True, description='Actuator initial value'),
-    'get_code': fields.String(required=True, description='Actuator initial value')
+    'code': fields.String(required=True, description='Actuator set/get functions')
 })
 
 actuator_value_model = api.model('ActuatorValue', {

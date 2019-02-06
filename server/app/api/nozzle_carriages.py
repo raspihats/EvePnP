@@ -6,9 +6,10 @@ api = Namespace('nozzle_carriages',
 
 nozzle_carriage_model = api.model('NozzleCarriage', {
     'id': fields.String(required=True, description='Nozzle carriage identifier'),
-    'rotation_axis_id': fields.String(required=True, description='Nozzle carriage rotation axis'),
     'pnp_axis_id': fields.String(required=True, description='Nozzle carriage pick n place axis'),
-    'vacuum_actuator_id': fields.String(required=True, description='Actuator identifier')
+    'rotation_axis_id': fields.String(required=True, description='Nozzle carriage rotation axis'),
+    'vacuum_actuator_id': fields.String(required=True, description='Actuator identifier'),
+    'code': fields.String(required=True, description='Pick and place functions')
 })
 
 

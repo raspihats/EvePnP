@@ -51,42 +51,163 @@ actuators_table.insert_multiple([
     {
         "id": "VacuumPump",
         "type": "ToggleActuator",
-        "inital_value": 0,
-        "set_code": "controllers['MC1'].spindle_duty = value * 100",
-        "get_code": "result = 1 if controllers['MC1'].spindle_duty else 0"
+        "initial_value": 0,
+        "code": """
+def set(value):
+    controllers['MC1'].spindle_duty = value * 100
+
+def get():
+    return 1 if controllers['MC1'].spindle_duty else 0
+"""
     },
     {
         "id": "Valve1",
         "type": "ToggleActuator",
-        "inital_value": 0,
-        "set_code": "controllers['MC1'].coolant_flood = value",
-        "get_code": "result = controllers['MC1'].coolant_flood"
+        "initial_value": 0,
+        "code": """
+def set(value):
+    controllers['MC1'].coolant_flood = value
+
+def get():
+    controllers['MC1'].coolant_flood
+"""
     },
     {
         "id": "Valve2",
         "type": "ToggleActuator",
-        "inital_value": 0,
-        "set_code": "controllers['MC1'].coolant_mist = value",
-        "get_code": "result = controllers['MC1'].coolant_mist"
+        "initial_value": 0,
+        "code": """
+def set(value):
+    controllers['MC1'].coolant_mist = value
+
+def get():
+    controllers['MC1'].coolant_mist
+"""
     }
 ])
 
+
+nc_one_code = """
+def pick(point):
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = point.pop('z')
+
+    # park pick n place axis
+    controllers['MC1'].move(
+        {
+            pnp_axis_id: axis[pnp_axis_id].park
+        }, 25000)
+
+    # move to pick point
+    controllers['MC1'].move({
+        'x': x_position, 
+        'y': y_position,
+        rotation_axis_id: 0
+    }, 25000)
+
+    # descent nozzle
+    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
+
+    # enable vacuum
+    actuators[vacuum_actuator_id].set(True)
+
+    # raise nozzle
+    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
+
+
+def place(point, rotation, package):
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = point.pop('z') + package.height
+
+    # move to pick point and rotate
+    controllers['MC1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: rotation
+        }, 25000)
+
+    # descent nozzle
+    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
+
+    # disable vacuum
+    actuators[vacuum_actuator_id].set(False)
+
+    # raise nozzle
+    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
+"""
+
+nc_two_code = """
+def pick(point):
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = 118 - point.pop('z')
+
+    # park pick n place axis
+    controllers['MC1'].move(
+        {
+            pnp_axis_id: axis[pnp_axis_id].park
+        }, 25000)
+
+    # move to pick point
+    controllers['MC1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: 0
+        }, 25000)
+
+    # descent nozzle
+    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
+
+    # enable vacuum
+    actuators[vacuum_actuator_id].set(True)
+
+    # raise nozzle
+    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
+
+
+def place(point, rotation, package):
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = 118 - (point.pop('z') + package.height)
+
+    # move to pick point and rotate
+    controllers['MC1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: rotation
+        }, 25000)
+
+    # descent nozzle
+    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
+
+    # disable vacuum
+    actuators[vacuum_actuator_id].set(False)
+
+    # raise nozzle
+    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
+"""
 
 nozzle_carriages_table = db.table("nozzle_carriages")
 nozzle_carriages_table.purge()
 nozzle_carriages_table.insert_multiple([
     {
         "id": "NC1",
-        "rotation_axis_id": "a",
         "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve1"
+        "rotation_axis_id": "a",
+        "vacuum_actuator_id": "Valve1",
+        "code": nc_one_code
     },
     {
         "id": "NC2",
-        "rotation_axis_id": "b",
         "pnp_axis_id": "z",
-        "vacuum_actuator_id": "Valve2"
-
+        "rotation_axis_id": "b",
+        "vacuum_actuator_id": "Valve2",
+        "code": nc_two_code
     }
 ])
 
@@ -115,7 +236,7 @@ heads_table.insert_multiple([
             },
             {
                 "id": "NC2",
-                "offset": {"x": 45.0, "y": 0.0}
+                "offset": {"x": -44.0, "y": 0.0}
             }
         ],
         "cameras": [
@@ -167,189 +288,189 @@ feeders_table = db.table("feeders")
 feeders_table.purge()
 feeders_table.insert_multiple([
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_1",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "5.6K 1%",
             "package": "RES-1206"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 225.9, "y": 130.5, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_2",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "10nF 50V 10%",
             "package": "CAP-0603"
         },
-        "point": {"x": 225.7, "y": 142.1, "z": 30},
+        "point": {"x": 226.1, "y": 142.5, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_3",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "24K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 226.1, "y": 154.5, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_4",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "18K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 225.8, "y": 166.6, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_5",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "47K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 225.8, "y": 178.7, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_6",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "12pF 50V 5%",
             "package": "CAP-0603"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "point": {"x": 225.6, "y": 190.7, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_7",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "1uF 50V 5%",
             "package": "CAP-0603"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "point": {"x": 225.6, "y": 202.8, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_8",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "100nF 10V 5%",
             "package": "CAP-0603"
         },
-        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "point": {"x": 225.7, "y": 214.8, "z": 31},
         "code": feeders_code_xn
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_9",
-        "size": 48,
+        "size": 47,
         "component": {"value": "BSS84", "package": "SOT-23"},
-        "point": {"y": 136.5, "x": 39.0, "z": 23},
+        "point": {"x": 252, "y": 133.2, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 23,
         "type": "StripFeeder",
         "id": "StripFeeder_10",
-        "size": 48,
+        "size": 23,
         "component": {
             "value": "680R 5%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 347.4, "y": 146, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 23,
         "type": "StripFeeder",
         "id": "StripFeeder_11",
-        "size": 48,
+        "size": 23,
         "component": {
             "value": "10K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 347.5, "y": 158, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_12",
-        "size": 48,
+        "size": 47,
         "component": {"value": "OSG050603", "package": "LED-0603"},
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 251.8, "y": 169.4, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_13",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "PDTC114ET",
             "package": "SOT-23",
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 251.8, "y": 181.4, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 23,
         "type": "StripFeeder",
         "id": "StripFeeder_14",
-        "size": 48,
+        "size": 23,
         "component": {
             "value": "0R 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 347.3, "y": 194, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 23,
         "type": "StripFeeder",
         "id": "StripFeeder_15",
-        "size": 48,
+        "size": 23,
         "component": {
             "value": "150R 5%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 347.3, "y": 206, "z": 31},
         "code": feeders_code_xp
     },
     {
-        "count": 48,
+        "count": 47,
         "type": "StripFeeder",
         "id": "StripFeeder_16",
-        "size": 48,
+        "size": 47,
         "component": {
             "value": "LL4148",
             "package": "SOD-80"
         },
-        "point": {"x": 225.9, "y": 130, "z": 30},
+        "point": {"x": 251.6, "y": 217.4, "z": 31},
         "code": feeders_code_xp
     }
 ])

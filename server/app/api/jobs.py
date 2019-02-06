@@ -116,23 +116,64 @@ class Job(Resource):
 # @api.param('id', 'The job identifier')
 @api.response(404, 'Job not found')
 class JobRunner(Resource):
-    '''Operations on a single job item given its identifier'''
+    '''Fetch running job status'''
 
-    @api.doc('get_job')
+    @api.doc('get_jobrunner_status')
     # @api.marshal_with(job_model)
     def get(self):
-        '''Fetch a job given its identifier'''
+        '''Fetch running job status'''
         try:
             return jobs_dao.get(id)
         except DAO.DocumentDoesNotExistError:
             api.abort(404)
 
-    @api.doc('run_job')
-    @api.expect(job_id_model)
-    # @api.marshal_with(job_model)
-    def put(self):
-        '''Update a job given its identifier'''
+
+@api.route('/runner/start')
+@api.param('id', 'The job identifier')
+@api.response(404, 'Job not found')
+class JobRunnerStart(Resource):
+    '''Start a job given its identifier'''
+
+    @api.doc('start_job')
+    # @api.expect(job_id_model)
+    # @api.marshal_with(job_id_model)
+    def put(self, id):
+        '''Start a job given its identifier'''
         try:
-            job_runner_service.start(jobs_dao.get(api.payload['id']))
+            job_runner_service.start(id)
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+
+@api.route('/runner/pause')
+@api.param('id', 'The job identifier')
+@api.response(404, 'Job not found')
+class JobRunnerPause(Resource):
+    '''Pause a job given its identifier'''
+
+    @api.doc('pause_job')
+    # @api.expect(job_id_model)
+    # @api.marshal_with(job_id_model)
+    def put(self, id):
+        '''Pause a job given its identifier'''
+        try:
+            job_runner_service.pause(id)
+        except DAO.DocumentDoesNotExistError:
+            api.abort(404)
+
+
+@api.route('/runner/stop')
+@api.param('id', 'The job identifier')
+@api.response(404, 'Job not found')
+class JobRunnerStop(Resource):
+    '''Stop a job given its identifier'''
+
+    @api.doc('pause_job')
+    # @api.expect(job_id_model)
+    # @api.marshal_with(job_id_model)
+    def put(self, id):
+        '''Stop a job given its identifier'''
+        try:
+            job_runner_service.stop(id)
         except DAO.DocumentDoesNotExistError:
             api.abort(404)

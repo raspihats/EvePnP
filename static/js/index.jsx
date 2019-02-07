@@ -17,7 +17,11 @@ import {
   faBullseye,
   faDotCircle,
   faAngleDoubleDown,
-  faAngleDoubleUp
+  faAngleDoubleUp,
+  faPenSquare,
+  faSave,
+  faTimesCircle,
+  faSpinner
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faUpload);
@@ -31,5 +35,9 @@ library.add(faBullseye);
 library.add(faDotCircle);
 library.add(faAngleDoubleDown);
 library.add(faAngleDoubleUp);
+library.add(faPenSquare);
+library.add(faSave);
+library.add(faTimesCircle);
+library.add(faSpinner);
 
 ReactDOM.render(<App />, document.getElementById("container"));

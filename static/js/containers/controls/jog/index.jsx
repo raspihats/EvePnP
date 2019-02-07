@@ -1,5 +1,5 @@
 import React from "react";
-import Select from "../../../components/Select";
+import SelectInputGroup from "../../../components/SelectInputGroup";
 import JogDial from "./JogDial";
 import api from "../../../api";
 
@@ -33,7 +33,7 @@ class Jog extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Select
+        <SelectInputGroup
           small
           prepend="Nozzle Carriage:"
           options={this.getNozzleCarriagesIds()}

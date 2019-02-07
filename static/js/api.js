@@ -74,7 +74,7 @@ const axis = {
             return { id: c };
           }),
           {
-            timeout: 30000
+            timeout: 60000
           }
         )
         .catch(error => {
@@ -87,16 +87,21 @@ const axis = {
           "/axis/positions/park",
           [...axis].map(c => {
             return { id: c };
-          })
+          }),
+          {
+            timeout: 5000
+          }
         )
         .catch(error => {
           errorHandler("Parking error!", error);
         });
     },
     jog: (axis, step) => {
-      api.put("/axis/positions/jog", { id: axis, step: step }).catch(error => {
-        errorHandler("Jog error!", error);
-      });
+      api
+        .put("/axis/positions/jog", { id: axis, step: step }, { timeout: 5000 })
+        .catch(error => {
+          errorHandler("Jog error!", error);
+        });
     },
     update: positions => {
       api
@@ -104,7 +109,8 @@ const axis = {
           "/axis/positions",
           Object.keys(positions).map(key => {
             return { id: key, position: positions[key] };
-          })
+          }),
+          { timeout: 5000 }
         )
         .catch(error => {
           errorHandler("Jog error!", error);
@@ -112,71 +118,6 @@ const axis = {
     }
   }
 };
-
-// const nozzleCarriages = {
-//   list: callback => {
-//     api
-//       .get("nozzle_carriages")
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, list nozzle carriages error!", error);
-//       });
-//   },
-//   get: (id, callback) => {
-//     api
-//       .get("nozzle_carriages/" + id)
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, get nozzle carriages error!", error);
-//       });
-//   },
-//   update: (id, value, callback) => {
-//     api
-//       .put("nozzle_carriages/" + id, { id: id, value: value })
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, update nozzle carriages error!", error);
-//       });
-//   }
-// };
-
-// const heads = {
-//   list: callback => {
-//     api
-//       .get("heads")
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         api.errorHandler("Heads error!", error);
-//       });
-//   }
-// };
-
-// const feeders = {
-//   list: callback => {
-//     api
-//       .get("feeders")
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, list feeders error!", error);
-//       });
-//   },
-//   get: (id, callback) => {
-//     api
-//       .get("feeders/" + id)
-//       .then(response => callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, get feeder error!", error);
-//       });
-//   },
-//   update: (id, feeder, callback = null) => {
-//     api
-//       .put("feeders/" + id, feeder)
-//       .then(response => callback && callback(response.data))
-//       .catch(error => {
-//         errorHandler("Api, update feeder error!", error);
-//       });
-//   }
-// };
 
 class ApiEndpoint {
   constructor(endpoint) {
@@ -201,9 +142,9 @@ class ApiEndpoint {
       });
   }
 
-  update(id, feeder, callback = null) {
+  update(id, data, callback = null) {
     api
-      .put(this.endpoint + id, feeder)
+      .put(this.endpoint + id, data)
       .then(response => callback && callback(response.data))
       .catch(error => {
         errorHandler("Api error, update " + this.endpoint, error);
@@ -218,5 +159,7 @@ api.nozzleCarriages = new ApiEndpoint("/nozzle_carriages/");
 api.heads = new ApiEndpoint("/heads/");
 api.feeders = new ApiEndpoint("/feeders/");
 api.jobs = new ApiEndpoint("/jobs/");
+api.jobsRunner = new ApiEndpoint("/jobs/runner/");
+api.packages = new ApiEndpoint("/packages/");
 
 export default api;

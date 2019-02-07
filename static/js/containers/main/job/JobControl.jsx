@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "../../../components/Select";
+import SelectInputGroup from "../../../components/SelectInputGroup";
 
 const Button = props => {
   return (
@@ -11,7 +11,7 @@ const Button = props => {
       onClick={e => {
         // e.preventDefault();
         // e.target.blur();
-        props.onClick(e);
+        props.onClick();
       }}
     >
       <FontAwesomeIcon icon={props.icon} />
@@ -30,23 +30,19 @@ class JobControl extends React.Component {
         <Button
           title="Upload job"
           icon="upload"
-          onClick={this.props.onUpload}
+          onClick={() => this.props.onUpload()}
         />
       );
     } else {
-      if (this.state.running) {
+      if (this.props.running) {
         return (
           <React.Fragment>
             <Button
               title="Pause job"
               icon="pause"
-              onClick={e => console.log(e)}
+              onClick={() => this.props.onPause()}
             />
-            <Button
-              title="Stop job"
-              icon="stop"
-              onClick={e => console.log(e)}
-            />
+            <Button title="Stop job" icon="stop" onClick={this.props.onStop} />
           </React.Fragment>
         );
       } else {
@@ -55,12 +51,12 @@ class JobControl extends React.Component {
             <Button
               title="Start job"
               icon="play"
-              onClick={e => console.log(e)}
+              onClick={() => this.props.onStart()}
             />
             <Button
               title="Delete job"
               icon="trash"
-              onClick={e => console.log(e)}
+              onClick={() => this.props.onDelete()}
             />
           </React.Fragment>
         );
@@ -70,7 +66,7 @@ class JobControl extends React.Component {
 
   render() {
     return (
-      <Select
+      <SelectInputGroup
         onChange={value => {
           if (value === uploadString) {
             this.props.onSelect(null);
@@ -81,6 +77,8 @@ class JobControl extends React.Component {
         }}
         prepend="Job:"
         options={[uploadString].concat(this.props.jobs)}
+        value={this.props.running}
+        disabled={this.props.running ? true : false}
         append={this.getButtons()}
       />
     );

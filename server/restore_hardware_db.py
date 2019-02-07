@@ -236,13 +236,13 @@ heads_table.insert_multiple([
             },
             {
                 "id": "NC2",
-                "offset": {"x": -44.0, "y": 0.0}
+                "offset": {"x": -43.8, "y": 0.0}
             }
         ],
         "cameras": [
             {
                 "id": "C2",
-                "offset": {"x": 22.5, "y": -20.0}
+                "offset": {"x": -21.9, "y": -20.0}
             }
         ]
     }
@@ -296,7 +296,7 @@ feeders_table.insert_multiple([
             "value": "5.6K 1%",
             "package": "RES-1206"
         },
-        "point": {"x": 225.9, "y": 130.5, "z": 31},
+        "point": {"x": 225.6, "y": 130.5, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -308,7 +308,7 @@ feeders_table.insert_multiple([
             "value": "10nF 50V 10%",
             "package": "CAP-0603"
         },
-        "point": {"x": 226.1, "y": 142.5, "z": 31},
+        "point": {"x": 225.6, "y": 142.5, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -320,7 +320,7 @@ feeders_table.insert_multiple([
             "value": "24K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 226.1, "y": 154.5, "z": 31},
+        "point": {"x": 225.6, "y": 154.5, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -332,7 +332,7 @@ feeders_table.insert_multiple([
             "value": "18K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.8, "y": 166.6, "z": 31},
+        "point": {"x": 225.6, "y": 166.6, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -344,7 +344,7 @@ feeders_table.insert_multiple([
             "value": "47K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 225.8, "y": 178.7, "z": 31},
+        "point": {"x": 225.6, "y": 178.7, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -380,7 +380,7 @@ feeders_table.insert_multiple([
             "value": "100nF 10V 5%",
             "package": "CAP-0603"
         },
-        "point": {"x": 225.7, "y": 214.8, "z": 31},
+        "point": {"x": 225.6, "y": 214.8, "z": 31},
         "code": feeders_code_xn
     },
     {
@@ -421,7 +421,7 @@ feeders_table.insert_multiple([
         "type": "StripFeeder",
         "id": "StripFeeder_12",
         "size": 47,
-        "component": {"value": "OSG050603", "package": "LED-0603"},
+        "component": {"value": "OSG50603C1E", "package": "LED-0603"},
         "point": {"x": 251.8, "y": 169.4, "z": 31},
         "code": feeders_code_xp
     },
@@ -478,6 +478,17 @@ feeders_table.insert_multiple([
 
 packages_table = db.table("packages")
 packages_table.purge()
+
+# fiducials
+packages_table.insert_multiple([
+    {
+        "id": "FID-1x3",
+        "length": 3.00,
+        "width": 3.00,
+        "height": 0.01
+    }
+])
+
 # resistors
 packages_table.insert_multiple([
     {
@@ -600,6 +611,18 @@ packages_table.insert_multiple([
         "width": 2.60,
         "height": 1.20
     },
+    {
+        "id": "SOT-23-5",
+        "length": 3.10,
+        "width": 2.60,
+        "height": 1.20
+    },
+    {
+        "id": "SOT-23-6",
+        "length": 3.10,
+        "width": 2.60,
+        "height": 1.20
+    }
 
 ])
 

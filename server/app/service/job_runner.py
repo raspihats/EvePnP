@@ -203,6 +203,11 @@ class JobRunnerService(object):
         # search for value match
         feeders_vm = [x for x in feeders if component['value']
                       in x['component']['value']]
+
+        for feeder in feeders_vm:
+            if component['value'] == feeder['component']['value'].split(' ')[0]:
+                return Feeder(feeder)
+
         if len(feeders_vm) > 0:
             return Feeder(feeders_vm[0])
 

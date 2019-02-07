@@ -41,7 +41,7 @@ jobs_table.insert({
             "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "package": "FID1x3"
+            "package": "FID-1x3"
         },
         {
             "id": "FID2",
@@ -52,7 +52,7 @@ jobs_table.insert({
             "rotation": 0,
             "operation": "ignore",
             "value": "fiducial",
-            "package": "FID1x3"
+            "package": "FID-1x3"
         },
         {
             "operation": "place",

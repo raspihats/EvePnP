@@ -11,37 +11,60 @@ axis_table.insert_multiple([
     {
         "id": "x",
         "limit": 450,
-        "feed_rate": 25000,
-        "acc": 600,
+        "feed_rate": 50000,
+        "acc": 1500,
         "park": 5
     },
     {
         "id": "y",
         "limit": 400,
-        "feed_rate": 25000,
-        "acc": 600,
+        "feed_rate": 50000,
+        "acc": 1500,
         "park": 5
     },
     {
         "id": "z",
         "limit": 120,
-        "feed_rate": 25000,
-        "acc": 600,
+        "feed_rate": 50000,
+        "acc": 1500,
         "park": 59
     },
     {
         "id": "a",
         "limit": 360,
         "feed_rate": 50000,
-        "acc": 1000,
+        "acc": 1500,
         "park": 0
     },
     {
         "id": "b",
         "limit": 360,
         "feed_rate": 50000,
-        "acc": 1000,
+        "acc": 1500,
         "park": 0
+    }
+])
+
+controllers_table = db.table("controllers")
+controllers_table.purge()
+controllers_table.insert_multiple([
+    {
+        "id": "Mc1",
+        "driver": "grbl",
+        "type": "motion",
+        "port": {
+                "name": "/dev/ttyAMA0",
+                "baudrate": 115200,
+                "bytesize": 8,
+                "parity": "N",
+                "stopbits": 1
+        },
+    },
+    {
+        "id": "Io1",
+        "driver": "raspihats.i2c_hats.DQ10rly",
+        "type": "input_output",
+        "adr": 0x50
     }
 ])
 
@@ -54,10 +77,10 @@ actuators_table.insert_multiple([
         "initial_value": 0,
         "code": """
 def set(value):
-    controllers['MC1'].spindle_duty = value * 100
+    controllers['Mc1'].spindle_duty = value * 100
 
 def get():
-    return 1 if controllers['MC1'].spindle_duty else 0
+    return 1 if controllers['Mc1'].spindle_duty else 0
 """
     },
     {
@@ -66,10 +89,10 @@ def get():
         "initial_value": 0,
         "code": """
 def set(value):
-    controllers['MC1'].coolant_flood = value
+    controllers['Mc1'].coolant_flood = value
 
 def get():
-    controllers['MC1'].coolant_flood
+    controllers['Mc1'].coolant_flood
 """
     },
     {
@@ -78,199 +101,247 @@ def get():
         "initial_value": 0,
         "code": """
 def set(value):
-    controllers['MC1'].coolant_mist = value
+    controllers['Mc1'].coolant_mist = value
 
 def get():
-    controllers['MC1'].coolant_mist
+    controllers['Mc1'].coolant_mist
 """
     }
 ])
 
-
-nc_one_code = """
-def pick(point):
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = point.pop('z')
-
-    # park pick n place axis
-    controllers['MC1'].move(
-        {
-            pnp_axis_id: axis[pnp_axis_id].park
-        }, 25000)
-
-    # move to pick point
-    controllers['MC1'].move({
-        'x': x_position, 
-        'y': y_position,
-        rotation_axis_id: 0
-    }, 25000)
-
-    # descent nozzle
-    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
-
-    # enable vacuum
-    actuators[vacuum_actuator_id].set(True)
-
-    # raise nozzle
-    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
-
-
-def place(point, rotation, package):
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = point.pop('z') + package.height
-
-    # move to pick point and rotate
-    controllers['MC1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: rotation
-        }, 25000)
-
-    # descent nozzle
-    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
-
-    # disable vacuum
-    actuators[vacuum_actuator_id].set(False)
-
-    # raise nozzle
-    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
-"""
-
-nc_two_code = """
-def pick(point):
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = 118 - point.pop('z')
-
-    # park pick n place axis
-    controllers['MC1'].move(
-        {
-            pnp_axis_id: axis[pnp_axis_id].park
-        }, 25000)
-
-    # move to pick point
-    controllers['MC1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: 0
-        }, 25000)
-
-    # descent nozzle
-    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
-
-    # enable vacuum
-    actuators[vacuum_actuator_id].set(True)
-
-    # raise nozzle
-    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
-
-
-def place(point, rotation, package):
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = 118 - (point.pop('z') + package.height)
-
-    # move to pick point and rotate
-    controllers['MC1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: rotation
-        }, 25000)
-
-    # descent nozzle
-    controllers['MC1'].move({pnp_axis_id: z_position}, 25000)
-
-    # disable vacuum
-    actuators[vacuum_actuator_id].set(False)
-
-    # raise nozzle
-    controllers['MC1'].move({pnp_axis_id: axis[pnp_axis_id].park}, 25000)
-"""
-
-nozzle_carriages_table = db.table("nozzle_carriages")
-nozzle_carriages_table.purge()
-nozzle_carriages_table.insert_multiple([
-    {
-        "id": "NC1",
-        "pnp_axis_id": "z",
-        "rotation_axis_id": "a",
-        "vacuum_actuator_id": "Valve1",
-        "code": nc_one_code
-    },
-    {
-        "id": "NC2",
-        "pnp_axis_id": "z",
-        "rotation_axis_id": "b",
-        "vacuum_actuator_id": "Valve2",
-        "code": nc_two_code
-    }
-])
 
 cameras_table = db.table("cameras")
 cameras_table.purge()
 cameras_table.insert_multiple([
     {
-        "id": "C1",
+        "id": "Cam1",
         "description": "Up looking camera"
     },
     {
-        "id": "C2",
+        "id": "Cam2",
         "description": "Down looking camera",
     }
 ])
+
+
+phead_one_code = """
+def move(point, rotation, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+
+    # park pick n place axis before doing anything
+    controllers['Mc1'].move({ 
+        pnp_axis_id: axis[pnp_axis_id].park
+    }, feed_rate)
+
+    # move to planar point
+    controllers['Mc1'].move({
+        'x': point['x'] + offset['x'], 
+        'y': point['y'] + offset['y']
+    }, feed_rate)
+
+    # raise/descent and rotate nozzle
+    controllers['Mc1'].move({
+        pnp_axis_id: point['z'],
+        rotation_axis_id: rotation
+    }, feed_rate)
+
+def get_position():
+    point = {
+        'x' : 100,
+        'y' : 101,
+        'z' : 102,
+    }
+    rotation = 104
+
+    return point, rotation
+
+def pick(point):
+    feed_rate = 50000
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = point.pop('z')
+
+    # park pick n place axis
+    controllers['Mc1'].move(
+        {
+            pnp_axis_id: axis[pnp_axis_id].park
+        }, feed_rate)
+
+    # move to pick point
+    controllers['Mc1'].move({
+        'x': x_position, 
+        'y': y_position,
+        rotation_axis_id: 0
+    }, feed_rate)
+
+    # descent nozzle
+    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+
+    # enable vacuum
+    actuators[vacuum_actuator_id].set(True)
+
+    # raise nozzle
+    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+
+
+def place(point, rotation, package):
+    feed_rate = 50000
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = point.pop('z') + package.height
+
+    # move to pick point and rotate
+    controllers['Mc1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: rotation
+        }, feed_rate)
+
+    # descent nozzle
+    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+
+    # disable vacuum
+    actuators[vacuum_actuator_id].set(False)
+
+    # raise nozzle
+    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+"""
+
+phead_two_code = """
+def move(point, rotation, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+
+    # park pick n place axis before doing anything
+    controllers[motion_controller_id].move({ 
+        pnp_axis_id: axis[pnp_axis_id].park
+    }, feed_rate)
+
+    # move to planar point
+    controllers[motion_controller_id].move({
+        'x': point['x'] + offset['x'], 
+        'y': point['y'] + offset['y']
+    }, feed_rate)
+
+    # raise/descent and rotate nozzle
+    controllers[motion_controller_id].move({
+        pnp_axis_id: 118 - point['z'],
+        rotation_axis_id: rotation
+    }, feed_rate)
+
+def pick(point):
+    feed_rate = 50000
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = 118 - point.pop('z')
+
+    # park pick n place axis
+    controllers['Mc1'].move(
+        {
+            pnp_axis_id: axis[pnp_axis_id].park
+        }, feed_rate)
+
+    # move to pick point
+    controllers['Mc1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: 0
+        }, feed_rate)
+
+    # descent nozzle
+    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+
+    # enable vacuum
+    actuators[vacuum_actuator_id].set(True)
+
+    # raise nozzle
+    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+
+
+def place(point, rotation, package):
+    feed_rate = 50000
+    x_position = point.pop('x')
+    y_position = point.pop('y')
+    z_position = 118 - (point.pop('z') + package.height)
+
+    # move to pick point and rotate
+    controllers['Mc1'].move(
+        {
+            'x': x_position,
+            'y': y_position,
+            rotation_axis_id: rotation
+        }, feed_rate)
+
+    # descent nozzle
+    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+
+    # disable vacuum
+    actuators[vacuum_actuator_id].set(False)
+
+    # raise nozzle
+    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+"""
+
+# placement_heads_table = db.table("placement_heads")
+# placement_heads_table.purge()
+# placement_heads_table.insert_multiple([
+#     {
+#         "id": "PlaceHead1",
+#         "pnp_axis_id": "z",
+#         "rotation_axis_id": "a",
+#         "vacuum_actuator_id": "Valve1",
+#         "code": nc_one_code
+#     },
+#     {
+#         "id": "PlaceHead2",
+#         "pnp_axis_id": "z",
+#         "rotation_axis_id": "b",
+#         "vacuum_actuator_id": "Valve2",
+#         "code": nc_two_code
+#     }
+# ])
+
+# /api/heads/Head1/p_heads/PlaceHead1/position
+# /api/p_heads/PlaceHead1/position
 
 heads_table = db.table("heads")
 heads_table.purge()
 heads_table.insert_multiple([
     {
-        "id": "H1",
-        "nozzle_carriages": [
+        "id": "Head1",
+        "motion_controller_id": "Mc1",          # for x/y movement
+        "x_axis_id": "x",
+        "y_axis_id": "y",
+        "placement_heads": [
             {
-                "id": "NC1",
-                "offset": {"x": 0.0, "y": 0.0}
+                "id": "PlaceHead1",
+                "offset": {"x": 0.0, "y": 0.0},
+                "motion_controller_id": "Mc1",  # for z/rot movement
+                "pnp_axis_id": "z",
+                "rotation_axis_id": "a",
+                "vacuum_actuator_id": "Valve1",
+                "code": phead_one_code
             },
             {
-                "id": "NC2",
-                "offset": {"x": -43.8, "y": 0.0}
+                "id": "PlaceHead2",
+                "offset": {"x": -43.8, "y": 0.0},
+                "motion_controller_id": "Mc1",  # for z/rot movement
+                "pnp_axis_id": "z",
+                "rotation_axis_id": "b",
+                "vacuum_actuator_id": "Valve2",
+                "code": phead_two_code
             }
         ],
         "cameras": [
             {
-                "id": "C2",
+                "id": "Cam2",
                 "offset": {"x": -21.9, "y": -20.0}
             }
         ]
     }
 ])
 
-
-controllers_table = db.table("controllers")
-controllers_table.purge()
-controllers_table.insert_multiple([
-    {
-        "id": "MC1",
-        "driver": "grbl",
-        "type": "motion",
-        "port": {
-                "name": "/dev/ttyAMA0",
-                "baudrate": 115200,
-                "bytesize": 8,
-                "parity": "N",
-                "stopbits": 1
-        },
-    },
-    {
-        "id": "IO1",
-        "driver": "raspihats.i2c_hats.DQ10rly",
-        "type": "input_output",
-        "adr": 0x50
-    }
-])
 
 feeders_code_xn = """# get_point gets called before pick operation 
 # and should return the next pick point

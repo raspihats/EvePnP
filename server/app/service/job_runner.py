@@ -23,14 +23,6 @@ class Package(object):
         return self._config[attribute]
 
 
-class Axis(object):
-    def __init__(self, config):
-        self._config = dict(config)
-
-    def __getattr__(self, attribute):
-        return self._config[attribute]
-
-
 class Feeder(object):
     def __init__(self, config):
         self._config = config

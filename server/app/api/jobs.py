@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from ..dao import jobs_dao, DAO
-from ..service.job_runner import job_runner_service
+# from ..service.job_runner import job_runner_service
 
 api = Namespace('jobs', description='Jobs related operations')
 

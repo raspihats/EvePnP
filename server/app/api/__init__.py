@@ -3,7 +3,6 @@ from flask_restplus import Api
 
 from .actuators import api as ns_actuators
 from .axis import api as ns_axis
-from .nozzle_carriages import api as ns_nozzle_carriages
 from .heads import api as ns_heads
 from .feeders import api as ns_feeders
 from .packages import api as ns_packages
@@ -21,7 +20,6 @@ api = Api(
 
 api.add_namespace(ns_actuators)
 api.add_namespace(ns_axis)
-api.add_namespace(ns_nozzle_carriages)
 api.add_namespace(ns_heads)
 api.add_namespace(ns_feeders)
 api.add_namespace(ns_packages)

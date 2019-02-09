@@ -8,10 +8,10 @@ const OffsetButtons = props => {
       camera.type = "camera";
       devices.push(camera);
     });
-    head.nozzle_carriages.forEach(nozzle_carriage => {
-      nozzle_carriage.type = "nozzle carriage";
-      devices.push(nozzle_carriage);
-    });
+    // head.nozzle_carriages.forEach(nozzle_carriage => {
+    //   nozzle_carriage.type = "nozzle carriage";
+    //   devices.push(nozzle_carriage);
+    // });
   });
 
   return (

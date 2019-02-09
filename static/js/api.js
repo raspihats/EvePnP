@@ -9,18 +9,17 @@ let api = axios.create({
 
 const errorHandler = (title, error) => {
   let message = title + "\n";
-  try {
-    message += JSON.stringify(error);
-  } catch (err) {
-    message += error;
-    console.log(error);
-  }
-  // if (error.hasOwnProperty("response")) {
-  //   message += "status: " + error.response.status;
-  //   message += ", " + error.response.statusText + "\n";
-  // }
-  // message += "message: " + error.response.data.message
 
+  if (error.hasOwnProperty("stack")) {
+    message += error.stack;
+  } else {
+    try {
+      message += JSON.stringify(error);
+    } catch (err) {
+      message += error;
+    }
+  }
+  console.log(error);
   alert(message);
 };
 
@@ -142,9 +141,9 @@ class ApiEndpoint {
       });
   }
 
-  update(id, data, callback = null) {
+  update(id, data, callback = null, timeout = 1000) {
     api
-      .put(this.endpoint + id, data)
+      .put(this.endpoint + id, data, { timeout: timeout })
       .then(response => callback && callback(response.data))
       .catch(error => {
         errorHandler("Api error, update " + this.endpoint, error);
@@ -155,8 +154,7 @@ class ApiEndpoint {
 api.errorHandler = errorHandler;
 api.actuators = actuators;
 api.axis = axis;
-api.nozzleCarriages = new ApiEndpoint("/nozzle_carriages/");
-api.heads = new ApiEndpoint("/heads/");
+api.head = new ApiEndpoint("/head/");
 api.feeders = new ApiEndpoint("/feeders/");
 api.jobs = new ApiEndpoint("/jobs/");
 api.jobsRunner = new ApiEndpoint("/jobs/runner/");

@@ -25,7 +25,7 @@ class Feeders extends React.Component {
   }
 
   componentDidMount() {
-    this.listHeads();
+    // this.listHeads();
     this.listFeeders();
   }
 

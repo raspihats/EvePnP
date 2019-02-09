@@ -4,29 +4,36 @@ import JogDial from "./JogDial";
 import api from "../../../api";
 
 class Jog extends React.Component {
-  state = { nozzleCarriages: [], selectedId: null };
+  state = { placementHeads: [], selected: "" };
 
-  getNozzleCarriagesIds() {
-    let nozzleCarriageIds = [];
-    this.state.nozzleCarriages.forEach(nozzleCarriage => {
-      nozzleCarriageIds.push(nozzleCarriage.id);
-    });
-    return nozzleCarriageIds;
+  onPark(axis) {
+    let pHeadId = this.state.selected;
+    api.head.update(
+      "p_heads/" + pHeadId + "/park",
+      [...axis].map(c => {
+        return { id: c };
+      }),
+      () => {},
+      10000
+    );
   }
 
-  getSelectedNozzleCarriage() {
-    let nozzleCarriage = null;
-    this.state.nozzleCarriages.forEach(element => {
-      if (element.id === this.state.selectedId) {
-        nozzleCarriage = element;
-      }
-    });
-    return nozzleCarriage;
+  onJog(axis, step) {
+    let pHeadId = this.state.selected;
+    api.head.update(
+      "p_heads/" + pHeadId + "/jog",
+      { id: axis, step: step },
+      () => {},
+      10000
+    );
   }
 
   componentDidMount() {
-    api.nozzleCarriages.list(data => {
-      this.setState({ nozzleCarriages: data, selectedId: data[0].id });
+    api.head.list(head => {
+      this.setState({
+        placementHeads: head.placement_heads,
+        selected: head.placement_heads[0].id
+      });
     });
   }
 
@@ -35,17 +42,17 @@ class Jog extends React.Component {
       <React.Fragment>
         <SelectInputGroup
           small
-          prepend="Nozzle Carriage:"
-          options={this.getNozzleCarriagesIds()}
+          prepend="Placement Head:"
+          options={this.state.placementHeads.map(p => p.id)}
+          value={this.state.selected}
           onChange={value => {
-            this.setState({ selectedId: value });
+            this.setState({ selected: value });
           }}
         />
         <JogDial
           onHome={api.axis.positions.home}
-          onPark={api.axis.positions.park}
-          onJog={api.axis.positions.jog}
-          nozzleCarriage={this.getSelectedNozzleCarriage()}
+          onPark={axis => this.onPark(axis)}
+          onJog={(axis, step) => this.onJog(axis, step)}
         />
       </React.Fragment>
     );

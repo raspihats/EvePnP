@@ -67,6 +67,11 @@ class JobControl extends React.Component {
   render() {
     return (
       <SelectInputGroup
+        prepend="Job:"
+        options={[uploadString].concat(this.props.jobs)}
+        value={this.props.selectedJobId}
+        disabled={this.props.running ? true : false}
+        append={this.getButtons()}
         onChange={value => {
           if (value === uploadString) {
             this.props.onSelect(null);
@@ -75,11 +80,6 @@ class JobControl extends React.Component {
           }
           this.setState({ option: value });
         }}
-        prepend="Job:"
-        options={[uploadString].concat(this.props.jobs)}
-        value={this.props.running}
-        disabled={this.props.running ? true : false}
-        append={this.getButtons()}
       />
     );
   }

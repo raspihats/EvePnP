@@ -1,49 +1,41 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import api from "../../../api";
 import SelectInputGroup from "../../../components/SelectInputGroup";
 import InputInputGroup from "../../../components/InputField";
 import ObjectProps from "../ObjectProps";
+import MoveHeadButtons from "../MoveHeadButtons";
 import IconButton from "../IconButton";
-import MoveHeadsButtons from "../MoveHeadsButtons";
+import { addPoints } from "../../../utils";
 
 const ComponentDisplayRow = props => {
-  let { heads, packages, component } = props;
+  let { head, packages, origin, component } = props;
   return (
-    <tr className="border-left border-right">
-      <th scope="row">{component.id}</th>
-      <td>{component.value}</td>
-      <td>
+    <tr>
+      <th scope="row" className="align-middle">
+        {component.id}
+      </th>
+      <td className="align-middle">{component.value}</td>
+      <td className="align-middle">
         {packages.indexOf(component.package) !== -1
           ? component.package
           : "???" + component.package}
       </td>
-      <td>
+      <td className="align-middle">
         <ObjectProps object={component.offset} inline />
       </td>
-      <td>{component.rotation}</td>
+      <td className="align-middle">{component.rotation}</td>
       <td
         className={
-          component.operation === "ignore" ? "text-warning" : undefined
+          "align-middle " + (component.operation === "ignore" && "text-warning")
         }
       >
         {component.operation}
       </td>
-      <td>
-        <MoveHeadsButtons
+      <td className="align-middle">
+        <MoveHeadButtons
           title="Move"
-          heads={heads}
-          onClick={offset => {
-            let point = { ...this.props.origin };
-            Object.keys(point).forEach(key => {
-              // component offset
-              component.offset.hasOwnProperty(key) &&
-                (point[key] += component.offset[key]);
-              // head offset
-              offset.hasOwnProperty(key) && (point[key] += offset[key]);
-            });
-            // api.axis.positions.update(point);
-          }}
+          head={head}
+          point={addPoints(origin, component.offset)}
         />
         <div className="float-right">
           <IconButton
@@ -64,11 +56,11 @@ class ComponentEditRow extends React.Component {
   };
 
   render() {
-    let { heads, packages, operations } = this.props;
+    let { head, packages, operations, origin } = this.props;
     let component = { ...this.state.component };
     return (
-      <tr className="border-left border-right">
-        <th scope="row">
+      <tr>
+        <th scope="row" className="align-middle">
           <InputInputGroup
             small
             id={component.id}
@@ -79,7 +71,7 @@ class ComponentEditRow extends React.Component {
             }}
           />
         </th>
-        <td>
+        <td className="align-middle">
           <InputInputGroup
             small
             id={"value" + component.id}
@@ -90,7 +82,7 @@ class ComponentEditRow extends React.Component {
             }}
           />
         </td>
-        <td>
+        <td className="align-middle">
           <SelectInputGroup
             small
             options={packages}
@@ -101,10 +93,10 @@ class ComponentEditRow extends React.Component {
             }}
           />
         </td>
-        <td>
+        <td className="align-middle">
           <ObjectProps object={component.offset} inline />
         </td>
-        <td>
+        <td className="align-middle">
           <InputInputGroup
             small
             id={"rotation" + component.id}
@@ -117,7 +109,7 @@ class ComponentEditRow extends React.Component {
             }}
           />
         </td>
-        <td>
+        <td className="align-middle">
           <SelectInputGroup
             small
             options={operations}
@@ -128,21 +120,11 @@ class ComponentEditRow extends React.Component {
             }}
           />
         </td>
-        <td>
-          <MoveHeadsButtons
+        <td className="align-middle">
+          <MoveHeadButtons
             title="Move"
-            heads={heads}
-            onClick={offset => {
-              let point = { ...this.props.origin };
-              Object.keys(point).forEach(key => {
-                // component offset
-                component.offset.hasOwnProperty(key) &&
-                  (point[key] += component.offset[key]);
-                // head offset
-                offset.hasOwnProperty(key) && (point[key] += offset[key]);
-              });
-              api.axis.positions.update(point);
-            }}
+            head={head}
+            point={addPoints(origin, component.offset)}
           />
           <div className="float-right">
             {this.state.updating ? (
@@ -179,13 +161,30 @@ class ComponentEditRow extends React.Component {
 class JobComponents extends React.Component {
   state = { editIds: [] };
 
+  addEditId(id) {
+    let editIds = [...this.state.editIds];
+    if (editIds.indexOf(id) === -1) {
+      editIds.push(id);
+    }
+    this.setState({ editIds: editIds });
+  }
+
+  removeEditId(id) {
+    let editIds = [...this.state.editIds];
+    let index = editIds.indexOf(id);
+    if (index !== -1) {
+      editIds.splice(index, 1);
+    }
+    this.setState({ editIds: editIds });
+  }
+
   render() {
     return (
       <React.Fragment>
         <div className="h4 text-info font-weight-bold">Components:</div>
         <table className="table table-sm text-info">
           <thead>
-            <tr className="border bg-light">
+            <tr className="bg-light">
               <th scope="col">ID</th>
               <th scope="col">Value</th>
               <th scope="col">Package</th>
@@ -195,27 +194,23 @@ class JobComponents extends React.Component {
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody>
-            {this.props.job.components.map((component, index) => {
-              return this.state.editIds.indexOf(component.id) === -1 ? (
+          <tbody className="border-bottom">
+            {this.props.job.components.map(component =>
+              this.state.editIds.indexOf(component.id) === -1 ? (
                 <ComponentDisplayRow
                   key={component.id}
+                  origin={this.props.origin}
                   component={component}
-                  heads={this.props.heads}
+                  head={this.props.head}
                   packages={this.props.packages}
-                  onEdit={() => {
-                    let editIds = [...this.state.editIds];
-                    if (editIds.indexOf(component.id) === -1) {
-                      editIds.push(component.id);
-                    }
-                    this.setState({ editIds: editIds });
-                  }}
+                  onEdit={() => this.addEditId(component.id)}
                 />
               ) : (
                 <ComponentEditRow
                   key={component.id}
+                  origin={this.props.origin}
                   component={component}
-                  heads={this.props.heads}
+                  head={this.props.head}
                   packages={this.props.packages}
                   operations={this.props.operations}
                   onUpdate={(updatedComponent, callback) => {
@@ -224,26 +219,14 @@ class JobComponents extends React.Component {
                       updatedComponent,
                       () => {
                         callback();
-                        let editIds = [...this.state.editIds];
-                        let index = editIds.indexOf(component.id);
-                        if (index !== -1) {
-                          editIds.splice(index, 1);
-                        }
-                        this.setState({ editIds: editIds });
+                        this.removeEditId(component.id);
                       }
                     );
                   }}
-                  onDiscard={() => {
-                    let editIds = [...this.state.editIds];
-                    let index = editIds.indexOf(component.id);
-                    if (index !== -1) {
-                      editIds.splice(index, 1);
-                    }
-                    this.setState({ editIds: editIds });
-                  }}
+                  onDiscard={() => this.removeEditId(component.id)}
                 />
-              );
-            })}
+              )
+            )}
           </tbody>
         </table>
       </React.Fragment>

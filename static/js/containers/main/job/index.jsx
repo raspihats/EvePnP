@@ -6,16 +6,16 @@ import JobComponents from "./JobComponents";
 
 class Job extends React.Component {
   state = {
-    heads: [],
+    head: null,
     packages: [],
     operations: ["place", "ignore"],
     jobs: [],
     job: null,
-    referenceId: null
+    origin: null
   };
 
-  listHeads() {
-    api.heads.list(data => this.setState({ heads: data }));
+  getHead() {
+    api.head.list(data => this.setState({ head: data }));
   }
 
   listPackages() {
@@ -88,25 +88,18 @@ class Job extends React.Component {
   }
 
   componentDidMount() {
-    this.listHeads();
+    this.getHead();
     this.listPackages();
     this.listJobs();
   }
 
   render() {
-    let origin = null;
-    this.state.job &&
-      this.state.job.boards.forEach(board => {
-        if (board.id === this.state.referenceId) {
-          origin = board.origin;
-        }
-      });
-
     return (
       <div className="row">
         <div className="col-12 col-md-8 col-lg-6">
           <JobControl
             jobs={this.state.jobs}
+            selected={this.state.job ? this.state.job.id : ""}
             running={
               this.state.job && this.state.job.running && this.state.job.id
             }
@@ -121,20 +114,20 @@ class Job extends React.Component {
         <div className="col-12 pt-3">
           {this.state.job && (
             <JobBoards
-              heads={this.state.heads}
+              head={this.state.head}
               job={this.state.job}
-              referenceId={this.state.referenceId}
-              onReferenceIdChange={id => this.setState({ referenceId: id })}
+              operations={this.state.operations}
+              onSetOrigin={data => this.setState({ origin: data })}
             />
           )}
         </div>
         <div className="col-12 pt-3">
           {this.state.job && (
             <JobComponents
-              heads={this.state.heads}
+              head={this.state.head}
               packages={this.state.packages.map(p => p.id)}
               operations={this.state.operations}
-              origin={origin}
+              origin={this.state.origin}
               job={this.state.job}
               onUpdateComponent={(initialId, updatedComponent, callback) =>
                 this.onUpdateComponent(initialId, updatedComponent, callback)

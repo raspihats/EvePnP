@@ -1,35 +1,166 @@
 import React from "react";
-import api from "../../../api";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Collapsible,
-  CollapsibleControlButton
-} from "../../../components/Collapsible";
 import CheckBox from "../../../components/CheckBox";
+import SelectInputGroup from "../../../components/SelectInputGroup";
+import InputInputGroup from "../../../components/InputField";
 import ObjectProps from "../ObjectProps";
-import OffsetButtons from "../OffsetButtons";
+import MoveHeadButtons from "../MoveHeadButtons";
+import IconButton from "../IconButton";
 import UpdateBoardForm from "./UpdateBoardForm";
-import { timingSafeEqual } from "crypto";
+
+const BoardDisplayRow = props => {
+  let { board } = props;
+  return (
+    <tr>
+      <th scope="row" className="align-middle">
+        {board.id}
+      </th>
+      <td className="align-middle">
+        <CheckBox
+          checked={props.reference}
+          onChange={value => value && props.onSetReferenceId()}
+        />
+      </td>
+      <td className="align-middle">
+        <ObjectProps object={board.origin} inline />
+      </td>
+      <td className="align-middle">{board.rotation}</td>
+      <td className="align-middle">{board.operation}</td>
+      <td className="align-middle">
+        <MoveHeadButtons title="Move" head={props.head} point={board.origin} />
+        <div className="float-right">
+          <IconButton
+            title="Edit component"
+            icon="pen-square"
+            onClick={e => props.onEdit()}
+          />
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+class BoardEditRow extends React.Component {
+  state = {
+    board: this.props.board,
+    updating: false
+  };
+
+  render() {
+    let { head, operations } = this.props;
+    let board = { ...this.state.board };
+    return (
+      <tr>
+        <th scope="row" className="align-middle">
+          <InputInputGroup
+            small
+            id={board.id}
+            value={board.id}
+            onChange={value => {
+              board.id = value;
+              this.setState({ board: board });
+            }}
+          />
+        </th>
+        <td className="align-middle">
+          <CheckBox
+            checked={this.props.reference}
+            onChange={value => value && this.props.onSetReferenceId()}
+          />
+        </td>
+        <td className="align-middle">
+          <ObjectProps object={board.origin} inline />
+        </td>
+        <td className="align-middle">
+          <InputInputGroup
+            small
+            id={"rotation" + board.id}
+            value={board.rotation}
+            options={[0, 45, 90, 135, 180, 225, 270]}
+            size="6"
+            onChange={value => {
+              board.rotation = parseFloat(value);
+              this.setState({ board: board });
+            }}
+          />
+        </td>
+        <td className="align-middle">
+          <SelectInputGroup
+            small
+            options={operations}
+            value={board.operation}
+            onChange={value => {
+              board.operation = value;
+              this.setState({ board: board });
+            }}
+          />
+        </td>
+        <td className="align-middle">
+          <MoveHeadButtons title="Move" head={head} point={board.origin} />
+          <div className="float-right">
+            {this.state.updating ? (
+              <FontAwesomeIcon icon="spinner" spin />
+            ) : (
+              <React.Fragment>
+                <IconButton
+                  title="Update component"
+                  icon="save"
+                  onClick={e => {
+                    this.setState({ updating: true });
+                    this.props.onUpdate(board, () => {
+                      this.setState({ updating: false });
+                    });
+                  }}
+                />
+                <IconButton
+                  title="Discard changes"
+                  icon="times-circle"
+                  onClick={e => {
+                    this.setState({ board: this.props.board });
+                    this.props.onDiscard();
+                  }}
+                />
+              </React.Fragment>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  }
+}
 
 class JobBoards extends React.Component {
-  // state = { heads: [], refId: null };
+  state = { editIds: [], referenceId: null };
 
-  // changeRefId() {
-  //   this.props.onRefIdChange();
-  // }
+  addEditId(id) {
+    let editIds = [...this.state.editIds];
+    if (editIds.indexOf(id) === -1) {
+      editIds.push(id);
+    }
+    this.setState({ editIds: editIds });
+  }
 
-  // componentDidMount() {
-  //   api.heads.list(data => this.setState({ heads: data }));
-  //   this.setState({ refId: this.props.boards[0].id });
-  // }
+  removeEditId(id) {
+    let editIds = [...this.state.editIds];
+    let index = editIds.indexOf(id);
+    if (index !== -1) {
+      editIds.splice(index, 1);
+    }
+    this.setState({ editIds: editIds });
+  }
+
+  componentDidMount() {
+    let board = this.props.job.boards[0];
+    this.setState({ referenceId: board.id });
+    this.props.onSetOrigin(board.origin);
+  }
 
   render() {
     return (
       <React.Fragment>
         <div className="h4 text-info font-weight-bold">Boards:</div>
-        <table className="table table-borderless text-info">
+        <table className="table text-info">
           <thead>
-            <tr className="border bg-light">
+            <tr className="bg-light">
               <th scope="col">ID</th>
               <th scope="col">Reference</th>
               <th scope="col">Origin</th>
@@ -38,83 +169,40 @@ class JobBoards extends React.Component {
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody>
-            {this.props.job.boards.map((board, index) => {
-              return (
-                <React.Fragment key={board.id}>
-                  <tr className="border-left border-right">
-                    <th scope="row">{board.id}</th>
-                    <td>
-                      <CheckBox
-                        checked={
-                          board.id === this.props.referenceId ? true : false
-                        }
-                        onChange={value =>
-                          value && this.props.onReferenceIdChange(board.id)
-                        }
-                      />
-                    </td>
-                    <td>
-                      <ObjectProps object={board.origin} />
-                    </td>
-                    <td>{board.rotation}</td>
-                    <td>{board.operation}</td>
-                    <td>
-                      <div className="row">
-                        <div className="col-12">
-                          <OffsetButtons
-                            title="Move"
-                            heads={this.props.heads}
-                            onClick={offset => {
-                              let origin = { ...board.origin }; //shallow clone
-                              Object.keys(offset).forEach(key => {
-                                if (origin.hasOwnProperty(key)) {
-                                  origin[key] += offset[key];
-                                }
-                              });
-                              api.axis.positions.update(origin);
-                            }}
-                          />
-                        </div>
-                        <div className="col-12">
-                          <CollapsibleControlButton
-                            className="btn-block btn-outline-secondary btn-lg px-1 py-0"
-                            title="Show edit panel"
-                            target={board.id}
-                          >
-                            <FontAwesomeIcon icon="angle-double-down" />
-                            <FontAwesomeIcon icon="angle-double-up" />
-                          </CollapsibleControlButton>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border border-top-0">
-                    <td colSpan="7" className="py-0">
-                      <Collapsible id={board.id}>
-                        <hr
-                          className="mt-0 px-2"
-                          style={{ borderStyle: "dotted" }}
-                        />
-                        <UpdateBoardForm
-                          heads={this.props.heads}
-                          board={board}
-                          onUpdate={updatedBoard => {
-                            let job = { ...this.props.job };
-                            job.boards.forEach(b => {
-                              if (b.id === board.id) {
-                                b = updatedBoard;
-                              }
-                            });
-                            api.jobs.update(job.id, job);
-                          }}
-                        />
-                      </Collapsible>
-                    </td>
-                  </tr>
-                </React.Fragment>
-              );
-            })}
+          <tbody className="border-bottom">
+            {this.props.job.boards.map(board =>
+              this.state.editIds.indexOf(board.id) === -1 ? (
+                <BoardDisplayRow
+                  key={board.id}
+                  head={this.props.head}
+                  board={board}
+                  reference={this.state.referenceId === board.id}
+                  onSetReferenceId={() => {
+                    this.setState({ referenceId: board.id });
+                    this.props.onSetOrigin(board.origin);
+                  }}
+                  onEdit={() => this.addEditId(board.id)}
+                />
+              ) : (
+                <BoardEditRow
+                  key={board.id}
+                  head={this.props.head}
+                  board={board}
+                  operations={this.props.operations}
+                  onSetReferenceId={() => {
+                    this.setState({ referenceId: board.id });
+                    this.props.onSetOrigin(board.origin);
+                  }}
+                  onUpdate={(updatedBoard, callback) => {
+                    this.props.onUpdateComponent(board.id, updatedBoard, () => {
+                      callback();
+                      this.removeEditId(board.id);
+                    });
+                  }}
+                  onDiscard={() => this.removeEditId(board.id)}
+                />
+              )
+            )}
           </tbody>
         </table>
       </React.Fragment>

@@ -9,8 +9,8 @@ const JogDial = props => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
       <JogDialXY {...props} />
-      {props.nozzleCarriage && <JogDialZ {...props} />}
-      {props.nozzleCarriage && <JogDialAngle {...props} />}
+      <JogDialZ {...props} />
+      <JogDialAngle {...props} />
       <SpeedKnob />
       <defs>
         <filter id="f1" x="-1" y="-1" width="300%" height="300%">

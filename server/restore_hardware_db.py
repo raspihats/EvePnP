@@ -125,35 +125,84 @@ cameras_table.insert_multiple([
 
 
 phead_one_code = """
-def move(point, rotation, speed_factor=1):
+def move(point, speed_factor=1):
     feed_rate = 50000 * speed_factor
+    axis_xy_config = controllers[motion_controller_xy_id].config['axis']
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park pick n place axis before doing anything
-    controllers['Mc1'].move({ 
-        pnp_axis_id: axis[pnp_axis_id].park
-    }, feed_rate)
+    # park pick n place axis before moving x or y
+    if 'x' in point or 'y' in point:
+        controllers[motion_controller_zr_id].move({ 
+            z_axis_id: axis_zr_config[z_axis_id]['park']
+        }, feed_rate)
 
-    # move to planar point
-    controllers['Mc1'].move({
-        'x': point['x'] + offset['x'], 
-        'y': point['y'] + offset['y']
-    }, feed_rate)
+    # move x,y
+    position = {}
+    if 'x' in point:
+        position[x_axis_id] = point['x'] + offset['x']
+    if 'y' in point:
+        position[y_axis_id] = point['y'] + offset['y']
+    
+    controllers[motion_controller_xy_id].move(position, feed_rate)
 
     # raise/descent and rotate nozzle
-    controllers['Mc1'].move({
-        pnp_axis_id: point['z'],
-        rotation_axis_id: rotation
-    }, feed_rate)
+    position = {}
+    if 'z' in point:
+        position[z_axis_id] = point['z']
+    if 'r' in point:
+        position[r_axis_id] = point['r']
+    controllers[motion_controller_zr_id].move(position, feed_rate)
 
 def get_position():
-    point = {
+    return {
         'x' : 100,
         'y' : 101,
         'z' : 102,
+        'r' : 104
     }
-    rotation = 104
 
-    return point, rotation
+def jog(axis, step, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+
+    axis_map = {
+        'x' : x_axis_id,
+        'y' : y_axis_id,
+        'z' : z_axis_id,
+        'r' : r_axis_id
+    }
+
+    if axis == 'x' or axis == 'y':
+        controllers[motion_controller_xy_id].jog(axis_map[axis], step, feed_rate)
+    if axis == 'z' or axis == 'r':
+        controllers[motion_controller_zr_id].jog(axis_map[axis], step, feed_rate)
+
+
+def park(axis_list, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_xy_config = controllers[motion_controller_xy_id].config['axis']
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
+
+    # park z and r axis
+    park_position = {}
+    # park z even if x, y parking is desired
+    if 'x' in axis_list or 'y' in axis_list or 'z' in axis_list:
+        park_position[z_axis_id] = axis_zr_config[z_axis_id]['park']
+    if 'r' in axis_list:
+        park_position[r_axis_id] = axis_zr_config[r_axis_id]['park']
+
+    if park_position:
+        controllers[motion_controller_zr_id].move(park_position, feed_rate)
+
+    # park x and y axis
+    park_position = {}
+    if 'x' in axis_list:
+        park_position[x_axis_id] = axis_xy_config[x_axis_id]['park']
+    if 'y' in axis_list:
+        park_position[y_axis_id] = axis_xy_config[y_axis_id]['park']
+    
+    if park_position:
+         controllers[motion_controller_xy_id].move(park_position, feed_rate)
+
 
 def pick(point):
     feed_rate = 50000
@@ -209,25 +258,86 @@ def place(point, rotation, package):
 """
 
 phead_two_code = """
-def move(point, rotation, speed_factor=1):
+def move(point, speed_factor=1):
     feed_rate = 50000 * speed_factor
+    axis_xy_config = controllers[motion_controller_xy_id].config['axis']
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park pick n place axis before doing anything
-    controllers[motion_controller_id].move({ 
-        pnp_axis_id: axis[pnp_axis_id].park
-    }, feed_rate)
+    # park pick n place axis before moving x or y
+    if 'x' in point or 'y' in point:
+        controllers[motion_controller_zr_id].move({ 
+            z_axis_id: axis_zr_config[z_axis_id]['park']
+        }, feed_rate)
 
-    # move to planar point
-    controllers[motion_controller_id].move({
-        'x': point['x'] + offset['x'], 
-        'y': point['y'] + offset['y']
-    }, feed_rate)
+    # move x,y
+    position = {}
+    if 'x' in point:
+        position[x_axis_id] = point['x'] + offset['x']
+    if 'y' in point:
+        position[y_axis_id] = point['y'] + offset['y']
+    
+    controllers[motion_controller_xy_id].move(position, feed_rate)
 
     # raise/descent and rotate nozzle
-    controllers[motion_controller_id].move({
-        pnp_axis_id: 118 - point['z'],
-        rotation_axis_id: rotation
-    }, feed_rate)
+    position = {}
+    if 'z' in point:
+        position[z_axis_id] = point['z']
+    if 'r' in point:
+        position[r_axis_id] = point['r']
+    controllers[motion_controller_zr_id].move(position, feed_rate)
+
+def get_position():
+    return {
+        'x' : 200,
+        'y' : 201,
+        'z' : 202,
+        'r' : 204
+    }
+
+def jog(axis, step, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+
+    axis_map = {
+        'x' : x_axis_id,
+        'y' : y_axis_id,
+        'z' : z_axis_id,
+        'r' : r_axis_id
+    }
+
+    if axis == 'z':
+        step = -step
+
+    if axis == 'x' or axis == 'y':
+        controllers[motion_controller_xy_id].jog(axis_map[axis], step, feed_rate)
+    if axis == 'z' or axis == 'r':
+        controllers[motion_controller_zr_id].jog(axis_map[axis], step, feed_rate)
+
+def park(axis_list, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_xy_config = controllers[motion_controller_xy_id].config['axis']
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
+
+    # park z and r axis
+    park_position = {}
+    # park z even if x, y parking is desired
+    if 'x' in axis_list or 'y' in axis_list or 'z' in axis_list:
+        park_position[z_axis_id] = axis_zr_config[z_axis_id]['park']
+    if 'r' in axis_list:
+        park_position[r_axis_id] = axis_zr_config[r_axis_id]['park']
+
+    if park_position:
+        controllers[motion_controller_zr_id].move(park_position, feed_rate)
+
+    # park x and y axis
+    park_position = {}
+    if 'x' in axis_list:
+        park_position[x_axis_id] = axis_xy_config[x_axis_id]['park']
+    if 'y' in axis_list:
+        park_position[y_axis_id] = axis_xy_config[y_axis_id]['park']
+    
+    if park_position:
+         controllers[motion_controller_xy_id].move(park_position, feed_rate)
+         
 
 def pick(point):
     feed_rate = 50000
@@ -283,52 +393,32 @@ def place(point, rotation, package):
     controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
 """
 
-# placement_heads_table = db.table("placement_heads")
-# placement_heads_table.purge()
-# placement_heads_table.insert_multiple([
-#     {
-#         "id": "PlaceHead1",
-#         "pnp_axis_id": "z",
-#         "rotation_axis_id": "a",
-#         "vacuum_actuator_id": "Valve1",
-#         "code": nc_one_code
-#     },
-#     {
-#         "id": "PlaceHead2",
-#         "pnp_axis_id": "z",
-#         "rotation_axis_id": "b",
-#         "vacuum_actuator_id": "Valve2",
-#         "code": nc_two_code
-#     }
-# ])
-
-# /api/heads/Head1/p_heads/PlaceHead1/position
-# /api/p_heads/PlaceHead1/position
-
-heads_table = db.table("heads")
-heads_table.purge()
-heads_table.insert_multiple([
+head_table = db.table("head")
+head_table.purge()
+head_table.insert(
     {
-        "id": "Head1",
-        "motion_controller_id": "Mc1",          # for x/y movement
-        "x_axis_id": "x",
-        "y_axis_id": "y",
         "placement_heads": [
             {
                 "id": "PlaceHead1",
+                "x_axis_id": "x",
+                "y_axis_id": "y",
+                "motion_controller_xy_id": "Mc1",  # for x/y movement
+                "z_axis_id": "z",
+                "r_axis_id": "a",
+                "motion_controller_zr_id": "Mc1",  # for z/rot movement
                 "offset": {"x": 0.0, "y": 0.0},
-                "motion_controller_id": "Mc1",  # for z/rot movement
-                "pnp_axis_id": "z",
-                "rotation_axis_id": "a",
                 "vacuum_actuator_id": "Valve1",
                 "code": phead_one_code
             },
             {
                 "id": "PlaceHead2",
+                "x_axis_id": "x",
+                "y_axis_id": "y",
+                "motion_controller_xy_id": "Mc1",  # for x/y movement
+                "z_axis_id": "z",
+                "r_axis_id": "b",
+                "motion_controller_zr_id": "Mc1",  # for z/rot movement
                 "offset": {"x": -43.8, "y": 0.0},
-                "motion_controller_id": "Mc1",  # for z/rot movement
-                "pnp_axis_id": "z",
-                "rotation_axis_id": "b",
                 "vacuum_actuator_id": "Valve2",
                 "code": phead_two_code
             }
@@ -340,7 +430,48 @@ heads_table.insert_multiple([
             }
         ]
     }
-])
+
+)
+
+# /api/heads/Head1/p_heads/PlaceHead1/position
+# /api/p_heads/PlaceHead1/position
+
+# heads_table = db.table("heads")
+# heads_table.purge()
+# heads_table.insert_multiple([
+#     {
+#         "id": "Head1",
+#         "motion_controller_id": "Mc1",          # for x/y movement
+#         "x_axis_id": "x",
+#         "y_axis_id": "y",
+#         "placement_heads": [
+#             {
+#                 "id": "PlaceHead1",
+#                 "offset": {"x": 0.0, "y": 0.0},
+#                 "motion_controller_id": "Mc1",  # for z/rot movement
+#                 "pnp_axis_id": "z",
+#                 "rotation_axis_id": "a",
+#                 "vacuum_actuator_id": "Valve1",
+#                 "code": phead_one_code
+#             },
+#             {
+#                 "id": "PlaceHead2",
+#                 "offset": {"x": -43.8, "y": 0.0},
+#                 "motion_controller_id": "Mc1",  # for z/rot movement
+#                 "pnp_axis_id": "z",
+#                 "rotation_axis_id": "b",
+#                 "vacuum_actuator_id": "Valve2",
+#                 "code": phead_two_code
+#             }
+#         ],
+#         "cameras": [
+#             {
+#                 "id": "Cam2",
+#                 "offset": {"x": -21.9, "y": -20.0}
+#             }
+#         ]
+#     }
+# ])
 
 
 feeders_code_xn = """# get_point gets called before pick operation 

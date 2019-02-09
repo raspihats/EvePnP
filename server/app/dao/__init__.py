@@ -63,6 +63,22 @@ class DAO(object):
             self._fire_on_change()
             return self.get(id)
 
+    def get_first(self):
+        result = self._db_table.all()
+        if len(result) < 1:
+            raise DAO.DocumentDoesNotExistError("No document found")
+        return result[0]
+
+    def update_first(self, data):
+        data_list = self._db_table.all()
+        self._db_table.purge()
+        if len(data_list) == 0:
+            self._db_table.insert(data)
+        else:
+            data_list[0] = data
+            self._db_table.insert_multiple(data_list)
+        return self._db_table.all()[0]
+
     def delete(self, id):
         result = self._db_table.remove(where('id') == id)
         if len(result) == 0:
@@ -87,7 +103,7 @@ class DAO(object):
 actuators_dao = DAO(db_hardware, 'actuators')
 axis_dao = DAO(db_hardware, 'axis')
 nozzle_carriages_dao = DAO(db_hardware, 'nozzle_carriages')
-heads_dao = DAO(db_hardware, 'heads')
+head_dao = DAO(db_hardware, 'head')
 controllers_dao = DAO(db_hardware, 'controllers')
 feeders_dao = DAO(db_hardware, 'feeders')
 packages_dao = DAO(db_hardware, 'packages')

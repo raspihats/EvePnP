@@ -14,7 +14,11 @@ class ControllersService(object):
                 if controller['driver'] == 'grbl':
                     from ..drivers import grbl
                     # add 'axis' to controller config
-                    controller['axis'] = axis_dao.get_list()
+                    axis = {}
+                    for a in axis_dao.get_list():
+                        _id = a.pop('id')
+                        axis[_id] = a
+                    controller['axis'] = axis
                     grbl = grbl.Grbl(controller)
                     self.motion_controller = grbl
                     self.controllers[controller['id']] = grbl

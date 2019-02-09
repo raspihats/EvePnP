@@ -16,9 +16,6 @@ head_camera_model = api.model('HeadCamera', {
 
 placement_head_model = api.model('PlacementHead', {
     'id': fields.String(required=True, description='Placement head identifier'),
-    'x_axis_id': fields.String(required=True, description='X axis identifier'),
-    'y_axis_id': fields.String(required=True, description='Y axis identifier'),
-    'motion_controller_xy_id': fields.String(required=True, description='Motion controller for X/Y axis'),
     'z_axis_id': fields.String(required=True, description='Pick n place axis identifier'),
     'r_axis_id': fields.String(required=True, description='Rotation axis identifier'),
     'motion_controller_zr_id': fields.String(required=True, description='Motion controller for Z/Rotation axis'),
@@ -28,6 +25,9 @@ placement_head_model = api.model('PlacementHead', {
 })
 
 head_model = api.model('Head', {
+    'x_axis_id': fields.String(required=True, description='X axis identifier'),
+    'y_axis_id': fields.String(required=True, description='Y axis identifier'),
+    'motion_controller_xy_id': fields.String(required=True, description='Motion controller for X/Y axis'),
     'placement_heads': fields.List(fields.Nested(placement_head_model), required=True, description='List of installed placement heads'),
     'cameras': fields.List(fields.Nested(head_camera_model), required=True, description='List of installed cameras')
 })
@@ -128,12 +128,13 @@ class PlacementHead(Resource):
             api.abort(404)
 
 
-# placement_head_position_model = api.model('PlacementHeadPosition', {
-#     'x': fields.Float(required=True, description='X axis position'),
-#     'y': fields.Float(required=True, description='Y axis position'),
-#     'z': fields.Float(required=True, description='Z axis position'),
-#     'r': fields.Float(required=True, description='Rotation axis position')
-# })
+def copy_keys(source, dest, omit):
+    for key in omit:
+        source.pop(key, None)
+    for key in source:
+        if key not in dest:
+            dest[key] = source[key]
+
 
 placement_head_position_model = api.model('PlacementHeadPosition', {
     'id': fields.String(required=True, description='Axis identifier'),
@@ -154,22 +155,24 @@ class PlacementHeadPosition(Resource):
         head = head_dao.get_first()
         for placement_head in head['placement_heads']:
             if placement_head['id'] == p_id:
+                copy_keys(head, placement_head, omit=[
+                          'placement_heads', 'cameras'])
                 position = run_func(placement_head, 'get_position')
                 return [{'id': axis, 'position': position[axis]} for axis in position]
         api.abort(404)
 
     @api.doc('update_placement_head_position')
     @api.expect([placement_head_position_model])
-    # @api.marshal_with(placement_head_position_model)
     def put(self, p_id):
         '''Update a placement head position given its identifier'''
-
         head = head_dao.get_first()
         for placement_head in head['placement_heads']:
             if placement_head['id'] == p_id:
                 position = {}
                 for axis in api.payload:
                     position[axis['id']] = axis['position']
+                copy_keys(head, placement_head, omit=[
+                          'placement_heads', 'cameras'])
                 run_func(placement_head, 'move', position)
                 return '', 200
         api.abort(404)
@@ -194,6 +197,8 @@ class PlacementHeadJog(Resource):
         head = head_dao.get_first()
         for placement_head in head['placement_heads']:
             if placement_head['id'] == p_id:
+                copy_keys(head, placement_head, omit=[
+                          'placement_heads', 'cameras'])
                 run_func(placement_head, 'jog',
                          api.payload['id'], api.payload['step'])
                 return '', 200
@@ -218,7 +223,52 @@ class PlacementHeadPark(Resource):
         head = head_dao.get_first()
         for placement_head in head['placement_heads']:
             if placement_head['id'] == p_id:
+                copy_keys(head, placement_head, omit=[
+                          'placement_heads', 'cameras'])
                 run_func(placement_head,
                          'park', [axis['id'] for axis in api.payload])
+                return '', 200
+        api.abort(404)
+
+
+camera_position_model = api.model('CameraPosition', {
+    'id': fields.String(required=True, description='Axis identifier'),
+    'position': fields.Float(required=True, description='Axis position')
+})
+
+
+@api.route('/cameras/<c_id>/position')
+@api.param('c_id', 'The camera identifier')
+@api.response(404, 'Camera not found')
+class CameraPosition(Resource):
+    '''Operations on position of a camera given its identifier'''
+
+    @api.doc('get_camera_position')
+    @api.marshal_list_with(camera_position_model)
+    def get(self, c_id):
+        '''Fetch a camera position given its identifier'''
+        head = head_dao.get_first()
+        for camera in head['cameras']:
+            if camera['id'] == c_id:
+                copy_keys(head, camera, omit=[
+                          'placement_heads', 'cameras'])
+                position = run_func(camera, 'get_position')
+                return [{'id': axis, 'position': position[axis]} for axis in position]
+        api.abort(404)
+
+    @api.doc('update_camera_position')
+    @api.expect([camera_position_model])
+    def put(self, c_id):
+        '''Update a camera position given its identifier'''
+
+        head = head_dao.get_first()
+        for camera in head['cameras']:
+            if camera['id'] == c_id:
+                position = {}
+                for axis in api.payload:
+                    position[axis['id']] = axis['position']
+                copy_keys(head, camera, omit=[
+                          'placement_heads', 'cameras'])
+                run_func(camera, 'move', position)
                 return '', 200
         api.abort(404)

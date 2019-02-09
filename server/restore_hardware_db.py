@@ -281,7 +281,7 @@ def move(point, speed_factor=1):
     # raise/descent and rotate nozzle
     position = {}
     if 'z' in point:
-        position[z_axis_id] = point['z']
+        position[z_axis_id] = 118 - point['z']
     if 'r' in point:
         position[r_axis_id] = point['r']
     controllers[motion_controller_zr_id].move(position, feed_rate)
@@ -393,31 +393,51 @@ def place(point, rotation, package):
     controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
 """
 
+cam_code = """
+def move(point, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_xy_config = controllers[motion_controller_xy_id].config['axis']
+
+    # move x,y
+    position = {}
+    if 'x' in point:
+        position[x_axis_id] = point['x'] + offset['x']
+    if 'y' in point:
+        position[y_axis_id] = point['y'] + offset['y']
+    
+    controllers[motion_controller_xy_id].move(position, feed_rate)
+
+def get_position():
+    return {
+        'x' : 200,
+        'y' : 201,
+        'z' : 202,
+        'r' : 204
+    }
+"""
+
 head_table = db.table("head")
 head_table.purge()
 head_table.insert(
     {
+        "x_axis_id": "x",
+        "y_axis_id": "y",
+        "motion_controller_xy_id": "Mc1",  # for x/y head movement
         "placement_heads": [
             {
                 "id": "PlaceHead1",
-                "x_axis_id": "x",
-                "y_axis_id": "y",
-                "motion_controller_xy_id": "Mc1",  # for x/y movement
                 "z_axis_id": "z",
                 "r_axis_id": "a",
-                "motion_controller_zr_id": "Mc1",  # for z/rot movement
+                "motion_controller_zr_id": "Mc1",  # for z/rot placement head movement
                 "offset": {"x": 0.0, "y": 0.0},
                 "vacuum_actuator_id": "Valve1",
                 "code": phead_one_code
             },
             {
                 "id": "PlaceHead2",
-                "x_axis_id": "x",
-                "y_axis_id": "y",
-                "motion_controller_xy_id": "Mc1",  # for x/y movement
                 "z_axis_id": "z",
                 "r_axis_id": "b",
-                "motion_controller_zr_id": "Mc1",  # for z/rot movement
+                "motion_controller_zr_id": "Mc1",  # for z/rot placement head movement
                 "offset": {"x": -43.8, "y": 0.0},
                 "vacuum_actuator_id": "Valve2",
                 "code": phead_two_code
@@ -426,7 +446,8 @@ head_table.insert(
         "cameras": [
             {
                 "id": "Cam2",
-                "offset": {"x": -21.9, "y": -20.0}
+                "offset": {"x": -21.9, "y": -20.0},
+                "code": cam_code
             }
         ]
     }

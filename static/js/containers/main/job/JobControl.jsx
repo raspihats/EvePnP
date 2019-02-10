@@ -22,10 +22,8 @@ const Button = props => {
 const uploadString = "Upload ...";
 
 class JobControl extends React.Component {
-  state = { option: uploadString };
-
   getButtons() {
-    if (this.state.option == uploadString) {
+    if (!this.props.selectedJobId) {
       return (
         <Button
           title="Upload job"
@@ -34,33 +32,36 @@ class JobControl extends React.Component {
         />
       );
     } else {
-      if (this.props.running) {
-        return (
-          <React.Fragment>
-            <Button
-              title="Pause job"
-              icon="pause"
-              onClick={() => this.props.onPause()}
-            />
-            <Button title="Stop job" icon="stop" onClick={this.props.onStop} />
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment>
+      return (
+        <React.Fragment>
+          {(this.props.runningState === "idle" ||
+            this.props.runningState === "pause") && (
             <Button
               title="Start job"
               icon="play"
               onClick={() => this.props.onStart()}
             />
+          )}
+          {this.props.runningState === "run" && (
+            <Button
+              title="Pause job"
+              icon="pause"
+              onClick={() => this.props.onPause()}
+            />
+          )}
+          {(this.props.runningState === "run" ||
+            this.props.runningState === "pause") && (
+            <Button title="Stop job" icon="stop" onClick={this.props.onStop} />
+          )}
+          {this.props.runningState === "idle" && (
             <Button
               title="Delete job"
               icon="trash"
               onClick={() => this.props.onDelete()}
             />
-          </React.Fragment>
-        );
-      }
+          )}
+        </React.Fragment>
+      );
     }
   }
 
@@ -69,8 +70,13 @@ class JobControl extends React.Component {
       <SelectInputGroup
         prepend="Job:"
         options={[uploadString].concat(this.props.jobs)}
-        value={this.props.selectedJobId}
-        disabled={this.props.running ? true : false}
+        value={
+          this.props.selectedJobId ? this.props.selectedJobId : uploadString
+        }
+        disabled={
+          this.props.runningState === "run" ||
+          this.props.runningState === "pause"
+        }
         append={this.getButtons()}
         onChange={value => {
           if (value === uploadString) {

@@ -128,16 +128,18 @@ class ApiEndpoint {
       .get(this.endpoint)
       .then(response => callback(response.data))
       .catch(error => {
-        errorHandler("Api error, list " + this.endpoint, error);
+        errorHandler("Api error, get " + this.endpoint, error);
       });
   }
 
-  get(id, callback) {
+  get(id, callback, reportError = true) {
     api
       .get(this.endpoint + id)
       .then(response => callback(response.data))
       .catch(error => {
-        errorHandler("Api error, get " + this.endpoint, error);
+        if (reportError) {
+          errorHandler("Api error, get " + this.endpoint, error);
+        }
       });
   }
 
@@ -157,7 +159,7 @@ api.axis = axis;
 api.head = new ApiEndpoint("/head/");
 api.feeders = new ApiEndpoint("/feeders/");
 api.jobs = new ApiEndpoint("/jobs/");
-api.jobsRunner = new ApiEndpoint("/jobs/runner/");
+api.jobRunner = new ApiEndpoint("/job_runner/");
 api.packages = new ApiEndpoint("/packages/");
 
 export default api;

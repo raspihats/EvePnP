@@ -1,4 +1,5 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CheckBox from "../../../components/CheckBox";
 import SelectInputGroup from "../../../components/SelectInputGroup";
 import InputInputGroup from "../../../components/InputField";
@@ -24,12 +25,18 @@ const BoardDisplayRow = props => {
         <ObjectProps object={board.origin} inline />
       </td>
       <td className="align-middle">{board.rotation}</td>
-      <td className="align-middle">{board.operation}</td>
+      <td
+        className={
+          "align-middle " + (board.operation === "ignore" && "text-warning")
+        }
+      >
+        {board.operation}
+      </td>
       <td className="align-middle">
         <MoveHeadButtons title="Move" head={props.head} point={board.origin} />
         <div className="float-right">
           <IconButton
-            title="Edit component"
+            title="Edit board"
             icon="pen-square"
             onClick={e => props.onEdit()}
           />
@@ -129,7 +136,10 @@ class BoardEditRow extends React.Component {
 }
 
 class JobBoards extends React.Component {
-  state = { editIds: [], referenceId: null };
+  state = {
+    editIds: [],
+    referenceId: this.props.job.boards[0].id
+  };
 
   addEditId(id) {
     let editIds = [...this.state.editIds];
@@ -149,9 +159,12 @@ class JobBoards extends React.Component {
   }
 
   componentDidMount() {
-    let board = this.props.job.boards[0];
-    this.setState({ referenceId: board.id });
-    this.props.onSetOrigin(board.origin);
+    // set initial origin value
+    this.props.job.boards.forEach(board => {
+      if (board.id === this.state.referenceId) {
+        this.props.onSetOrigin(board.origin);
+      }
+    });
   }
 
   render() {
@@ -189,14 +202,19 @@ class JobBoards extends React.Component {
                   head={this.props.head}
                   board={board}
                   operations={this.props.operations}
+                  reference={this.state.referenceId === board.id}
                   onSetReferenceId={() => {
                     this.setState({ referenceId: board.id });
                     this.props.onSetOrigin(board.origin);
                   }}
                   onUpdate={(updatedBoard, callback) => {
-                    this.props.onUpdateComponent(board.id, updatedBoard, () => {
+                    this.props.onUpdateBoard(board.id, updatedBoard, () => {
                       callback();
                       this.removeEditId(board.id);
+                      if (this.state.referenceId === board.id) {
+                        this.setState({ referenceId: updatedBoard.id });
+                        this.props.onSetOrigin(updatedBoard.origin);
+                      }
                     });
                   }}
                   onDiscard={() => this.removeEditId(board.id)}

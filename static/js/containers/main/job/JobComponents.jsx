@@ -26,7 +26,9 @@ const ComponentDisplayRow = props => {
       <td className="align-middle">{component.rotation}</td>
       <td
         className={
-          "align-middle " + (component.operation === "ignore" && "text-warning")
+          "align-middle " +
+          (component.operation === "ignore" && "text-warning") +
+          " bg-success text-white"
         }
       >
         {component.operation}

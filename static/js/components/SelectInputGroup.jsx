@@ -48,8 +48,9 @@ class SelectInputGroup extends React.Component {
           </InputGroupPrepend>
         )}
         <select
-          className="custom-select"
           id={this.props.id}
+          className="custom-select"
+          disabled={this.props.disabled}
           onChange={e => {
             e.target.blur();
             // this.setState({ value: e.target.value });

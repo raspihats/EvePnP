@@ -1,11 +1,19 @@
 import gevent
-from ..dao import feeders_dao, heads_dao, nozzle_carriages_dao, axis_dao, packages_dao, jobs_dao
+from ..dao import axis_dao, head_dao, feeders_dao, packages_dao, jobs_dao
 from .controllers import controllers_service
 from .actuators import actuators_service
 from .motion import motion_service
 
 
-def _add_points(p1, p2):
+class DictKeysToObjectProps(object):
+    def __init__(self, config):
+        self._config = dict(config)
+
+    def __getattr__(self, attribute):
+        return self._config[attribute]
+
+
+def add_points(p1, p2):
     result = dict(p1)
     for key in p2:
         if key in p1:
@@ -13,6 +21,30 @@ def _add_points(p1, p2):
         else:
             result[key] = p2[key]
     return result
+
+
+def copy_keys(source, dest, omit):
+    for key in omit:
+        source.pop(key, None)
+    for key in source:
+        if key not in dest:
+            dest[key] = source[key]
+
+
+def run_func(target, name, *args, **kwargs):
+    axis = {}
+    for axis_config in axis_dao.get_list():
+        axis[axis_config['id']] = DictKeysToObjectProps(axis_config)
+
+    _globals = dict(target)
+    _globals['controllers'] = controllers_service.controllers
+    _globals['actuators'] = actuators_service.actuators
+    _globals['axis'] = axis
+
+    _locals = {}
+    exec(target['code'], _globals, _locals)
+    func = _locals[name]
+    return func(*args, **kwargs)
 
 
 class Package(object):
@@ -49,80 +81,69 @@ class Head(object):
         def __init__(self, *args, **kwargs):
             Exception.__init__(self, *args, **kwargs)
 
-    class NozzleCarriage(object):
+    class PlacementHead(object):
         def __init__(self, config):
-            self._config = nozzle_carriages_dao.get(config['id'])
-            self._config['offset'] = config['offset']
+            self._config = config
             self._component = None
 
         def isEmpty(self):
             return self._component == None
 
-        def _get_function(self, name):
-            axis = {}
-            for axis_config in axis_dao.get_list():
-                axis[axis_config['id']] = Axis(axis_config)
-
-            _locals = {}
-            _globals = dict(self._config)
-            _globals['controllers'] = controllers_service.controllers
-            _globals['actuators'] = actuators_service.actuators
-            _globals['axis'] = axis
-            exec(self._config['code'], _globals, _locals)
-            return(_locals[name])
-
         def pick(self, component):
-            point = _add_points(
+            point = add_points(
                 component['pick_point'], self._config['offset'])
 
             print('Pick point: {}'.format(point))
 
-            pick = self._get_function('pick')
-            pick(point)
+            run_func(self._config, 'pick', point)
             self._component = component
 
         def place(self):
-            point = _add_points(
+            point = add_points(
                 self._component['place_point'], self._config['offset'])
             rotation = self._component['rotation']
+
             package = Package(packages_dao.get(self._component['package']))
+            point['z'] += package.height
 
-            print('Place point: {}'.format(point))
+            print('Place point: {} {}'.format(point, rotation))
 
-            place = self._get_function('place')
-            place(point, rotation, package)
+            run_func(self._config, 'place', point, rotation)
             placed_component = self._component
             self._component = None
             return placed_component
 
-    def __init__(self, config):
-        self.id = config['id']
-        self.nozzle_carriages = []
-        for nc_config in config['nozzle_carriages']:
-            self.nozzle_carriages.append(self.NozzleCarriage(nc_config))
+    def __init__(self):
+        self._config = head_dao.get_first()
+        self.placement_heads = []
+        for ph_config in self._config['placement_heads']:
+            # migrate some config keys from head to placement head
+            copy_keys(self._config, ph_config, omit=[
+                      'placement_heads', 'cameras'])
+            self.placement_heads.append(Head.PlacementHead(ph_config))
 
     def pick(self, component):
-        for nc in self.nozzle_carriages:
-            if nc.isEmpty():
-                nc.pick(component)
+        for ph in self.placement_heads:
+            if ph.isEmpty():
+                ph.pick(component)
                 return
         raise self.FullException()
 
     def place(self):
-        for nc in self.nozzle_carriages:
-            if not nc.isEmpty():
-                return nc.place()
+        for ph in self.placement_heads:
+            if not ph.isEmpty():
+                return ph.place()
         raise self.EmptyException()
 
     def isLoaded(self):
-        for nc in self.nozzle_carriages:
-            if nc.isEmpty():
+        for ph in self.placement_heads:
+            if ph.isEmpty():
                 return False
         return True
 
     def isEmpty(self):
-        for nc in self.nozzle_carriages:
-            if not nc.isEmpty():
+        for ph in self.placement_heads:
+            if not ph.isEmpty():
                 return False
         return True
 
@@ -145,13 +166,7 @@ class JobRunnerService(object):
         self._progress = {'id': None}
         self._pause = False
         self._stop = False
-        self._heads = []
-        self._load_heads()
-
-    def _load_heads(self):
-        self._heads = []
-        for head_config in heads_dao.get_list():
-            self._heads.append(Head(head_config))
+        self._head = Head()
 
     def start(self, id):
         if self._job is None:
@@ -242,26 +257,24 @@ class JobRunnerService(object):
 
                 if not self._pause:
                     # pick multiple components
-                    for head in self._heads:
-                        while not head.isLoaded() and len(components):
-                            component = components[0]
-                            try:
-                                feeder = self._select_feeder(component)
-                                component['pick_point'] = feeder.get_point()
-                                component['place_point'] = _add_points(
-                                    board['origin'], component['offset'])
-                                head.pick(component)
-                            except self.FeederNotFoundError as e:
-                                print(e)
-                            finally:
-                                components.remove(component)
+                    while not self._head.isLoaded() and len(components):
+                        component = components[0]
+                        try:
+                            feeder = self._select_feeder(component)
+                            component['pick_point'] = feeder.get_point()
+                            component['place_point'] = add_points(
+                                board['origin'], component['offset'])
+                            self._head.pick(component)
+                        except self.FeederNotFoundError as e:
+                            print(e)
+                        finally:
+                            components.remove(component)
 
                     # place multiple components
-                    for head in self._heads:
-                        while not head.isEmpty():
-                            placed_component = head.place()
-                            board_progress['components_ids'].append(
-                                placed_component['id'])
+                    while not self._head.isEmpty():
+                        placed_component = self._head.place()
+                        board_progress['components_ids'].append(
+                            placed_component['id'])
 
                 gevent.sleep(0.1)
 

@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from ..dao import head_dao, DAO
-from ..service import run_func
+from ..service.job_runner import run_func, copy_keys
 
 api = Namespace('head', description='Head related operations')
 
@@ -126,14 +126,6 @@ class PlacementHead(Resource):
             raise DAO.DocumentDoesNotExistError()
         except DAO.DocumentDoesNotExistError:
             api.abort(404)
-
-
-def copy_keys(source, dest, omit):
-    for key in omit:
-        source.pop(key, None)
-    for key in source:
-        if key not in dest:
-            dest[key] = source[key]
 
 
 placement_head_position_model = api.model('PlacementHeadPosition', {

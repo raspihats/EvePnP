@@ -143,7 +143,8 @@ def move(point, speed_factor=1):
     if 'y' in point:
         position[y_axis_id] = point['y'] + offset['y']
     
-    controllers[motion_controller_xy_id].move(position, feed_rate)
+    if position:
+        controllers[motion_controller_xy_id].move(position, feed_rate)
 
     # raise/descent and rotate nozzle
     position = {}
@@ -151,7 +152,9 @@ def move(point, speed_factor=1):
         position[z_axis_id] = point['z']
     if 'r' in point:
         position[r_axis_id] = point['r']
-    controllers[motion_controller_zr_id].move(position, feed_rate)
+    
+    if position:
+        controllers[motion_controller_zr_id].move(position, feed_rate)
 
 def get_position():
     return {
@@ -204,57 +207,64 @@ def park(axis_list, speed_factor=1):
          controllers[motion_controller_xy_id].move(park_position, feed_rate)
 
 
-def pick(point):
-    feed_rate = 50000
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = point.pop('z')
+def pick(point, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park pick n place axis
-    controllers['Mc1'].move(
-        {
-            pnp_axis_id: axis[pnp_axis_id].park
-        }, feed_rate)
-
-    # move to pick point
-    controllers['Mc1'].move({
-        'x': x_position, 
-        'y': y_position,
-        rotation_axis_id: 0
+    # park z and r axis
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park'],
+        r_axis_id: axis_zr_config[r_axis_id]['park']
     }, feed_rate)
 
-    # descent nozzle
-    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+    # move to pick point on x and y axis
+    controllers[motion_controller_xy_id].move({
+        x_axis_id: point['x'], 
+        y_axis_id: point['y']
+    }, feed_rate)
+
+    # lower nozzle
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: point['z']
+    }, feed_rate)
 
     # enable vacuum
     actuators[vacuum_actuator_id].set(True)
 
     # raise nozzle
-    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park']
+    }, feed_rate)
 
 
-def place(point, rotation, package):
-    feed_rate = 50000
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = point.pop('z') + package.height
+def place(point, rotation, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # move to pick point and rotate
-    controllers['Mc1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: rotation
-        }, feed_rate)
+    # move to place point on x and y axis
+    controllers[motion_controller_xy_id].move({
+        x_axis_id: point['x'], 
+        y_axis_id: point['y']
+    }, feed_rate)
 
-    # descent nozzle
-    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+    # rotate nozzle
+    controllers[motion_controller_zr_id].move({
+        r_axis_id: rotation
+    }, feed_rate)
+
+    # lower nozzle
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: point['z']
+    }, feed_rate)
 
     # disable vacuum
     actuators[vacuum_actuator_id].set(False)
 
-    # raise nozzle
-    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+    # raise nozzle, park rotation axis
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park'],
+        r_axis_id: axis_zr_config[r_axis_id]['park']
+    }, feed_rate)
 """
 
 phead_two_code = """
@@ -275,8 +285,9 @@ def move(point, speed_factor=1):
         position[x_axis_id] = point['x'] + offset['x']
     if 'y' in point:
         position[y_axis_id] = point['y'] + offset['y']
-    
-    controllers[motion_controller_xy_id].move(position, feed_rate)
+
+    if position:
+        controllers[motion_controller_xy_id].move(position, feed_rate)
 
     # raise/descent and rotate nozzle
     position = {}
@@ -284,7 +295,9 @@ def move(point, speed_factor=1):
         position[z_axis_id] = 118 - point['z']
     if 'r' in point:
         position[r_axis_id] = point['r']
-    controllers[motion_controller_zr_id].move(position, feed_rate)
+    
+    if position:
+        controllers[motion_controller_zr_id].move(position, feed_rate)
 
 def get_position():
     return {
@@ -339,58 +352,65 @@ def park(axis_list, speed_factor=1):
          controllers[motion_controller_xy_id].move(park_position, feed_rate)
          
 
-def pick(point):
-    feed_rate = 50000
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = 118 - point.pop('z')
+def pick(point, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park pick n place axis
-    controllers['Mc1'].move(
-        {
-            pnp_axis_id: axis[pnp_axis_id].park
-        }, feed_rate)
+    # park z and r axis
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park'],
+        r_axis_id: axis_zr_config[r_axis_id]['park']
+    }, feed_rate)
 
-    # move to pick point
-    controllers['Mc1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: 0
-        }, feed_rate)
+    # move to pick
+    # position x and y axis
+    controllers[motion_controller_xy_id].move({
+        x_axis_id: point['x'], 
+        y_axis_id: point['y']
+    }, feed_rate)
 
-    # descent nozzle
-    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+    # position z axis, lower nozzle
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: 118 - point['z']
+    }, feed_rate)
 
     # enable vacuum
     actuators[vacuum_actuator_id].set(True)
 
     # raise nozzle
-    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park']
+    }, feed_rate)
 
 
-def place(point, rotation, package):
-    feed_rate = 50000
-    x_position = point.pop('x')
-    y_position = point.pop('y')
-    z_position = 118 - (point.pop('z') + package.height)
+def place(point, rotation, speed_factor=1):
+    feed_rate = 50000 * speed_factor
+    axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # move to pick point and rotate
-    controllers['Mc1'].move(
-        {
-            'x': x_position,
-            'y': y_position,
-            rotation_axis_id: rotation
-        }, feed_rate)
+    # move to place point on x and y axis
+    controllers[motion_controller_xy_id].move({
+        x_axis_id: point['x'], 
+        y_axis_id: point['y']
+    }, feed_rate)
 
-    # descent nozzle
-    controllers['Mc1'].move({pnp_axis_id: z_position}, feed_rate)
+    # rotate nozzle
+    controllers[motion_controller_zr_id].move({
+        r_axis_id: rotation
+    }, feed_rate)
+
+    # lower nozzle
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: 118 - point['z']
+    }, feed_rate)
 
     # disable vacuum
     actuators[vacuum_actuator_id].set(False)
 
-    # raise nozzle
-    controllers['Mc1'].move({pnp_axis_id: axis[pnp_axis_id].park}, feed_rate)
+    # raise nozzle, park rotation axis
+    controllers[motion_controller_zr_id].move({
+        z_axis_id: axis_zr_config[z_axis_id]['park'],
+        r_axis_id: axis_zr_config[r_axis_id]['park']
+    }, feed_rate)
 """
 
 cam_code = """

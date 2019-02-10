@@ -2,7 +2,6 @@ import gevent
 from ..dao import axis_dao, head_dao, feeders_dao, packages_dao, jobs_dao
 from .controllers import controllers_service
 from .actuators import actuators_service
-from .motion import motion_service
 
 
 class DictKeysToObjectProps(object):
@@ -89,6 +88,10 @@ class Head(object):
         def isEmpty(self):
             return self._component == None
 
+        def park(self):
+            print('Parking placement head: {}'.format(self._config['id']))
+            run_func(self._config, 'park', ['x', 'y', 'z', 'r'])
+
         def pick(self, component):
             point = add_points(
                 component['pick_point'], self._config['offset'])
@@ -121,6 +124,10 @@ class Head(object):
             copy_keys(self._config, ph_config, omit=[
                       'placement_heads', 'cameras'])
             self.placement_heads.append(Head.PlacementHead(ph_config))
+
+    def park(self):
+        for ph in self.placement_heads:
+            ph.park()
 
     def pick(self, component):
         for ph in self.placement_heads:
@@ -230,10 +237,9 @@ class JobRunnerService(object):
         }
 
         print("Starting job: {}".format(self._job['id']))
-        actuators_service.actuators['VacuumPump'].set(True)
 
-        motion_service.park([{'id': 'z'}])
-        motion_service.park([{'id': 'x'}, {'id': 'y'}])
+        self._head.park()
+        actuators_service.actuators['VacuumPump'].set(True)
 
         # build new boards list including only the ones that should be placed
         boards = [x for x in self._job['boards'] if x['operation'] == 'place']
@@ -278,10 +284,8 @@ class JobRunnerService(object):
 
                 gevent.sleep(0.1)
 
-        motion_service.park([{'id': 'z'}])
-        motion_service.park([{'id': 'x'}, {'id': 'y'}])
-
         actuators_service.actuators['VacuumPump'].set(False)
+        self._head.park()
 
         print("Finished job: {}".format(self._job['id']))
         self._job = None

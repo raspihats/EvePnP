@@ -1,6 +1,5 @@
 from flask_restplus import Namespace, Resource, fields
 from ..dao import jobs_dao, DAO
-from ..service.job_runner import job_runner_service
 
 api = Namespace('jobs', description='Jobs related operations')
 
@@ -103,54 +102,3 @@ class Job(Resource):
             return '', 204
         except DAO.DocumentDoesNotExistError:
             api.abort(404)
-
-
-board_progess_model = api.model('BoardProgress', {
-    'id': fields.String(required=True, description='Board id'),
-    'components_ids': fields.List(fields.String, required=False, description='Placed components ids')
-})
-
-job_runner_status_model = api.model('JobRunnerStatus', {
-    'id': fields.String(required=True, description='Running job name'),
-    'boards': fields.List(fields.Nested(board_progess_model), required=False, description='Placed componets ids')
-})
-
-job_runner_control_model = api.model('JobRunnerOperation', {
-    'id': fields.String(required=True, description='Job name'),
-    'operation': fields.String(required=True, description='Operation: start, stop and pause')
-})
-
-
-@api.route('/runner')
-# @api.param('id', 'The job identifier')
-@api.response(404, 'Job not found')
-class JobRunner(Resource):
-    '''JobRunner status'''
-
-    @api.doc('get_jobrunner_status')
-    @api.marshal_with(job_runner_status_model)
-    def get(self):
-        '''Fetch status'''
-        return job_runner_service.get_progress()
-
-
-@api.route('/runner/<string:id>')
-@api.param('id', 'The job identifier')
-@api.response(400, 'Operation unknown')
-@api.response(404, 'Operation not allowed')
-class JobRunnerControl(Resource):
-    '''Control JobRunner'''
-
-    @api.doc('control_jobrunner')
-    @api.expect(job_runner_control_model)
-    # @api.marshal_with(job_id_model)
-    def put(self, id):
-        '''Start, pause, stop a job given its identifier'''
-        if api.payload['operation'] == 'start':
-            job_runner_service.start(id)
-        elif api.payload['operation'] == 'stop':
-            job_runner_service.stop(id)
-        elif api.payload['operation'] == 'pause':
-            job_runner_service.pause(id)
-        else:
-            api.abort(400)

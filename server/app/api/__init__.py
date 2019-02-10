@@ -7,6 +7,7 @@ from .head import api as ns_head
 from .feeders import api as ns_feeders
 from .packages import api as ns_packages
 from .jobs import api as ns_jobs
+from .job_runner import api as ns_job_runner
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 
@@ -24,3 +25,4 @@ api.add_namespace(ns_head)
 api.add_namespace(ns_feeders)
 api.add_namespace(ns_packages)
 api.add_namespace(ns_jobs)
+api.add_namespace(ns_job_runner)

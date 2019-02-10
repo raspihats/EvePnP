@@ -1,5 +1,5 @@
 import gevent
-from ..dao import axis_dao, head_dao, feeders_dao, packages_dao, jobs_dao
+from ..dao import axis_dao, head_dao, feeders_dao, packages_dao
 from .controllers import controllers_service
 from .actuators import actuators_service
 
@@ -155,6 +155,12 @@ class Head(object):
         return True
 
 
+class State(object):
+    IDLE = 'idle'
+    RUN = 'run'
+    PAUSE = 'pause'
+
+
 class JobRunnerService(object):
     class FeederNotFoundError(Exception):
         def __init__(self, *args, **kwargs):
@@ -169,33 +175,33 @@ class JobRunnerService(object):
             Exception.__init__(self, *args, **kwargs)
 
     def __init__(self):
-        self._job = None
-        self._progress = {'id': None}
-        self._pause = False
-        self._stop = False
         self._head = Head()
+        self._stop = False
+        self.status = {
+            'state': State.IDLE,
+            'job_id': "",
+            'boards_ids': [],
+            'components_ids': []
+        }
 
-    def start(self, id):
-        if self._job is None:
-            self._job = jobs_dao.get(id)
-            gevent.spawn(lambda: self._run())
-        elif self._pause:
-            self._pause = False
+    def start(self, job):
+        if self.status['state'] == State.IDLE:
+            gevent.spawn(lambda: self._run(job))
+        elif self.status['state'] == State.PAUSE:
+            self.status['state'] = State.RUN
         else:
-            raise Exception("Job {} is already running".format(self._job.id))
+            raise Exception("Job '{}' is already running".format(
+                self.status['job_id']))
 
     def pause(self, id):
-        if self._job is not None:
-            if self._job['id'] == id:
-                self._pause = True
+        if self.status['state'] == State.RUN:
+            if self.status['job_id'] == id:
+                self.status['state'] = State.PAUSE
 
     def stop(self, id):
-        if self._job is not None:
-            if self._job['id'] == id:
+        if self.status['state'] == State.RUN or self.status['state'] == State.PAUSE:
+            if self.status['job_id'] == id:
                 self._stop = True
-
-    def get_progress(self):
-        return self._progress
 
     def _select_feeder(self, component):
         from tinydb import Query
@@ -228,28 +234,27 @@ class JobRunnerService(object):
         raise self.FeederNotFoundError("Can't find feeder for: {} {} {}".format(
             component['id'], component['value'], component['package']))
 
-    def _run(self):
-        self._pause = False
-        self._stop = False
-        self._progress = {
-            'id': self._job['id'],
-            'boards': []
-        }
+    def _run(self, job):
+        print("Job '{}' started".format(job['id']))
 
-        print("Starting job: {}".format(self._job['id']))
+        self.status = {
+            'state': State.RUN,
+            'job_id': job['id'],
+            'boards_ids': [],
+            'components_ids': []
+        }
 
         self._head.park()
         actuators_service.actuators['VacuumPump'].set(True)
 
         # build new boards list including only the ones that should be placed
-        boards = [x for x in self._job['boards'] if x['operation'] == 'place']
+        boards = [x for x in job['boards'] if x['operation'] == 'place']
 
         for board in boards:
-            board_progress = {'id': board['id'], 'components_ids': []}
-            self._progress['boards'].append(board_progress)
+            self.status['boards_ids'].append(board['id'])
 
             # build new components list including only the ones that should be placed
-            components = [x for x in self._job['components']
+            components = [x for x in job['components']
                           if x['operation'] == 'place']
 
             # sort components, group them using packages and values
@@ -258,10 +263,9 @@ class JobRunnerService(object):
 
             while len(components):
                 if self._stop:
-                    self._job = None
                     break
 
-                if not self._pause:
+                if self.status['state'] == State.RUN:
                     # pick multiple components
                     while not self._head.isLoaded() and len(components):
                         component = components[0]
@@ -279,7 +283,7 @@ class JobRunnerService(object):
                     # place multiple components
                     while not self._head.isEmpty():
                         placed_component = self._head.place()
-                        board_progress['components_ids'].append(
+                        self.status['components_ids'].append(
                             placed_component['id'])
 
                 gevent.sleep(0.1)
@@ -287,8 +291,13 @@ class JobRunnerService(object):
         actuators_service.actuators['VacuumPump'].set(False)
         self._head.park()
 
-        print("Finished job: {}".format(self._job['id']))
-        self._job = None
+        if self._stop:
+            self._stop = False
+            print("Job '{}' stopped".format(job['id']))
+        else:
+            print("Job '{}' finished".format(job['id']))
+
+        self.status['state'] = State.IDLE
 
 
 job_runner_service = JobRunnerService()

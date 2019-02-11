@@ -2,11 +2,11 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CheckBox from "../../../components/CheckBox";
 import SelectInputGroup from "../../../components/SelectInputGroup";
-import InputInputGroup from "../../../components/InputField";
+import InputInputGroup from "../../../components/InputInputGroup";
 import ObjectProps from "../ObjectProps";
+import PointEdit from "../PointEdit";
 import MoveHeadButtons from "../MoveHeadButtons";
 import IconButton from "../IconButton";
-import UpdateBoardForm from "./UpdateBoardForm";
 
 const BoardDisplayRow = props => {
   let { board } = props;
@@ -33,7 +33,7 @@ const BoardDisplayRow = props => {
         {board.operation}
       </td>
       <td className="align-middle">
-        <MoveHeadButtons title="Move" head={props.head} point={board.origin} />
+        <MoveHeadButtons head={props.head} point={board.origin} />
         <div className="float-right">
           <IconButton
             title="Edit board"
@@ -62,6 +62,7 @@ class BoardEditRow extends React.Component {
             small
             id={board.id}
             value={board.id}
+            size="15"
             onChange={value => {
               board.id = value;
               this.setState({ board: board });
@@ -75,15 +76,23 @@ class BoardEditRow extends React.Component {
           />
         </td>
         <td className="align-middle">
-          <ObjectProps object={board.origin} inline />
+          <PointEdit
+            head={head}
+            point={board.origin}
+            onChange={value => {
+              board.origin = value;
+              this.setState({ board: board });
+            }}
+          />
         </td>
         <td className="align-middle">
           <InputInputGroup
             small
             id={"rotation" + board.id}
+            type="number"
             value={board.rotation}
-            options={[0, 45, 90, 135, 180, 225, 270]}
-            size="6"
+            // options={[0, 45, 90, 135, 180, 225, 270]}
+            range={{ min: 0.0, max: 360.0, step: 0.01 }}
             onChange={value => {
               board.rotation = parseFloat(value);
               this.setState({ board: board });
@@ -102,14 +111,14 @@ class BoardEditRow extends React.Component {
           />
         </td>
         <td className="align-middle">
-          <MoveHeadButtons title="Move" head={head} point={board.origin} />
+          <MoveHeadButtons head={head} point={board.origin} />
           <div className="float-right">
             {this.state.updating ? (
               <FontAwesomeIcon icon="spinner" spin />
             ) : (
               <React.Fragment>
                 <IconButton
-                  title="Update component"
+                  title="Save changes"
                   icon="save"
                   onClick={e => {
                     this.setState({ updating: true });

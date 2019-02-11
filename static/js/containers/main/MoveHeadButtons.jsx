@@ -34,7 +34,7 @@ const MoveHeadButtons = props => {
           return (
             <IconButton
               key={camera.id}
-              title={props.title + " " + camera.id}
+              title={"Move to '" + camera.id + "' position"}
               icon="bullseye"
               onClick={e => moveCamera(camera.id, props.point)}
             />
@@ -45,7 +45,7 @@ const MoveHeadButtons = props => {
           return (
             <IconButton
               key={pHead.id}
-              title={props.title + " " + pHead.id}
+              title={"Move to '" + pHead.id + "' position"}
               icon="dot-circle"
               onClick={e => movePlacementHead(pHead.id, props.point)}
             />

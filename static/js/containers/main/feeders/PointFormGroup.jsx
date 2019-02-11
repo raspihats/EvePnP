@@ -1,5 +1,5 @@
 import React from "react";
-import InputField from "../../../components/InputField";
+import InputInputGroup from "../../../components/InputInputGroup";
 import OffsetButtons from "../OffsetButtons";
 import api from "../../../api";
 
@@ -29,7 +29,7 @@ class PointFormGroup extends React.Component {
             {Object.keys(this.props.point)
               .sort()
               .map(axis => (
-                <InputField
+                <InputInputGroup
                   type="number"
                   key={axis}
                   prepend={axis + ":"}

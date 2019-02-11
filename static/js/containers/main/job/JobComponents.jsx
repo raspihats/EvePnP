@@ -1,11 +1,12 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectInputGroup from "../../../components/SelectInputGroup";
-import InputInputGroup from "../../../components/InputField";
+import InputInputGroup from "../../../components/InputInputGroup";
 import ObjectProps from "../ObjectProps";
 import MoveHeadButtons from "../MoveHeadButtons";
 import IconButton from "../IconButton";
 import { addPoints } from "../../../utils";
+import PointEdit from "../PointEdit";
 
 const ComponentDisplayRow = props => {
   let { head, packages, origin, component } = props;
@@ -35,7 +36,6 @@ const ComponentDisplayRow = props => {
       </td>
       <td className="align-middle">
         <MoveHeadButtons
-          title="Move"
           head={head}
           point={addPoints(origin, component.offset)}
         />
@@ -67,6 +67,7 @@ class ComponentEditRow extends React.Component {
             small
             id={component.id}
             value={component.id}
+            size="15"
             onChange={value => {
               component.id = value;
               this.setState({ component: component });
@@ -78,6 +79,7 @@ class ComponentEditRow extends React.Component {
             small
             id={"value" + component.id}
             value={component.value}
+            size="15"
             onChange={value => {
               component.value = value;
               this.setState({ component: component });
@@ -96,15 +98,23 @@ class ComponentEditRow extends React.Component {
           />
         </td>
         <td className="align-middle">
-          <ObjectProps object={component.offset} inline />
+          <PointEdit
+            head={head}
+            point={component.offset}
+            onChange={value => {
+              component.offset = value;
+              this.setState({ component: component });
+            }}
+          />
         </td>
         <td className="align-middle">
           <InputInputGroup
             small
             id={"rotation" + component.id}
+            type="number"
             value={component.rotation}
             options={[0, 45, 90, 135, 180, 225, 270]}
-            size="6"
+            range={{ min: 0.0, max: 360.0, step: 0.01 }}
             onChange={value => {
               component.rotation = parseFloat(value);
               this.setState({ component: component });
@@ -124,7 +134,6 @@ class ComponentEditRow extends React.Component {
         </td>
         <td className="align-middle">
           <MoveHeadButtons
-            title="Move"
             head={head}
             point={addPoints(origin, component.offset)}
           />
@@ -134,7 +143,7 @@ class ComponentEditRow extends React.Component {
             ) : (
               <React.Fragment>
                 <IconButton
-                  title="Update component"
+                  title="Save changes"
                   icon="save"
                   onClick={e => {
                     this.setState({ updating: true });

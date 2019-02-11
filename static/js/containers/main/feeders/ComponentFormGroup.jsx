@@ -1,5 +1,5 @@
 import React from "react";
-import InputField from "../../../components/InputField";
+import InputInputGroup from "../../../components/InputInputGroup";
 
 const ComponentFormGroup = props => {
   return (
@@ -8,7 +8,7 @@ const ComponentFormGroup = props => {
       <div className="form-row">
         {Object.keys(props.component).map(key => (
           <div key={key} className="form-group col-md-6 mb-1">
-            <InputField
+            <InputInputGroup
               prepend={key + ":"}
               value={props.component[key]}
               onChange={e => {

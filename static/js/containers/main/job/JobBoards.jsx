@@ -9,7 +9,14 @@ import MoveHeadButtons from "../MoveHeadButtons";
 import IconButton from "../IconButton";
 
 const BoardDisplayRow = props => {
-  let { board } = props;
+  let { board, status } = props;
+  let classOperation;
+  if (board.operation === "ignore") {
+    classOperation = "text-warning";
+  } else if (status && status.boards_ids.indexOf(board.id) !== -1) {
+    classOperation = "text-white bg-success";
+  }
+
   return (
     <tr>
       <th scope="row" className="align-middle">
@@ -25,13 +32,7 @@ const BoardDisplayRow = props => {
         <ObjectProps object={board.origin} inline />
       </td>
       <td className="align-middle">{board.rotation}</td>
-      <td
-        className={
-          "align-middle " + (board.operation === "ignore" && "text-warning")
-        }
-      >
-        {board.operation}
-      </td>
+      <td className={"align-middle " + classOperation}>{board.operation}</td>
       <td className="align-middle">
         <MoveHeadButtons head={props.head} point={board.origin} />
         <div className="float-right">
@@ -198,6 +199,7 @@ class JobBoards extends React.Component {
                 <BoardDisplayRow
                   key={board.id}
                   head={this.props.head}
+                  status={this.props.job.status}
                   board={board}
                   reference={this.state.referenceId === board.id}
                   onSetReferenceId={() => {

@@ -9,7 +9,13 @@ import { addPoints } from "../../../utils";
 import PointEdit from "../PointEdit";
 
 const ComponentDisplayRow = props => {
-  let { head, packages, origin, component } = props;
+  let { head, packages, origin, component, status } = props;
+  let classOperation;
+  if (component.operation === "ignore") {
+    classOperation = "text-warning";
+  } else if (status && status.components_ids.indexOf(component.id) !== -1) {
+    classOperation = "text-white bg-success";
+  }
   return (
     <tr>
       <th scope="row" className="align-middle">
@@ -25,13 +31,7 @@ const ComponentDisplayRow = props => {
         <ObjectProps object={component.offset} inline />
       </td>
       <td className="align-middle">{component.rotation}</td>
-      <td
-        className={
-          "align-middle " +
-          (component.operation === "ignore" && "text-warning") +
-          " bg-success text-white"
-        }
-      >
+      <td className={"align-middle " + classOperation}>
         {component.operation}
       </td>
       <td className="align-middle">
@@ -60,6 +60,7 @@ class ComponentEditRow extends React.Component {
   render() {
     let { head, packages, operations, origin } = this.props;
     let component = { ...this.state.component };
+
     return (
       <tr>
         <th scope="row" className="align-middle">
@@ -211,10 +212,11 @@ class JobComponents extends React.Component {
               this.state.editIds.indexOf(component.id) === -1 ? (
                 <ComponentDisplayRow
                   key={component.id}
-                  origin={this.props.origin}
-                  component={component}
                   head={this.props.head}
                   packages={this.props.packages}
+                  origin={this.props.origin}
+                  component={component}
+                  status={this.props.job.status}
                   onEdit={() => this.addEditId(component.id)}
                 />
               ) : (

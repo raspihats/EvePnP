@@ -12,8 +12,7 @@ class Job extends React.Component {
     operations: ["place", "ignore"],
     jobs: [],
     job: null,
-    origin: null,
-    jobRunnerStatus: null
+    origin: null
   };
 
   getHead() {
@@ -33,15 +32,20 @@ class Job extends React.Component {
   getJobRunnerStatus(reportError = true) {
     api.jobRunner.get(
       "",
-      jobRunnerStatus => {
-        let { state, job_id } = jobRunnerStatus;
-        // force switch to runnig job if not already selected
-        if (state === "run" || state === "pause") {
-          if (this.state.job === null || this.state.job.id !== job_id) {
-            this.onSelect(job_id);
-          }
+      status => {
+        let { job } = this.state;
+
+        if (
+          (status.state === "run" || status.state === "pause") &&
+          (job === null || job.id !== status.job_id)
+        ) {
+          // force switch to running job
+          this.onSelect(job_id);
+        } else if (job) {
+          let jobCopy = { ...job };
+          jobCopy.status = status;
+          this.setState({ job: jobCopy });
         }
-        this.setState({ jobRunnerStatus: jobRunnerStatus });
       },
       reportError
     );
@@ -119,7 +123,6 @@ class Job extends React.Component {
     this.getHead();
     this.listPackages();
     this.listJobs();
-    // this.getJobRunnerStatus();
     setInterval(() => this.getJobRunnerStatus(false), 100);
   }
 
@@ -131,7 +134,9 @@ class Job extends React.Component {
             jobs={this.state.jobs}
             selectedJobId={this.state.job ? this.state.job.id : null}
             runningState={
-              this.state.jobRunnerStatus && this.state.jobRunnerStatus.state
+              this.state.job &&
+              this.state.job.status &&
+              this.state.job.status.state
             }
             onSelect={id => this.onSelect(id)}
             onUpload={() => this.onUpload()}
@@ -140,25 +145,16 @@ class Job extends React.Component {
             onPause={() => this.onPause()}
             onStop={() => this.onStop()}
           />
-          {this.state.job &&
-            this.state.jobRunnerStatus &&
-            (this.state.jobRunnerStatus.state === "run" ||
-              this.state.jobRunnerStatus.state === "pause") && (
-              <JobProgress
-                job={this.state.job}
-                jobRunnerStatus={this.state.jobRunnerStatus}
-              />
-            )}
+          <JobProgress job={this.state.job} />
         </div>
         <div className="col-12 pt-3">
           {this.state.job && (
             <JobBoards
               head={this.state.head}
-              job={this.state.job}
               operations={this.state.operations}
+              job={this.state.job}
               onSetOrigin={data => {
                 this.setState({ origin: data });
-                console.log(data);
               }}
               onUpdateBoard={(initialId, updatedComponent, callback) =>
                 this.onUpdateBoard(initialId, updatedComponent, callback)

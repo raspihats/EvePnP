@@ -77,6 +77,7 @@ class BoardEditRow extends React.Component {
         </td>
         <td className="align-middle">
           <PointEdit
+            inline
             head={head}
             point={board.origin}
             onChange={value => {

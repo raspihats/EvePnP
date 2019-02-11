@@ -99,6 +99,7 @@ class ComponentEditRow extends React.Component {
         </td>
         <td className="align-middle">
           <PointEdit
+            inline
             head={head}
             point={component.offset}
             onChange={value => {

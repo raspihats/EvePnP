@@ -21,7 +21,8 @@ import {
   faPenSquare,
   faSave,
   faTimesCircle,
-  faSpinner
+  faSpinner,
+  faRedo
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faUpload);
@@ -39,5 +40,7 @@ library.add(faPenSquare);
 library.add(faSave);
 library.add(faTimesCircle);
 library.add(faSpinner);
+library.add(faPlus);
+library.add(faRedo);
 
 ReactDOM.render(<App />, document.getElementById("container"));

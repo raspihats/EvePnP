@@ -5,7 +5,7 @@ import CaptureHeadButtons from "./CaptureHeadButtons";
 const PointEdit = props => {
   return (
     <React.Fragment>
-      <div className="form-inline">
+      <div className={props.inline && "form-inline"}>
         {Object.keys(props.point).map(key => (
           <InputInputGroup
             key={key}

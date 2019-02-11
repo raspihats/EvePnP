@@ -176,6 +176,7 @@ class JobRunnerService(object):
 
     def __init__(self):
         self._head = Head()
+        self._pause = False
         self._stop = False
         self.status = {
             'state': State.IDLE,
@@ -196,7 +197,7 @@ class JobRunnerService(object):
     def pause(self, id):
         if self.status['state'] == State.RUN:
             if self.status['job_id'] == id:
-                self.status['state'] = State.PAUSE
+                self._pause = True
 
     def stop(self, id):
         if self.status['state'] == State.RUN or self.status['state'] == State.PAUSE:
@@ -235,6 +236,8 @@ class JobRunnerService(object):
             component['id'], component['value'], component['package']))
 
     def _run(self, job):
+        self._stop = False
+        self._pause = False
         print("Job '{}' started".format(job['id']))
 
         self.status = {
@@ -252,6 +255,7 @@ class JobRunnerService(object):
 
         for board in boards:
             self.status['boards_ids'].append(board['id'])
+            self.status['components_ids'] = []
 
             # build new components list including only the ones that should be placed
             components = [x for x in job['components']
@@ -264,6 +268,10 @@ class JobRunnerService(object):
             while len(components):
                 if self._stop:
                     break
+
+                if self._pause:
+                    self._pause = False
+                    self.status['state'] = State.PAUSE
 
                 if self.status['state'] == State.RUN:
                     # pick multiple components

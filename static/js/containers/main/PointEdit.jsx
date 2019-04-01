@@ -6,21 +6,23 @@ const PointEdit = props => {
   return (
     <React.Fragment>
       <div className={props.inline && "form-inline"}>
-        {Object.keys(props.point).map(key => (
-          <InputInputGroup
-            key={key}
-            small
-            type="number"
-            range={{ min: 0.0, max: 999.999, step: 0.001 }}
-            prepend={key}
-            value={props.point[key]}
-            onChange={value => {
-              let point = { ...props.point };
-              point[key] = parseFloat(value);
-              props.onChange(point);
-            }}
-          />
-        ))}
+        {Object.keys(props.point)
+          .sort()
+          .map(key => (
+            <InputInputGroup
+              key={key}
+              small
+              type="number"
+              range={{ min: 0.0, max: 999.999, step: 0.001 }}
+              prepend={key}
+              value={props.point[key]}
+              onChange={value => {
+                let point = { ...props.point };
+                point[key] = parseFloat(value);
+                props.onChange(point);
+              }}
+            />
+          ))}
         <CaptureHeadButtons
           head={props.head}
           onCapture={capturePoint => {

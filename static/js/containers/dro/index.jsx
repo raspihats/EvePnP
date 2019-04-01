@@ -14,9 +14,9 @@ class Dro extends React.Component {
 
   componentDidMount() {
     this.updateAxisPositions();
-    // setInterval(() => {
-    //   this.updateAxisPositions();
-    // }, 100);
+    setInterval(() => {
+      this.updateAxisPositions();
+    }, 100);
   }
 
   render() {

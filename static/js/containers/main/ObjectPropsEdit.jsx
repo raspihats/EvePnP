@@ -15,7 +15,7 @@ const ObjectPropsEdit = props => {
           value={props.object[key]}
           onChange={value => {
             let object = { ...props.object };
-            object[key] = parseFloat(value);
+            object[key] = value;
             props.onChange(object);
           }}
         />

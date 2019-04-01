@@ -48,7 +48,7 @@ class FeederEditRow extends React.Component {
               object={feeder.component}
               onChange={value => {
                 feeder.component = value;
-                this.setState({ feeder: feeder });
+                this.setState({ feeder });
               }}
             />
           </td>

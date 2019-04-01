@@ -9,7 +9,13 @@ db = TinyDB("db_jobs.json", storage=CachingMiddleware(JSONStorage))
 def dict_builder(keys, values):
     d = {}
     for i in range(0, len(keys)):
-        d[keys[i]] = values[i]
+        try:
+            d[keys[i]] = values[i]
+        except Exception as e:
+            print(keys)
+            print(values)
+            print(e)
+            raise e
     return d
 
 
@@ -20,7 +26,7 @@ def load(file):
         for line in f:
             print(line.strip())
             d = dict_builder(fields, line.strip().replace(
-                '   ', ' ').replace('  ', ' ').split(' '))
+                '   ', ' ').replace('  ', ' ').split(','))
             x = d.pop('x')
             y = d.pop('y')
             d['offset'] = {'x': float(x), 'y': float(y)}

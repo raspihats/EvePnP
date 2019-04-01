@@ -84,6 +84,7 @@ class Head(object):
         def __init__(self, config):
             self._config = config
             self._component = None
+            print(self._config['offset'])
 
         def isEmpty(self):
             return self._component == None

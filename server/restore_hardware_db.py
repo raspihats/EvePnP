@@ -157,11 +157,17 @@ def move(point, speed_factor=1):
         controllers[motion_controller_zr_id].move(position, feed_rate)
 
 def get_position():
+    position_xy = controllers[motion_controller_xy_id].position
+    if motion_controller_xy_id == motion_controller_zr_id:
+        position_zr = position_xy
+    else:
+        position_zr = controllers[motion_controller_zr_id].position
+
     return {
-        'x' : 100,
-        'y' : 101,
-        'z' : 102,
-        'r' : 104
+        'x' : position_xy[x_axis_id],
+        'y' : position_xy[y_axis_id],
+        'z' : position_zr[z_axis_id],
+        'r' : position_zr[r_axis_id]
     }
 
 def jog(axis, step, speed_factor=1):
@@ -211,17 +217,27 @@ def pick(point, speed_factor=1):
     feed_rate = 50000 * speed_factor
     axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park z and r axis
+    # park z and axis
     controllers[motion_controller_zr_id].move({
         z_axis_id: axis_zr_config[z_axis_id]['park'],
-        r_axis_id: axis_zr_config[r_axis_id]['park']
     }, feed_rate)
 
-    # move to pick point on x and y axis
-    controllers[motion_controller_xy_id].move({
+    # move to pick point on x and y axis and park rotation axis
+    point_xy = {
         x_axis_id: point['x'], 
         y_axis_id: point['y']
-    }, feed_rate)
+    }
+    
+    if motion_controller_xy_id == motion_controller_zr_id:
+        # also park raxis if z and r axis use same motion controller as x and y
+        point_xy[r_axis_id] = axis_zr_config[r_axis_id]['park']
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+    else:
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+        # rotate nozzle
+        controllers[motion_controller_zr_id].move({
+            r_axis_id: axis_zr_config[r_axis_id]['park']
+        }, feed_rate)
 
     # lower nozzle
     controllers[motion_controller_zr_id].move({
@@ -242,15 +258,21 @@ def place(point, rotation, speed_factor=1):
     axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
     # move to place point on x and y axis
-    controllers[motion_controller_xy_id].move({
+    point_xy = {
         x_axis_id: point['x'], 
         y_axis_id: point['y']
-    }, feed_rate)
-
-    # rotate nozzle
-    controllers[motion_controller_zr_id].move({
-        r_axis_id: rotation
-    }, feed_rate)
+    }
+    
+    if motion_controller_xy_id == motion_controller_zr_id:
+        # also rotate if z and r axis use same motion controller
+        point_xy[r_axis_id] = rotation
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+    else:
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+        # rotate nozzle
+        controllers[motion_controller_zr_id].move({
+            r_axis_id: rotation
+        }, feed_rate)
 
     # lower nozzle
     controllers[motion_controller_zr_id].move({
@@ -262,8 +284,7 @@ def place(point, rotation, speed_factor=1):
 
     # raise nozzle, park rotation axis
     controllers[motion_controller_zr_id].move({
-        z_axis_id: axis_zr_config[z_axis_id]['park'],
-        r_axis_id: axis_zr_config[r_axis_id]['park']
+        z_axis_id: axis_zr_config[z_axis_id]['park']
     }, feed_rate)
 """
 
@@ -300,11 +321,17 @@ def move(point, speed_factor=1):
         controllers[motion_controller_zr_id].move(position, feed_rate)
 
 def get_position():
+    position_xy = controllers[motion_controller_xy_id].position
+    if motion_controller_xy_id == motion_controller_zr_id:
+        position_zr = position_xy
+    else:
+        position_zr = controllers[motion_controller_zr_id].position
+
     return {
-        'x' : 200,
-        'y' : 201,
-        'z' : 202,
-        'r' : 204
+        'x' : position_xy[x_axis_id],
+        'y' : position_xy[y_axis_id],
+        'z' : 118 - position_zr[z_axis_id],
+        'r' : position_zr[r_axis_id]
     }
 
 def jog(axis, step, speed_factor=1):
@@ -356,18 +383,27 @@ def pick(point, speed_factor=1):
     feed_rate = 50000 * speed_factor
     axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
-    # park z and r axis
+    # park z axis
     controllers[motion_controller_zr_id].move({
-        z_axis_id: axis_zr_config[z_axis_id]['park'],
-        r_axis_id: axis_zr_config[r_axis_id]['park']
+        z_axis_id: axis_zr_config[z_axis_id]['park']
     }, feed_rate)
 
-    # move to pick
-    # position x and y axis
-    controllers[motion_controller_xy_id].move({
+    # move to pick point on x and y axis and park rotation axis
+    point_xy = {
         x_axis_id: point['x'], 
         y_axis_id: point['y']
-    }, feed_rate)
+    }
+    
+    if motion_controller_xy_id == motion_controller_zr_id:
+        # also park raxis if z and r axis use same motion controller as x and y
+        point_xy[r_axis_id] = axis_zr_config[r_axis_id]['park']
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+    else:
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+        # rotate nozzle
+        controllers[motion_controller_zr_id].move({
+            r_axis_id: axis_zr_config[r_axis_id]['park']
+        }, feed_rate)
 
     # position z axis, lower nozzle
     controllers[motion_controller_zr_id].move({
@@ -388,15 +424,21 @@ def place(point, rotation, speed_factor=1):
     axis_zr_config = controllers[motion_controller_zr_id].config['axis']
 
     # move to place point on x and y axis
-    controllers[motion_controller_xy_id].move({
+    point_xy = {
         x_axis_id: point['x'], 
         y_axis_id: point['y']
-    }, feed_rate)
-
-    # rotate nozzle
-    controllers[motion_controller_zr_id].move({
-        r_axis_id: rotation
-    }, feed_rate)
+    }
+    
+    if motion_controller_xy_id == motion_controller_zr_id:
+        # also rotate if z and r axis use same motion controller as x and y axis
+        point_xy[r_axis_id] = rotation
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+    else:
+        controllers[motion_controller_xy_id].move(point_xy, feed_rate)
+        # rotate nozzle
+        controllers[motion_controller_zr_id].move({
+            r_axis_id: rotation
+        }, feed_rate)
 
     # lower nozzle
     controllers[motion_controller_zr_id].move({
@@ -406,10 +448,9 @@ def place(point, rotation, speed_factor=1):
     # disable vacuum
     actuators[vacuum_actuator_id].set(False)
 
-    # raise nozzle, park rotation axis
+    # raise nozzle
     controllers[motion_controller_zr_id].move({
-        z_axis_id: axis_zr_config[z_axis_id]['park'],
-        r_axis_id: axis_zr_config[r_axis_id]['park']
+        z_axis_id: axis_zr_config[z_axis_id]['park']
     }, feed_rate)
 """
 
@@ -458,7 +499,7 @@ head_table.insert(
                 "z_axis_id": "z",
                 "r_axis_id": "b",
                 "motion_controller_zr_id": "Mc1",  # for z/rot placement head movement
-                "offset": {"x": -43.8, "y": 0.0},
+                "offset": {"x": -43.9, "y": -0.2},
                 "vacuum_actuator_id": "Valve2",
                 "code": phead_two_code
             }
@@ -632,7 +673,7 @@ feeders_table.insert_multiple([
         "id": "StripFeeder_9",
         "size": 47,
         "component": {"value": "BSS84", "package": "SOT-23"},
-        "point": {"x": 252, "y": 133.2, "z": 31},
+        "point": {"x": 251.6, "y": 133.2, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -644,7 +685,7 @@ feeders_table.insert_multiple([
             "value": "680R 5%",
             "package": "RES-0603"
         },
-        "point": {"x": 347.4, "y": 146, "z": 31},
+        "point": {"x": 347.2, "y": 146, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -656,7 +697,7 @@ feeders_table.insert_multiple([
             "value": "10K 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 347.5, "y": 158, "z": 31},
+        "point": {"x": 347.2, "y": 158, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -665,7 +706,7 @@ feeders_table.insert_multiple([
         "id": "StripFeeder_12",
         "size": 47,
         "component": {"value": "OSG50603C1E", "package": "LED-0603"},
-        "point": {"x": 251.8, "y": 169.4, "z": 31},
+        "point": {"x": 251.6, "y": 169.4, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -677,7 +718,7 @@ feeders_table.insert_multiple([
             "value": "PDTC114ET",
             "package": "SOT-23",
         },
-        "point": {"x": 251.8, "y": 181.4, "z": 31},
+        "point": {"x": 251.6, "y": 181.4, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -689,7 +730,7 @@ feeders_table.insert_multiple([
             "value": "0R 1%",
             "package": "RES-0603"
         },
-        "point": {"x": 347.3, "y": 194, "z": 31},
+        "point": {"x": 347.2, "y": 194, "z": 31},
         "code": feeders_code_xp
     },
     {
@@ -701,7 +742,7 @@ feeders_table.insert_multiple([
             "value": "150R 5%",
             "package": "RES-0603"
         },
-        "point": {"x": 347.3, "y": 206, "z": 31},
+        "point": {"x": 347.2, "y": 206, "z": 31},
         "code": feeders_code_xp
     },
     {
